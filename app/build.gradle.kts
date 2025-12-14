@@ -49,8 +49,6 @@ android {
     productFlavors {
         create("dev") {
             applicationIdSuffix = ".dev"
-            resValue("string", "app_name", "Blood Sugar Dev")
-
         }
 
         create("prod") {
@@ -79,13 +77,13 @@ dependencies {
     implementation(libs.androidx.compose.ui.graphics)
     implementation(libs.androidx.compose.ui.tooling.preview)
     implementation(libs.androidx.compose.material3)
-    testImplementation(libs.junit)
-    androidTestImplementation(libs.androidx.junit)
-    androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(platform(libs.androidx.compose.bom))
-    androidTestImplementation(libs.androidx.compose.ui.test.junit4)
     debugImplementation(libs.androidx.compose.ui.tooling)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
+    implementation(project(path = ":domain"))
+    implementation(project(path = ":data"))
+    implementation(project(path = ":base"))
+    implementation(project(path = ":feature"))
 
     // Splash Screen
     implementation(libs.androidx.core.splashscreen)
@@ -96,8 +94,8 @@ dependencies {
     // Work manager
 //    implementation(libs.androidx.runtime.worker)
     // Exo player
-    implementation(libs.androidx.media3.exoplayer)
-    implementation(libs.androidx.media3.ui)
+//    implementation(libs.androidx.media3.exoplayer)
+//    implementation(libs.androidx.media3.ui)
     // Moshi
     implementation(libs.com.squareup.moshi.kotlin)
     implementation(libs.com.squareup.retrofit2.converter.moshi)
@@ -115,7 +113,6 @@ dependencies {
     // Navigation
     implementation(libs.androidx.navigation.compose)
     // Live data
-    implementation(libs.androidx.lifecycle.livedata.ktx)
     implementation(libs.androidx.lifecycle.viewmodel.ktx)
     implementation(libs.androidx.lifecycle.viewmodel.savedstate)
     // Multi dex
@@ -131,8 +128,6 @@ dependencies {
     implementation(libs.dagger.hilt)
     ksp(libs.dagger.hilt.android.compiler)
     implementation(libs.hilt.navigation.compose)
-    // health
-    implementation(libs.androidx.health)
     // Permissions
     implementation(libs.android.permissions)
     // Serializable
@@ -140,10 +135,10 @@ dependencies {
     // pager
     implementation(libs.accompanist.pager)
     // camera
-    implementation(libs.androidx.camera)
-    implementation(libs.camera.lifecycle)
-    implementation(libs.camera.view)
-    implementation(libs.camera.camera2)
+//    implementation(libs.androidx.camera)
+//    implementation(libs.camera.lifecycle)
+//    implementation(libs.camera.view)
+//    implementation(libs.camera.camera2)
     // Admob
     implementation(libs.play.services.ads)
     // Splash
