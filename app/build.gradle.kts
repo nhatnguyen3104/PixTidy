@@ -84,6 +84,7 @@ dependencies {
     implementation(project(path = ":data"))
     implementation(project(path = ":base"))
     implementation(project(path = ":feature"))
+    implementation(project(path = ":monetization"))
 
     // Splash Screen
     implementation(libs.androidx.core.splashscreen)

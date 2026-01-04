@@ -38,4 +38,5 @@ dependencies {
     implementation(libs.material)
     implementation(project(path = ":domain"))
     implementation(project(path = ":data"))
+    implementation(project(path = ":monetization"))
 }
