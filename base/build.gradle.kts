@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.kotlin.compose)
 }
 
 android {
@@ -30,6 +31,9 @@ android {
     kotlinOptions {
         jvmTarget = "21"
     }
+    buildFeatures {
+        compose = true
+    }
 }
 
 dependencies {
@@ -38,5 +42,9 @@ dependencies {
     implementation(libs.material)
     implementation(project(path = ":domain"))
     implementation(project(path = ":data"))
-    implementation(project(path = ":monetization"))
+    implementation(platform(libs.androidx.compose.bom))
+    implementation(libs.androidx.compose.ui)
+    implementation(libs.androidx.compose.ui.graphics)
+    implementation(libs.androidx.compose.ui.tooling.preview)
+    implementation(libs.androidx.compose.material3)
 }
