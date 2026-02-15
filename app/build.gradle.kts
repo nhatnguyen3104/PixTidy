@@ -120,8 +120,6 @@ dependencies {
     // Retrofit
     implementation (libs.com.squareup.retrofit)
     implementation (libs.com.squareup.retrofit.converter.gson)
-    // Skydoves
-    implementation (libs.com.github.skydoves.sandwich)
     //
     implementation(libs.com.google.accompanist.systemuicontroller)
     // Hilt
