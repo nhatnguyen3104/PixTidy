@@ -50,4 +50,12 @@ dependencies {
     implementation(libs.androidx.compose.material3)
     // Navigation
     implementation(libs.androidx.navigation.compose)
+    // OkHttp
+    implementation(libs.com.squareup.okhttp)
+    implementation(libs.com.squareup.okhttp3.logging.interceptor)
+    // Retrofit
+    implementation (libs.com.squareup.retrofit)
+    implementation (libs.com.squareup.retrofit.converter.gson)
+    // Timber
+    implementation(libs.com.jakewharton.timber)
 }

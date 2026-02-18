@@ -1,3 +1,5 @@
+import com.android.kotlin.multiplatform.models.AndroidCompilation
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
@@ -22,37 +24,87 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
-    buildTypes {
+    flavorDimensions += listOf("tier")
 
-        debug {
-            applicationIdSuffix = ".debug"
+    androidComponents {
+        beforeVariants { variantBuilder ->
+            val buildType = variantBuilder.buildType
+
+            val allowBuildTypes = setOf(
+                "devDebug",
+                "devRelease",
+                "prodDebug",
+                "prodRelease"
+            )
+
+            if (buildType !in allowBuildTypes) {
+                variantBuilder.enable = false
+            }
+        }
+    }
+
+    buildTypes {
+        create("devDebug") {
+            initWith(getByName("debug"))
+            matchingFallbacks += "debug"
+            applicationIdSuffix = ".dev"
+            versionNameSuffix = "-dev"
             isDebuggable = true
+            signingConfig = signingConfigs.getByName("debug")
         }
 
-        release {
-            isMinifyEnabled = false
+        create("devRelease") {
+            initWith(getByName("release"))
+            applicationIdSuffix = ".dev"
+            versionNameSuffix = "-dev"
+            isMinifyEnabled = true
+            isShrinkResources = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
-            signingConfig = signingConfigs.create("release") {
-                keyAlias = "generalapps"
-                keyPassword = "generalapps@123"
-                storeFile = file("key/release.jks")
-                storePassword = "generalapps@123"
-            }
+            matchingFallbacks += "release"
         }
 
+        create("prodDebug") {
+            initWith(getByName("debug"))
+            isDebuggable = true
+            signingConfig = signingConfigs.getByName("debug")
+            matchingFallbacks += "debug"
+        }
+
+        create("prodRelease") {
+            initWith(getByName("release"))
+            isMinifyEnabled = true
+            isShrinkResources = true
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
+            matchingFallbacks += "release"
+        }
     }
 
-    flavorDimensions += "default"
     productFlavors {
-        create("dev") {
-            applicationIdSuffix = ".dev"
+        create("general") {
+            dimension = "tier"
+            applicationIdSuffix = ".general"
+            versionCode = 1
+            versionName = "1.0.0"
+            resValue("string", "app_name", "General Dev")
+
+            buildConfigField("String", "DOMAIN_URL", "\"https://mobiledev-nct.tech/\"")
         }
 
-        create("prod") {
-        }
+        /*create("pdfScanner") {
+            dimension = "tier"
+            applicationIdSuffix = ".pdfScanner"
+            versionCode = 1
+            versionName = "1.0.0"
+            resValue("string", "app_name", "Pdf Scanner")
+
+            buildConfigField("String", "DOMAIN_URL", "\"https://mobiledev-nct.tech/\"")
+        }*/
     }
 
     compileOptions {
@@ -141,4 +193,7 @@ dependencies {
     implementation(libs.play.services.ads)
     // Splash
     implementation(libs.androidx.core.splashscreen)
+    // OkHttp
+    implementation(libs.com.squareup.okhttp)
+    implementation(libs.com.squareup.okhttp3.logging.interceptor)
 }
