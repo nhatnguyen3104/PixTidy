@@ -1,5 +1,6 @@
 package com.androidtech.base.permission
 
+import android.Manifest
 import android.content.pm.PackageManager
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -12,8 +13,27 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.core.content.ContextCompat
 
+sealed class Permission(val permission: String) {
+    data object Camera : Permission(Manifest.permission.CAMERA)
+}
+
+class SinglePermissionState(
+    val permission: String,
+    val isGranted: Boolean,
+    val request: () -> Unit
+)
+
+class MultiplePermissionsState(
+    val permissions: List<String>,
+    val grantedMap: Map<String, Boolean>,
+    val requestAll: () -> Unit
+) {
+    val allGranted: Boolean get() = grantedMap.values.all { it }
+    val deniedPermissions: List<String> get() = grantedMap.filterValues { !it }.keys.toList()
+}
+
 @Composable
-fun rememberPermissionState(permission: String): MutableState<Boolean> {
+fun rememberPermissionGranted(permission: String): MutableState<Boolean> {
     val content = LocalContext.current
     return remember {
         mutableStateOf(
