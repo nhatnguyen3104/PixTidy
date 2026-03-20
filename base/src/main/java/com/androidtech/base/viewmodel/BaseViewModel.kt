@@ -35,7 +35,6 @@ abstract class BaseViewModel<Event: UIEvent, State: UIState, Effect: UIEffect>(
     val uiState = _uiState
         .onEach { state ->
             savedStateToHandle(state)
-
         }
         .stateIn(
             scope = viewModelScope,
