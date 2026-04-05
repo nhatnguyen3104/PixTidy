@@ -31,7 +31,7 @@ inline fun <FAILURE, SUCCESS> Either<FAILURE, SUCCESS>.fold(
     is Either.Failure -> onFailure(failure)
 }
 
-inline fun <FAILURE, SUCCESS, R> Either<FAILURE, SUCCESS>.fold(
+inline fun <FAILURE, SUCCESS, R> Either<FAILURE, SUCCESS>.getFold(
     onSuccess: (SUCCESS) -> R,
     onFailure: (FAILURE) -> R
 ): R = when (this) {
