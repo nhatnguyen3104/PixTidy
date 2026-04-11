@@ -1,11 +1,10 @@
-package com.androidtech.base.extension
+package com.androidtech.domain.extensions
 
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flowOn
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onCompletion
 
 /**
@@ -16,20 +15,27 @@ import kotlinx.coroutines.flow.onCompletion
  */
 fun <T> Flow<T>.flowEither(
     dispatcher: CoroutineDispatcher = Dispatchers.IO
-): Flow<Either<Failure, T>> {
-    return map { t ->
-        try {
-            Either.Success(t)
-        } catch (e: Exception) {
-            Either.Failure(Failure(e))
-        }
-    }
+): Flow<T> {
+    return this
         .flowOn(dispatcher)
         .catch {
-            Either.Failure(Failure(it))
+            Either.Failure(AppFailure.Unknown(it))
         }.onCompletion {
             if (it != null) {
-                Either.Failure(Failure(it))
+                Either.Failure(AppFailure.Unknown(it))
             }
         }
 }
+
+fun <T> Flow<T>.flowUIState(
+    dispatcher: CoroutineDispatcher = Dispatchers.IO
+): Flow<T> = this
+    .flowOn(dispatcher)
+    .catch {
+        UiState.Error(AppFailure.Unknown(it))
+    }
+    .onCompletion {
+        if (it != null) {
+            UiState.Error(AppFailure.Unknown(it))
+        }
+    }

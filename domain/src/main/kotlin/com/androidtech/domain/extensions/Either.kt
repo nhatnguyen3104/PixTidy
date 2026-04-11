@@ -1,5 +1,12 @@
-package com.androidtech.base.extension
+package com.androidtech.domain.extensions
 
+/**
+ * Either
+ * Xử lý những tác vụ không cần đến Loading
+ * @param FAILURE
+ * @param SUCCESS
+ * @constructor Create empty Either
+ */
 sealed class Either<out FAILURE, out SUCCESS> {
     data class Failure<FAILURE>(val failure: FAILURE): Either<FAILURE, Nothing>()
     data class Success<SUCCESS>(val success: SUCCESS): Either<Nothing, SUCCESS>()
