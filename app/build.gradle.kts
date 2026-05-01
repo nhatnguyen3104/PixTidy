@@ -15,7 +15,6 @@ android {
     }
 
     defaultConfig {
-        applicationId = "com.androidtech.generalapps"
         minSdk = 28
         targetSdk = 36
         versionCode = 1
@@ -88,10 +87,10 @@ android {
     productFlavors {
         create("general") {
             dimension = "tier"
-            applicationIdSuffix = ".general"
+            applicationId = "com.androidtech.generalapps"
             versionCode = 1
             versionName = "1.0.0"
-            resValue("string", "app_name", "General Dev")
+            resValue("string", "app_name", "General")
 
             buildConfigField("String", "DOMAIN_URL", "\"https://mobiledev-nct.tech/\"")
         }
