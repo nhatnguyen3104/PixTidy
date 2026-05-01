@@ -1,4 +1,3 @@
-import com.android.kotlin.multiplatform.models.AndroidCompilation
 
 plugins {
     alias(libs.plugins.android.application)
@@ -6,6 +5,7 @@ plugins {
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.com.google.devtools.ksp)
     alias(libs.plugins.com.google.dagger.hilt.android)
+    alias(libs.plugins.com.google.gms.google.services)
 }
 
 android {
@@ -195,4 +195,7 @@ dependencies {
     // OkHttp
     implementation(libs.com.squareup.okhttp)
     implementation(libs.com.squareup.okhttp3.logging.interceptor)
+    // Firebase
+    implementation(platform(libs.com.google.firebase.bom))
+    implementation(libs.com.google.firebase.analytics)
 }
