@@ -61,4 +61,6 @@ dependencies {
     implementation (libs.com.squareup.retrofit.converter.gson)
     // Timber
     implementation(libs.com.jakewharton.timber)
+    // Lottie
+    implementation(libs.lottie.compose)
 }
