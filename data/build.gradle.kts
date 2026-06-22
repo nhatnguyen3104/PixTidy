@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.com.google.devtools.ksp)
+    alias(libs.plugins.com.google.dagger.hilt.android)
 }
 
 android {
@@ -30,6 +31,9 @@ android {
     kotlinOptions {
         jvmTarget = "21"
     }
+    buildFeatures {
+        buildConfig = true
+    }
 }
 
 dependencies {
@@ -54,4 +58,12 @@ dependencies {
     implementation(libs.androidx.runtime.room)
     ksp(libs.androidx.room.compiler)
     implementation (libs.androidx.room.ktx)
+    // remote config
+    implementation(platform(libs.com.google.firebase.bom))
+    implementation(libs.com.google.firebase.remote.configs)
+    // Hilt
+    implementation(libs.dagger.hilt)
+    ksp(libs.dagger.hilt.android.compiler)
+    // Timber
+    implementation(libs.com.jakewharton.timber)
 }
