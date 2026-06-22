@@ -5,7 +5,7 @@ import com.androidtech.data.utils.isDebug
 import timber.log.Timber
 
 object DataLogger {
-    private const val TAG = "ModernApp data"
+    private const val TAG = "ModernApp"
 
     fun d(s: String?, vararg objects: Any?) {
         Timber.tag(TAG).d(s, *objects)

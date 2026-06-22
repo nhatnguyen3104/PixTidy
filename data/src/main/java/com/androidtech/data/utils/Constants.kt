@@ -1,0 +1,12 @@
+package com.androidtech.data.utils
+
+object Constants {
+    const val FETCH_REMOTE_CONFIG_TIMEOUT = 10 * 1000L
+
+    const val INTERSTITIAL_AD_CONFIG_MAX_SHOW_PER_SESSION = 10
+    const val INTERSTITIAL_AD_CONFIG_TIME_PER_SESSION = 600L
+    const val INTERSTITIAL_AD_CONFIG_TIME_INTERVAL = 37L
+    const val INTERSTITIAL_AD_CONFIG_TIME_INTERVAL_AFTER_SHOW_OPEN_AD = 10L
+
+    const val OPEN_APP_AD_TIME_INTERVAL = 1L
+}

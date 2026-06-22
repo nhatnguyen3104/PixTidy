@@ -5,7 +5,7 @@ import com.androidtech.base.viewmodel.UIEvent
 import com.androidtech.base.viewmodel.UIState
 
 sealed class MainEvent(): UIEvent {
-    data object TestEvent: MainEvent()
+    data object LoadRemoteConfig: MainEvent()
 }
 
 data class MainState(

@@ -198,4 +198,5 @@ dependencies {
     // Firebase
     implementation(platform(libs.com.google.firebase.bom))
     implementation(libs.com.google.firebase.analytics)
+    implementation(libs.com.google.firebase.remote.configs)
 }

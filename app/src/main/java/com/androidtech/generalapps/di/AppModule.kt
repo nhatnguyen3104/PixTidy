@@ -4,6 +4,8 @@ import android.content.Context
 import com.ads.monetization.AdMobManager
 import com.ads.monetization.AdManager
 import com.androidtech.generalapps.app.MainApp
+import com.squareup.moshi.Moshi
+import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -21,4 +23,12 @@ class AppModule {
     @Singleton
     @Provides
     fun provideAdManager(context: Context): AdManager = AdMobManager(context)
+
+    @Provides
+    @Singleton
+    fun provideMoshi(): Moshi {
+        return Moshi.Builder()
+            .addLast(KotlinJsonAdapterFactory())
+            .build()
+    }
 }
