@@ -32,7 +32,8 @@ fun NativeAdView(
     adUnitId: String,
     onAdLoaded: () -> Unit = {},
     onAdFailedToLoad: (LoadAdError) -> Unit = {},
-    customView: ((NativeAdView, NativeAd) -> Unit)? = null
+    customView: ((NativeAdView, NativeAd) -> Unit)? = null,
+    onAdClicked: () -> Unit = {}
 ) {
     val context = LocalContext.current
     var nativeAd by remember { mutableStateOf<NativeAd?>(null) }
@@ -67,7 +68,7 @@ fun NativeAdView(
                     if (customView != null) {
                         customView(this, mNativeAd)
                     } else {
-                        setupDefaultNativeAdView(this, mNativeAd)
+                        setupDefaultNativeAdView(this, mNativeAd, onAdClicked = onAdClicked)
                     }
                 }
             }
@@ -75,7 +76,11 @@ fun NativeAdView(
     }
 }
 
-private fun setupDefaultNativeAdView(adView: NativeAdView, nativeAd: NativeAd) {
+private fun setupDefaultNativeAdView(
+    adView: NativeAdView,
+    nativeAd: NativeAd,
+    onAdClicked: () -> Unit
+) {
     val context = adView.context
 
     // Root container khớp với NativeAdView
@@ -83,7 +88,7 @@ private fun setupDefaultNativeAdView(adView: NativeAdView, nativeAd: NativeAd) {
         orientation = LinearLayout.VERTICAL
         layoutParams = FrameLayout.LayoutParams(MATCH_PARENT, WRAP_CONTENT)
         setPadding(16, 16, 16, 16)
-        setBackgroundColor(Color.parseColor("#1C1C1E"))
+        setBackgroundColor("#1C1C1E".toColorInt())
     }
 
     val headerRow = LinearLayout(context).apply {
@@ -183,9 +188,16 @@ private fun setupDefaultNativeAdView(adView: NativeAdView, nativeAd: NativeAd) {
         textSize = 14f
         setTextColor(Color.WHITE)
         setBackgroundColor("#FF6B35".toColorInt())
+        setOnClickListener {
+            onAdClicked()
+        }
     }
     adView.callToActionView = ctaButton
     rootLayout.addView(ctaButton)
+
+    adView.setOnClickListener {
+        onAdClicked()
+    }
 
     adView.addView(rootLayout)
     adView.setNativeAd(nativeAd)
