@@ -7,6 +7,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.viewinterop.AndroidView
+import com.androidtech.base.logger.Logger
+import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.AdSize
 import com.google.android.gms.ads.LoadAdError
 
@@ -27,9 +29,21 @@ fun BannerAdView(
             bannerAdLoader.createAdView(
                 activity = context as Activity,
                 adSize = adSize,
-                onAdLoaded = onAdLoaded,
-                onAdFailedToLoad = onAdFailedToLoad
+                onAdLoaded = {
+                    Logger.d("BannerAdView loaded")
+                    onAdLoaded()
+                },
+                onAdFailedToLoad = {
+                    Logger.e("BannerAdView failed to load: ${it.message}")
+                    onAdFailedToLoad(it)
+                }
             )
+        },
+        update = { adView ->
+            if (adView.adUnitId != adUnitId) {
+                adView.adUnitId = adUnitId
+                adView.loadAd(AdRequest.Builder().build())
+            }
         }
     )
 

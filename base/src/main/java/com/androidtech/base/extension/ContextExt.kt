@@ -1,38 +1,20 @@
 package com.androidtech.base.extension
 
-import android.Manifest
 import android.annotation.SuppressLint
 import android.app.ActivityManager
 import android.app.AppOpsManager
 import android.content.Context
 import android.content.Context.APP_OPS_SERVICE
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.os.Build
 import android.provider.Settings
-import androidx.core.app.ActivityCompat
-import com.androidtech.base.permission.Permission
 import androidx.core.net.toUri
+import com.androidtech.base.permission.Permission
 import java.security.MessageDigest
 
 
 fun Context.isPermissionGranted(permission: Permission): Boolean =
     when (permission) {
-        Permission.DisplayOverlay -> {
-            Settings.canDrawOverlays(this)
-        }
-
-        Permission.PostNotification -> {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                ActivityCompat.checkSelfPermission(
-                    this,
-                    Manifest.permission.POST_NOTIFICATIONS
-                ) != PackageManager.PERMISSION_GRANTED
-            } else {
-                true
-            }
-        }
-
         else -> false
     }
 
