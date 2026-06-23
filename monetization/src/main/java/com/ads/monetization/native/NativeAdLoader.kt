@@ -1,6 +1,6 @@
 package com.ads.monetization.native
 
-import android.app.Activity
+import android.content.Context
 import android.util.Log
 import com.ads.monetization.config.AdConfig
 import com.google.android.gms.ads.AdListener
@@ -18,7 +18,7 @@ class NativeAdLoader(
     private var isLoadingAd = false
 
     fun loadAd(
-        activity: Activity,
+        context: Context,
         onAdLoaded: (NativeAd) -> Unit = {},
         onAdFailedToLoad: (LoadAdError) -> Unit = {}
     ) {
@@ -29,7 +29,7 @@ class NativeAdLoader(
 
         isLoadingAd = true
 
-        val adLoader = AdLoader.Builder(activity, adUnitId)
+        val adLoader = AdLoader.Builder(context, adUnitId)
             .forNativeAd { ad ->
                 Log.d(AdConfig.TAG, "Native Ad loaded thành công")
 

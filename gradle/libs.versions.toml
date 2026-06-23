@@ -36,6 +36,7 @@ pagerVersion = "0.34.0"
 appcompat = "1.7.1"
 material = "1.13.0"
 lottie = "6.7.1"
+materialVersion = "1.14.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -91,6 +92,7 @@ accompanist-pager = { module = "com.google.accompanist:accompanist-pager", versi
 androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 lottie-compose = { module = "com.airbnb.android:lottie-compose", version.ref = "lottie" }
+google-material = { group = "com.google.android.material", name = "material", version.ref = "materialVersion" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
