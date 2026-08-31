@@ -23,6 +23,14 @@ object DataLogger {
         Timber.tag(TAG).e(throwable, s, objects)
     }
 
+    fun w(s: String?, vararg objects: Any?) {
+        Timber.tag(TAG).w(s, objects)
+    }
+
+    fun w(throwable: Throwable, s: String?, vararg objects: Any?) {
+        Timber.tag(TAG).w(throwable, s, objects)
+    }
+
     fun init(context: Context) {
         if (context.isDebug()) { Timber.plant(Timber.DebugTree()) }
     }
