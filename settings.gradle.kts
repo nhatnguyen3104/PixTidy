@@ -19,7 +19,7 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "General Apps"
+rootProject.name = "SnapSweep"
 include(":app")
 include(":domain")
 include(":data")
