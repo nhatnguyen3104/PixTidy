@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">General</string>
+    <string name="app_name">Snap Sweep</string>
 
     <string name="text_cat_gate_keeper">Cat Gatekeeper</string>
     <string name="text_choose_app_to_guard">Choose apps to guard</string>
@@ -19,4 +19,9 @@
     <string name="text_overlay_description">Pet the cat and relax a little</string>
     <string name="text_notification_title">Cat Gatekeeper is running</string>
     <string name="text_notification_content">Tap to open the app</string>
+    
+    <string name="text_capacity"> GB</string>
+    <string name="text_used_capacity">used of %1$d GB</string>
+    <string name="text_available_capacity">%1$.2f GB available</string>
+    <string name="text_scan_storage">Scan storage</string>
 </resources>

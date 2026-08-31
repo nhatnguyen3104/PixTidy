@@ -23,11 +23,16 @@ import androidx.compose.ui.graphics.PaintingStyle.Companion.Stroke
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.androidtech.base.theme.AppTheme
+import com.androidtech.base.theme.DocumentBadge
 import com.androidtech.base.theme.StorageBadge
 import com.androidtech.base.ui.animation.bounceClick
+import com.androidtech.base.R
 
 @Composable
 fun StorageRingGauge(
@@ -50,7 +55,9 @@ fun StorageRingGauge(
         val trackColor = MaterialTheme.colorScheme.surfaceVariant
         val primaryColor = MaterialTheme.colorScheme.primary
 
-        Canvas(modifier = Modifier.fillMaxSize().padding(10.dp)) {
+        Canvas(modifier = Modifier
+            .fillMaxSize()
+            .padding(10.dp)) {
             // Background track ring
             drawArc(
                 color = trackColor,
@@ -83,7 +90,7 @@ fun StorageRingGauge(
                     )
                 )
                 Text(
-                    text = " GB",
+                    text = stringResource(R.string.text_capacity),
                     style = MaterialTheme.typography.titleLarge.copy(
                         fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colorScheme.onBackground
@@ -92,7 +99,7 @@ fun StorageRingGauge(
                 )
             }
             Text(
-                text = "used of ${totalGb.toInt()} GB",
+                text = stringResource(R.string.text_used_capacity, totalGb.toInt()),
                 style = MaterialTheme.typography.bodyMedium.copy(
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -105,7 +112,7 @@ fun StorageRingGauge(
                 shape = RoundedCornerShape(16.dp)
             ) {
                 Text(
-                    text = "$availableGb GB available",
+                    text = stringResource(R.string.text_available_capacity, availableGb),
                     style = MaterialTheme.typography.labelMedium.copy(
                         color = Color.Black.copy(alpha = 0.75f),
                         fontWeight = FontWeight.Medium
@@ -116,6 +123,21 @@ fun StorageRingGauge(
         }
     }
 }
+
+/*@Preview(showBackground = true)
+@Composable
+fun StorageRingGaugePreview(
+) {
+    AppTheme(
+        dynamicColor = false
+    ) {
+        StorageRingGauge(
+            usedGb = 100f,
+            totalGb = 200f,
+            availableGb = 100f
+        )
+    }
+}*/
 
 @Composable
 fun PotentialCleanupCard(potentialGb: String) {
@@ -155,6 +177,18 @@ fun PotentialCleanupCard(potentialGb: String) {
         }
     }
 }
+
+/*@Preview(showBackground = true)
+@Composable
+fun PotentialCleanupCardPreview() {
+    AppTheme(
+        dynamicColor = false
+    ) {
+        PotentialCleanupCard(
+            potentialGb = "100 GB"
+        )
+    }
+}*/
 
 @Composable
 fun CategoryCard(
@@ -210,3 +244,17 @@ fun CategoryCard(
         }
     }
 }
+
+/*@Preview(showBackground = true)
+@Composable
+fun CategoryCardPreview() {
+    AppTheme(dynamicColor = false) {
+        CategoryCard(
+            title = "Documents",
+            sizeText = "100 GB",
+            icon = Icons.Outlined.AutoAwesome,
+            badgeColor = DocumentBadge,
+            onClick = {}
+        )
+    }
+}*/

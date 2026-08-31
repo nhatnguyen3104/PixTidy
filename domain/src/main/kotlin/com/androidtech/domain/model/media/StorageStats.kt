@@ -36,4 +36,11 @@ data class StorageStats(
     /** Used space as a fraction of total, in `[0.0, 1.0]`. Safe against a zero-size volume. */
     val usedFraction: Float
         get() = if (totalBytes <= 0L) 0f else (usedBytes.toFloat() / totalBytes.toFloat()).coerceIn(0f, 1f)
+
+    val usedGb: Float get() = usedBytes / BYTES_IN_GB
+    val totalGb: Float get() = totalBytes / BYTES_IN_GB
+    val freeGb: Float get() = freeBytes / BYTES_IN_GB
+
 }
+
+private const val BYTES_IN_GB = 1024f * 1024f * 1024f
