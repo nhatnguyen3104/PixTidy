@@ -9,7 +9,8 @@ sealed class MainEvent(): UIEvent {
 }
 
 data class MainState(
-    val testData: String = ""
+    val testData: String = "",
+    val isDarkMode: Boolean = false
 ): UIState
 
 sealed class MainEffect: UIEffect {

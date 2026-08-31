@@ -1,4 +1,4 @@
-package com.androidtech.features.ui.screens
+package com.androidtech.features.ui.screens.home
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column

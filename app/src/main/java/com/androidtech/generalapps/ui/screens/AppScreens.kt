@@ -9,7 +9,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
 import com.androidtech.base.extension.AppDestination
 import com.androidtech.base.extension.LocalNavController
-import com.androidtech.features.ui.screens.homeScreen
+import com.androidtech.features.ui.screens.home.homeScreen
 
 @Composable
 fun AppScreens(

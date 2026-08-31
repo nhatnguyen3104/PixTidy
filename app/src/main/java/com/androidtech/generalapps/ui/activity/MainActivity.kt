@@ -8,8 +8,11 @@ import androidx.activity.viewModels
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.ads.monetization.AdManager
+import com.androidtech.base.theme.AppTheme
 import com.androidtech.generalapps.ui.screens.AppScreens
 import com.androidtech.generalapps.ui.theme.GeneralAppsTheme
 import dagger.hilt.android.AndroidEntryPoint
@@ -24,8 +27,8 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            GeneralAppsTheme {
-                mainViewModel.setEvent(MainEvent.LoadRemoteConfig)
+            val uiState by mainViewModel.uiState.collectAsStateWithLifecycle()
+            AppTheme(darkTheme = uiState.isDarkMode) {
                 Scaffold(modifier = Modifier.Companion.fillMaxSize()) { innerPadding ->
                     AppScreens(
                         modifier = Modifier.Companion.fillMaxSize()

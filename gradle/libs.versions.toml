@@ -34,9 +34,8 @@ permissionsVersion = "0.37.3"
 pagerVersion = "0.34.0"
 #camera = "1.4.0-beta02"
 appcompat = "1.7.1"
-material = "1.13.0"
+material = "1.14.0"
 lottie = "6.7.1"
-materialVersion = "1.14.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -49,6 +48,8 @@ androidx-compose-ui-tooling = { group = "androidx.compose.ui", name = "ui-toolin
 androidx-compose-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-tooling-preview" }
 androidx-compose-ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest" }
 androidx-compose-material3 = { group = "androidx.compose.material3", name = "material3" }
+androidx-compose-material-icons-core = { group = "androidx.compose.material", name = "material-icons-core" }
+androidx-compose-material-icons-extended = { group = "androidx.compose.material", name = "material-icons-extended" }
 
 androidx-core-splashscreen = { module = "androidx.core:core-splashscreen", version.ref = "splashScreen" }
 com-jakewharton-timber = { module = "com.jakewharton.timber:timber", version.ref = "timber" }
@@ -92,7 +93,6 @@ accompanist-pager = { module = "com.google.accompanist:accompanist-pager", versi
 androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 lottie-compose = { module = "com.airbnb.android:lottie-compose", version.ref = "lottie" }
-google-material = { group = "com.google.android.material", name = "material", version.ref = "materialVersion" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
