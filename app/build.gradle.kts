@@ -85,7 +85,7 @@ android {
     }
 
     productFlavors {
-        create("general") {
+        /*create("general") {
             dimension = "tier"
             applicationId = "com.androidtech.generalapps"
             versionCode = 1
@@ -93,17 +93,17 @@ android {
             resValue("string", "app_name", "General")
 
             buildConfigField("String", "DOMAIN_URL", "\"https://mobiledev-nct.tech/\"")
-        }
+        }*/
 
-        /*create("pdfScanner") {
+        create("SnapSweep") {
             dimension = "tier"
-            applicationIdSuffix = ".pdfScanner"
+            applicationId = "com.androidtech.snapsweep"
             versionCode = 1
             versionName = "1.0.0"
-            resValue("string", "app_name", "Pdf Scanner")
+            resValue("string", "app_name", "Snap Sweep")
 
-            buildConfigField("String", "DOMAIN_URL", "\"https://mobiledev-nct.tech/\"")
-        }*/
+            buildConfigField("String", "DOMAIN_URL", "\"https://mobiledev-nate.tech/\"")
+        }
     }
 
     compileOptions {
@@ -190,11 +190,6 @@ dependencies {
 //    implementation(libs.camera.camera2)
     // Admob
     implementation(libs.play.services.ads)
-    // Splash
-    implementation(libs.androidx.core.splashscreen)
-    // OkHttp
-    implementation(libs.com.squareup.okhttp)
-    implementation(libs.com.squareup.okhttp3.logging.interceptor)
     // Firebase
     implementation(platform(libs.com.google.firebase.bom))
     implementation(libs.com.google.firebase.analytics)
