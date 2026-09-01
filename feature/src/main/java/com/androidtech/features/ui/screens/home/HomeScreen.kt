@@ -75,10 +75,17 @@ fun HomeScreen(
                 is HomeEffect.NavigateToScan -> {
                     //navController.navigate(AppDestination.ScanScreen.route)
                 }
+                is HomeEffect.NavigateToSettings -> {
 
+                }
             }
         }
     }
+    HomeContent(
+        uiState = uiState.value,
+        onEvent = { viewModel.handleEvent(it) },
+        snackbarHostState = snackbarHostState
+    )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -156,7 +163,7 @@ fun HomeContent(
             Spacer(modifier = Modifier.height(24.dp))
 
             // 2. Potential Cleanup Card
-            PotentialCleanupCard(potentialGb = "8.7 GB")
+            PotentialCleanupCard(potentialGb = uiState.storageStats.duplicatesSizeBytes.formatSize())
 
             Spacer(modifier = Modifier.height(12.dp))
 
@@ -206,7 +213,7 @@ fun HomeContent(
             ) {
                 CategoryCard(
                     title = "Duplicate photos",
-                    sizeText = "1.8 GB",
+                    sizeText = uiState.storageStats.duplicatesSizeBytes.formatSize(),
                     icon = Icons.Outlined.ContentCopy,
                     badgeColor = ImageBadge,
                     modifier = Modifier.weight(1f),
@@ -214,7 +221,7 @@ fun HomeContent(
                 )
                 CategoryCard(
                     title = "Similar photos",
-                    sizeText = "2.4 GB",
+                    sizeText = uiState.storageStats.photosSizeBytes.formatSize(),
                     icon = Icons.Outlined.Collections,
                     badgeColor = AudioBadge,
                     modifier = Modifier.weight(1f),
@@ -230,7 +237,7 @@ fun HomeContent(
             ) {
                 CategoryCard(
                     title = "Large videos",
-                    sizeText = "3.1 GB",
+                    sizeText = uiState.storageStats.videosSizeBytes.formatSize(),
                     icon = Icons.Outlined.VideoLibrary,
                     badgeColor = VideoBadge,
                     modifier = Modifier.weight(1f),
@@ -238,7 +245,7 @@ fun HomeContent(
                 )
                 CategoryCard(
                     title = "Screenshots",
-                    sizeText = "0.9 GB",
+                    sizeText = uiState.storageStats.screenshotsSizeBytes.formatSize(),
                     icon = Icons.Outlined.Smartphone,
                     badgeColor = DocumentBadge,
                     modifier = Modifier.weight(1f),

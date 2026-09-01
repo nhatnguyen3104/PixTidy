@@ -4,9 +4,11 @@ import android.app.usage.StorageStatsManager
 import android.content.Context
 import android.database.ContentObserver
 import android.net.Uri
+import android.os.Build
 import android.os.Environment
 import android.os.Handler
 import android.os.Looper
+import android.os.Process
 import android.os.StatFs
 import android.os.storage.StorageManager
 import android.provider.MediaStore
@@ -14,6 +16,7 @@ import android.util.Log
 import com.androidtech.data.logger.DataLogger
 import com.androidtech.domain.model.media.StorageStats
 import com.androidtech.domain.repository.StorageRepository
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.awaitClose
@@ -29,6 +32,7 @@ import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.withContext
 import java.io.IOException
 import java.util.UUID
+import javax.inject.Inject
 import kotlin.time.Duration.Companion.milliseconds
 
 /**
@@ -57,12 +61,12 @@ class StorageUnavailableException(
  * both the system stats calls and the MediaStore cursor queries are blocking
  * I/O.
  */
-class StorageRepositoryImpl(
-    private val context: Context,
+class StorageRepositoryImpl @Inject constructor(
+    @ApplicationContext private val context: Context,
     private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : StorageRepository {
 
-    private val appContext = context.applicationContext
+    private val appContext = context
 
     private val storageStatsManager: StorageStatsManager? by lazy {
         appContext.getSystemService(Context.STORAGE_STATS_SERVICE) as? StorageStatsManager
@@ -145,26 +149,46 @@ class StorageRepositoryImpl(
             ?: throw StorageUnavailableException("StorageStatsManager unavailable")
         val volumeUuid: UUID = StorageManager.UUID_DEFAULT
 
-        val totalBytes = statsManager.getTotalBytes(volumeUuid)
-        val freeBytes = statsManager.getFreeBytes(volumeUuid)
-        val usedBytes = (totalBytes - freeBytes).coerceAtLeast(0L)
+        // 1. Get raw capacity from Android OS (Base-2 Bytes)
+        val rawTotalBytes = statsManager.getTotalBytes(volumeUuid)
+        val rawFreeBytes = statsManager.getFreeBytes(volumeUuid)
 
-        val photosSizeBytes = sumMediaSize(MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
-        val videosSizeBytes = sumMediaSize(MediaStore.Video.Media.EXTERNAL_CONTENT_URI)
-        val screenshotsSizeBytes = sumScreenshotSize()
+        // 2. Normalize Total Bytes to commercial figure (e.g., 128,000,000,000 Bytes)
+        val commercialTotalBytes = StorageStats.roundToCommercialTotalBytes(rawTotalBytes)
 
+        // 3. Keep actual Free Bytes (as this is the space truly available to the user)
+        val actualFreeBytes = rawFreeBytes
+
+        // 4. Calculate new Used Bytes = Commercial Total - Actual Free
+        // Any discrepancy (OS overhead + conversion rounding) is automatically bundled into usedBytes
+        val calculatedUsedBytes = (commercialTotalBytes - actualFreeBytes).coerceAtLeast(0L)
+
+        // 5. Categorized User Data
+        val photosSize = sumMediaSize(MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+        val videosSize = sumMediaSize(MediaStore.Video.Media.EXTERNAL_CONTENT_URI)
+        val screenshotsSize = sumScreenshotSize()
+        val appsSize = sumAppsSize(volumeUuid)
+        val downloadsSize = sumDownloadsSize()
+
+        // Avoid double-counting: screenshots are a subset of the images collection
+        val adjustedPhotosSize = (photosSize - screenshotsSize).coerceAtLeast(0L)
+
+        // 6. Calculate System / Other partition
+        val knownUserMediaBytes = adjustedPhotosSize + videosSize + screenshotsSize + appsSize + downloadsSize
+        val systemAndOtherBytes = (calculatedUsedBytes - knownUserMediaBytes).coerceAtLeast(0L)
+
+        // 7. Return Model
         return StorageStats(
-            totalBytes = totalBytes,
-            usedBytes = usedBytes,
-            freeBytes = freeBytes,
-            photosSizeBytes = photosSizeBytes,
-            // Avoid double-counting: screenshots are a subset of the images
-            // collection on most OEMs, so we subtract them out of "photos".
-            videosSizeBytes = videosSizeBytes,
-            screenshotsSizeBytes = screenshotsSizeBytes
-        ).let { stats ->
-            stats.copy(photosSizeBytes = (stats.photosSizeBytes - stats.screenshotsSizeBytes).coerceAtLeast(0L))
-        }
+            totalBytes = commercialTotalBytes,
+            usedBytes = calculatedUsedBytes,
+            freeBytes = actualFreeBytes,
+            photosSizeBytes = adjustedPhotosSize,
+            videosSizeBytes = videosSize,
+            screenshotsSizeBytes = screenshotsSize,
+            appsSizeBytes = appsSize,
+            downloadsSizeBytes = downloadsSize,
+            systemAndOtherSizeBytes = systemAndOtherBytes
+        )
     }
 
     /**
@@ -189,30 +213,33 @@ class StorageRepositoryImpl(
             throw StorageUnavailableException("StatFs failed for ${externalDir.path}", e)
         }
 
-        val totalBytes = statFs.totalBytes
-        val freeBytes = statFs.availableBytes
-        val usedBytes = (totalBytes - freeBytes).coerceAtLeast(0L)
+        val rawTotalBytes = statFs.totalBytes
+        val rawFreeBytes = statFs.availableBytes
+
+        val commercialTotalBytes = StorageStats.roundToCommercialTotalBytes(rawTotalBytes)
+        val actualFreeBytes = rawFreeBytes
+        val calculatedUsedBytes = (commercialTotalBytes - actualFreeBytes).coerceAtLeast(0L)
 
         // Best-effort category breakdown even in fallback mode; if MediaStore
         // itself is the thing failing, degrade to zeros rather than throwing.
-        val (photos, videos, screenshots) = try {
-            Triple(
-                sumMediaSize(MediaStore.Images.Media.EXTERNAL_CONTENT_URI),
-                sumMediaSize(MediaStore.Video.Media.EXTERNAL_CONTENT_URI),
-                sumScreenshotSize()
-            )
-        } catch (e: Exception) {
-            DataLogger.e( "MediaStore aggregation failed during fallback", e)
-            Triple(0L, 0L, 0L)
-        }
+        val photos = sumMediaSize(MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+        val videos = sumMediaSize(MediaStore.Video.Media.EXTERNAL_CONTENT_URI)
+        val screenshots = sumScreenshotSize()
+        val downloads = sumDownloadsSize()
+
+        val adjustedPhotos = (photos - screenshots).coerceAtLeast(0L)
+        val knownUserMediaBytes = adjustedPhotos + videos + screenshots + downloads
+        val systemAndOtherBytes = (calculatedUsedBytes - knownUserMediaBytes).coerceAtLeast(0L)
 
         return StorageStats(
-            totalBytes = totalBytes,
-            usedBytes = usedBytes,
-            freeBytes = freeBytes,
-            photosSizeBytes = (photos - screenshots).coerceAtLeast(0L),
+            totalBytes = commercialTotalBytes,
+            usedBytes = calculatedUsedBytes,
+            freeBytes = actualFreeBytes,
+            photosSizeBytes = adjustedPhotos,
             videosSizeBytes = videos,
-            screenshotsSizeBytes = screenshots
+            screenshotsSizeBytes = screenshots,
+            downloadsSizeBytes = downloads,
+            systemAndOtherSizeBytes = systemAndOtherBytes
         )
     }
 
@@ -263,5 +290,34 @@ class StorageRepositoryImpl(
             selection = selection,
             selectionArgs = selectionArgs
         )
+    }
+
+    /**
+     * Sums the size of files in the Downloads directory using MediaStore.
+     */
+    private fun sumDownloadsSize(): Long {
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            sumMediaSize(MediaStore.Downloads.EXTERNAL_CONTENT_URI)
+        } else {
+            // Best effort for older APIs: query MediaStore.Files with a relative path filter
+            val selection = "${MediaStore.MediaColumns.RELATIVE_PATH} LIKE ?"
+            val selectionArgs = arrayOf("Download%")
+            sumMediaSize(MediaStore.Files.getContentUri("external"), selection, selectionArgs)
+        }
+    }
+
+    /**
+     * Sums the total storage used by all applications for the current user.
+     * Requires PACKAGE_USAGE_STATS permission for accurate results.
+     */
+    private fun sumAppsSize(volumeUuid: UUID): Long {
+        return try {
+            val stats = storageStatsManager?.queryStatsForUser(volumeUuid, Process.myUserHandle())
+            // Sum app code, data, and cache to represent "Apps" category
+            (stats?.appBytes ?: 0L) + (stats?.dataBytes ?: 0L) + (stats?.cacheBytes ?: 0L)
+        } catch (e: Exception) {
+            DataLogger.e("Failed to query app stats", e)
+            0L
+        }
     }
 }

@@ -1,5 +1,6 @@
 package com.androidtech.features.ui.screens.home
 
+import java.util.Locale
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
@@ -19,16 +20,13 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.*
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.PaintingStyle.Companion.Stroke
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.androidtech.base.theme.AppTheme
 import com.androidtech.base.theme.DocumentBadge
 import com.androidtech.base.theme.StorageBadge
 import com.androidtech.base.ui.animation.bounceClick
@@ -82,7 +80,7 @@ fun StorageRingGauge(
         ) {
             Row(verticalAlignment = Alignment.Bottom) {
                 Text(
-                    text = "$usedGb",
+                    text = String.format(Locale.US, "%.1f", usedGb),
                     style = MaterialTheme.typography.displayMedium.copy(
                         fontWeight = FontWeight.Bold,
                         fontSize = 42.sp,
@@ -124,21 +122,6 @@ fun StorageRingGauge(
     }
 }
 
-/*@Preview(showBackground = true)
-@Composable
-fun StorageRingGaugePreview(
-) {
-    AppTheme(
-        dynamicColor = false
-    ) {
-        StorageRingGauge(
-            usedGb = 100f,
-            totalGb = 200f,
-            availableGb = 100f
-        )
-    }
-}*/
-
 @Composable
 fun PotentialCleanupCard(potentialGb: String) {
     Surface(
@@ -177,18 +160,6 @@ fun PotentialCleanupCard(potentialGb: String) {
         }
     }
 }
-
-/*@Preview(showBackground = true)
-@Composable
-fun PotentialCleanupCardPreview() {
-    AppTheme(
-        dynamicColor = false
-    ) {
-        PotentialCleanupCard(
-            potentialGb = "100 GB"
-        )
-    }
-}*/
 
 @Composable
 fun CategoryCard(
@@ -245,16 +216,15 @@ fun CategoryCard(
     }
 }
 
-/*@Preview(showBackground = true)
-@Composable
-fun CategoryCardPreview() {
-    AppTheme(dynamicColor = false) {
-        CategoryCard(
-            title = "Documents",
-            sizeText = "100 GB",
-            icon = Icons.Outlined.AutoAwesome,
-            badgeColor = DocumentBadge,
-            onClick = {}
-        )
+fun Long.formatSize(): String {
+    val kb = 1024L
+    val mb = kb * 1024L
+    val gb = mb * 1024L
+
+    return when {
+        this >= gb -> String.format(Locale.US, "%.1f GB", this.toFloat() / gb)
+        this >= mb -> String.format(Locale.US, "%.1f MB", this.toFloat() / mb)
+        this >= kb -> String.format(Locale.US, "%.1f KB", this.toFloat() / kb)
+        else -> "$this B"
     }
-}*/
+}

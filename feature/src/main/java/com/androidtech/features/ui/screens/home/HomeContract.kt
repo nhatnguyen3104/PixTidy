@@ -18,5 +18,5 @@ sealed class HomeEvent : UIEvent {
 
 sealed class HomeEffect : UIEffect {
     object NavigateToScan : HomeEffect()
-
+    object NavigateToSettings : HomeEffect()
 }
