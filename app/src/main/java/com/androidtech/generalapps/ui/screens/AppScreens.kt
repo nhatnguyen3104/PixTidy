@@ -10,6 +10,7 @@ import androidx.navigation.compose.rememberNavController
 import com.androidtech.base.extension.AppDestination
 import com.androidtech.base.extension.LocalNavController
 import com.androidtech.features.ui.screens.home.homeScreen
+import com.androidtech.features.ui.screens.scan.scanScreen
 
 @Composable
 fun AppScreens(
@@ -27,6 +28,7 @@ fun AppScreens(
                 startDestination = AppDestination.HomeScreen.route
             ) {
                 homeScreen()
+                scanScreen()
             }
         }
     }

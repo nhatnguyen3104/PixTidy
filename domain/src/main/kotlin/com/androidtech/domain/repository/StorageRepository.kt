@@ -1,32 +1,28 @@
 package com.androidtech.domain.repository
 
+import com.androidtech.domain.model.media.MediaItem
 import com.androidtech.domain.model.media.StorageStats
 import kotlinx.coroutines.flow.Flow
 
 /**
- * Source of device storage capacity/usage information.
- *
- * Implementations live in the data layer (e.g. backed by [android.os.StatFs]
- * and MediaStore aggregate queries) and are responsible for translating
- * platform APIs into the pure [StorageStats] model.
+ * Provides device-level storage statistics and destructive operations on media.
+ * Implemented by the data layer using Android's `StorageStatsManager` and `MediaStore`.
  */
 interface StorageRepository {
 
-    /**
-     * A continuously-updating stream of storage statistics.
-     *
-     * Implementations should emit an initial value promptly and re-emit
-     * whenever the underlying usage materially changes (e.g. after a delete
-     * operation, or on a polling/observer interval). This is a "hot" view of
-     * current state, not a one-shot request/response.
-     */
-    fun observeStorageStats(): Flow<StorageStats>
+    /** Continuous stream of storage statistics; re-emits as usage changes. */
+    fun getStorageStats(): Flow<StorageStats>
 
     /**
-     * A single, immediate snapshot of storage statistics.
+     * Attempts to delete the given [items] from device storage.
      *
-     * Prefer [observeStorageStats] for UI that should stay live; use this for
-     * one-off checks (e.g. "is there enough free space before this operation").
+     * On Android 11+ this may require surfacing a system consent dialog (via
+     * `MediaStore.createDeleteRequest`); implementations signal that need through
+     * a failed [Result] carrying a consent-required exception, since a suspend
+     * function cannot itself launch UI.
+     *
+     * @return [Result.success] with the count of items actually deleted, or
+     *   [Result.failure] with the triggering exception (e.g. [SecurityException]).
      */
-    suspend fun getStorageStatsSnapshot(): StorageStats
+    suspend fun deleteMediaItems(items: List<MediaItem>): Result<Int>
 }

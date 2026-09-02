@@ -20,20 +20,22 @@ sealed interface ScanProgress {
     /**
      * A scan is actively running.
      *
-     * @property currentFile Path or display name of the file currently being
+     * @property currentFileName Path or display name of the file currently being
      *   processed, primarily for showing live progress text to the user.
-     * @property percentage Overall completion, `0..100`. Detectors that
+     * @property progressPercentage Overall completion, `0..100`. Detectors that
      *   cannot estimate total work up front may hold this at 0 until a total
      *   count is known.
-     * @property itemsFound Count of items discovered/processed so far.
+     * @property totalCount Count of items discovered/processed so far.
      */
     data class Scanning(
-        val currentFile: String,
-        val percentage: Int,
-        val itemsFound: Int
+        val stage: ScanStage,
+        val currentFileName: String,
+        val processedCount: Int,
+        val totalCount: Int,
+        val progressPercentage: Float
     ) : ScanProgress {
         init {
-            require(percentage in 0..100) { "percentage must be within 0..100, was $percentage" }
+            require(progressPercentage in 0f..100f) { "percentage must be within 0..100, was $progressPercentage" }
         }
     }
 
@@ -44,7 +46,10 @@ sealed interface ScanProgress {
      *   An empty list is a valid, successful outcome (no duplicates found).
      */
     data class Completed(
-        val duplicateGroups: List<DuplicateGroup>
+        val stats: StorageStats,
+        val duplicateGroups: List<SimilarGroup>,
+        val similarGroups: List<SimilarGroup>,
+        val totalReclaimableBytes: Long
     ) : ScanProgress
 
     /**
@@ -52,10 +57,10 @@ sealed interface ScanProgress {
      *
      * @property message Human-readable (but not necessarily user-facing as-is)
      *   description of the failure, for logging and UI error mapping.
-     * @property cause Optional underlying throwable for diagnostics.
+     * @property throwable Optional underlying throwable for diagnostics.
      */
     data class Error(
-        val message: String,
-        val cause: Throwable? = null
+        val throwable: Throwable? = null,
+        val message: String
     ) : ScanProgress
 }

@@ -11,7 +11,7 @@ package com.androidtech.domain.model.media
  * @property id Stable identifier for the item. In practice this mirrors the
  *   platform media store's row id, but the domain layer treats it as an
  *   opaque, unique [Long] so it has no framework dependency.
- * @property contentUri Opaque, resolvable URI string (e.g. a `content://` URI)
+ * @property uriString Opaque, resolvable URI string (e.g. a `content://` URI)
  *   used by the data layer to open a stream to the file. The domain layer
  *   never parses this — it's a handle, not structured data.
  * @property path Absolute filesystem path, retained for operations (delete,
@@ -29,16 +29,22 @@ package com.androidtech.domain.model.media
  */
 data class MediaItem(
     val id: Long,
-    val contentUri: String,
+    val uriString: String,
     val path: String,
     val displayName: String,
     val sizeBytes: Long,
     val mimeType: String,
     val dateAddedEpochSec: Long,
+    val dateModifiedEpochSec: Long,
     val width: Int,
     val height: Int,
     val durationMs: Long? = null
 ) {
-    /** Convenience flag; true when this item carries video-specific fields. */
-    val isVideo: Boolean get() = durationMs != null
+
+    val isLargeFile: Boolean
+        get() = sizeBytes > LARGE_FILE_THRESHOLD_BYTES
+
+    companion object {
+        const val LARGE_FILE_THRESHOLD_BYTES: Long = 50L * 1024L * 1024L
+    }
 }

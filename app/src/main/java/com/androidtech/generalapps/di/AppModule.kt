@@ -20,7 +20,11 @@ class AppModule {
 
     @Provides
     @Singleton
-    fun provideContext(): Context = MainApp()
+    fun provideContext(app: MainApp): Context = app
+
+    @Provides
+    @Singleton
+    fun provideContentResolver(context: Context): android.content.ContentResolver = context.contentResolver
 
     @Singleton
     @Provides

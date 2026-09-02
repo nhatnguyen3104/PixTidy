@@ -73,7 +73,7 @@ fun HomeScreen(
         viewModel.uiEffect.flowWithLifecycle(lifecycleOwner.lifecycle).collect { effect ->
             when (effect) {
                 is HomeEffect.NavigateToScan -> {
-                    //navController.navigate(AppDestination.ScanScreen.route)
+                    navController.navigate(AppDestination.ScanScreen.route)
                 }
                 is HomeEffect.NavigateToSettings -> {
 

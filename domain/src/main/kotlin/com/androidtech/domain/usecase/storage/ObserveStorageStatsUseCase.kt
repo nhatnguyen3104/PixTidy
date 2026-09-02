@@ -15,7 +15,7 @@ class ObserveStorageStatsUseCase @Inject constructor(
     private val storageRepository: StorageRepository
 ): UIStateUseCase<Unit, StorageStats>() {
     override fun run(param: Unit): Flow<UiState<StorageStats>> {
-        return storageRepository.observeStorageStats().map { UiState.Success(it) as UiState<StorageStats> }
+        return storageRepository.getStorageStats().map { UiState.Success(it) as UiState<StorageStats> }
             .onStart { emit(UiState.Loading()) }
             .catch { emit(UiState.Error(AppFailure.Unknown(it))) }
     }

@@ -11,5 +11,6 @@ package com.androidtech.domain.model.media
 enum class MediaType {
     IMAGE,
     VIDEO,
-    SCREENSHOT
+    SCREENSHOT,
+    UNKNOWN
 }

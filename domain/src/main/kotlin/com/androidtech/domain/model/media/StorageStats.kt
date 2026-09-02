@@ -56,6 +56,11 @@ data class StorageStats(
     val usedGb: Float get() = usedBytes / BYTES_IN_GB_COMMERCIAL
     val freeGb: Float get() = freeBytes / BYTES_IN_GB_COMMERCIAL
 
+    val photosGb: Float get() = photosSizeBytes / BYTES_IN_GB_COMMERCIAL
+    val videosGb: Float get() = videosSizeBytes / BYTES_IN_GB_COMMERCIAL
+    val screenshotsGb: Float get() = screenshotsSizeBytes / BYTES_IN_GB_COMMERCIAL
+    val duplicatesGb: Float get() = duplicatesSizeBytes / BYTES_IN_GB_COMMERCIAL
+
     val systemAndOtherGb: Float get() = systemAndOtherSizeBytes / BYTES_IN_GB_COMMERCIAL
 
     companion object {
