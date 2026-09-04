@@ -1,29 +1,11 @@
 package com.androidtech.features.ui.screens.scan
 
-import androidx.compose.animation.AnimatedContent
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.CheckCircle
-import androidx.compose.material.icons.filled.ErrorOutline
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -35,21 +17,25 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.flowWithLifecycle
 import androidx.navigation.NavGraphBuilder
+import androidx.navigation.NavType
 import androidx.navigation.compose.composable
+import androidx.navigation.navArgument
 import com.androidtech.base.R
 import com.androidtech.base.extension.AppDestination
 import com.androidtech.base.extension.LocalNavController
 import com.androidtech.base.theme.Title20Bold
-import com.androidtech.domain.model.media.ScanProgress
+import com.androidtech.domain.model.media.ScanLayer
 
 fun NavGraphBuilder.scanScreen() {
-    composable(route = AppDestination.ScanScreen.route) {
+    composable(
+        route = AppDestination.ScanScreen.route,
+        arguments = listOf(navArgument("mode") { type = NavType.StringType })
+    ) {
         ScanScreen()
     }
 }
@@ -90,12 +76,18 @@ fun ScanContent(
     snackbarHostState: SnackbarHostState,
     modifier: Modifier = Modifier,
 ) {
+    val titleRes = if (uiState.scanLayer == ScanLayer.SMART_SCAN) {
+        R.string.text_smart_scan_storage
+    } else {
+        R.string.text_fast_scan_storage
+    }
+
     Scaffold(
         topBar = {
             TopAppBar(
                 title = {
                     Text(
-                        text = stringResource(R.string.text_scan_storage),
+                        text = stringResource(titleRes),
                         style = Title20Bold,
                         color = MaterialTheme.colorScheme.onBackground
                     )
@@ -120,7 +112,7 @@ fun ScanContent(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
-            AnimatedContent(
+            /*AnimatedContent(
                 targetState = uiState.scanProgress,
                 transitionSpec = {
                     fadeIn(animationSpec = tween(300)) togetherWith fadeOut(animationSpec = tween(300))
@@ -209,7 +201,7 @@ fun ScanContent(
                 ) {
                     Text(text = "Go Back", fontWeight = FontWeight.Bold)
                 }
-            }
+            }*/
         }
     }
 }

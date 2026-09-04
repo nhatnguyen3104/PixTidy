@@ -1,12 +1,16 @@
 package com.androidtech.generalapps.di
 
-import com.androidtech.data.engine.StorageIntelligenceEngineImpl
-import com.androidtech.data.repository.MediaRepositoryImpl
+import com.androidtech.data.analyzer.ImageAnalyzerEngineImpl
+import com.androidtech.data.engine.DeepAnalysisEngineImpl
+import com.androidtech.data.engine.RecommendationEngineImpl
+import com.androidtech.data.repository.MediaStoreRepositoryImpl
 import com.androidtech.data.repository.RemoteConfigRepositoryImp
 import com.androidtech.data.repository.StorageRepositoryImpl
-import com.androidtech.domain.repository.MediaRepository
+import com.androidtech.domain.engine.DeepAnalysisEngine
+import com.androidtech.domain.engine.ImageAnalyzerEngine
+import com.androidtech.domain.engine.RecommendationEngine
+import com.androidtech.domain.repository.MediaStoreRepository
 import com.androidtech.domain.repository.RemoteConfigRepository
-import com.androidtech.domain.repository.StorageIntelligenceEngine
 import com.androidtech.domain.repository.StorageRepository
 import dagger.Binds
 import dagger.Module
@@ -21,12 +25,18 @@ interface RepositoryModule {
     fun bindRemoteConfigRepository(impl: RemoteConfigRepositoryImp): RemoteConfigRepository
 
     @Binds
-    fun bindMediaRepository(impl: MediaRepositoryImpl): MediaRepository
+    fun bindMediaStoreRepository(impl: MediaStoreRepositoryImpl): MediaStoreRepository
 
     @Binds
     fun bindStorageRepository(impl: StorageRepositoryImpl): StorageRepository
 
     @Binds
-    fun bindStorageIntelligenceEngine(impl: StorageIntelligenceEngineImpl): StorageIntelligenceEngine
+    abstract fun bindImageAnalyzerEngine(impl: ImageAnalyzerEngineImpl): ImageAnalyzerEngine
+
+    @Binds
+    abstract fun bindDeepAnalysisEngine(impl: DeepAnalysisEngineImpl): DeepAnalysisEngine
+
+    @Binds
+    abstract fun bindRecommendationEngine(impl: RecommendationEngineImpl): RecommendationEngine
 
 }

@@ -38,7 +38,7 @@ fun StorageRingGauge(
     totalGb: Float,
     availableGb: Float
 ) {
-    val sweepAngleTarget = (usedGb / totalGb) * 260f
+    val sweepAngleTarget = if (totalGb > 0f) (usedGb / totalGb) * 260f else 0f
     val animatedSweepAngle by animateFloatAsState(
         targetValue = sweepAngleTarget,
         animationSpec = tween(durationMillis = 1000, easing = FastOutSlowInEasing),
@@ -213,18 +213,5 @@ fun CategoryCard(
                 )
             )
         }
-    }
-}
-
-fun Long.formatSize(): String {
-    val kb = 1024L
-    val mb = kb * 1024L
-    val gb = mb * 1024L
-
-    return when {
-        this >= gb -> String.format(Locale.US, "%.1f GB", this.toFloat() / gb)
-        this >= mb -> String.format(Locale.US, "%.1f MB", this.toFloat() / mb)
-        this >= kb -> String.format(Locale.US, "%.1f KB", this.toFloat() / kb)
-        else -> "$this B"
     }
 }

@@ -36,6 +36,9 @@ pagerVersion = "0.34.0"
 appcompat = "1.7.1"
 material = "1.14.0"
 lottie = "6.7.1"
+visionCommon = "17.3.0"
+playServicesMlkitTextRecognitionCommon = "19.1.0"
+playServicesMlkitTextRecognition = "19.0.1"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -93,6 +96,9 @@ accompanist-pager = { module = "com.google.accompanist:accompanist-pager", versi
 androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 lottie-compose = { module = "com.airbnb.android:lottie-compose", version.ref = "lottie" }
+vision-common = { group = "com.google.mlkit", name = "vision-common", version.ref = "visionCommon" }
+play-services-mlkit-text-recognition-common = { group = "com.google.android.gms", name = "play-services-mlkit-text-recognition-common", version.ref = "playServicesMlkitTextRecognitionCommon" }
+play-services-mlkit-text-recognition = { group = "com.google.android.gms", name = "play-services-mlkit-text-recognition", version.ref = "playServicesMlkitTextRecognition" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

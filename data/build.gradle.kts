@@ -40,6 +40,9 @@ dependencies {
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
+    implementation(libs.play.services.mlkit.text.recognition)
+    implementation(libs.play.services.mlkit.text.recognition.common)
+    implementation(libs.vision.common)
 
     implementation(project(path = ":domain"))
 

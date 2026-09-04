@@ -3,9 +3,9 @@ package com.androidtech.features.ui.screens.home
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.androidtech.base.viewmodel.BaseViewModel
-import com.androidtech.domain.extensions.UiState
-import com.androidtech.domain.usecase.storage.ObserveStorageStatsUseCase
+import com.androidtech.domain.usecase.media.RunFastScanUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import javax.inject.Inject
@@ -13,29 +13,21 @@ import javax.inject.Inject
 @HiltViewModel
 class HomeViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
-    private val observeStorageStatsUseCase: ObserveStorageStatsUseCase
+    private val runFastScanUseCase: RunFastScanUseCase
 ): BaseViewModel<HomeEvent, HomeState, HomeEffect>(savedStateHandle) {
     override fun createInitializeState(): HomeState = HomeState()
 
+    private var scanJob: Job? = null
+
     init {
-        observeStorageStats()
+        fastScan()
     }
 
-    private fun observeStorageStats() {
-        observeStorageStatsUseCase(Unit)
-            .onEach { uiState ->
-                when (uiState) {
-                    is UiState.Loading -> {
-                        setState { copy(isLoading = true) }
-                    }
-                    is UiState.Success -> {
-                        setState { copy(isLoading = false, storageStats = uiState.data) }
-                    }
-                    is UiState.Error -> {
-                        setState { copy(isLoading = false) }
-                    }
-                    else -> {}
-                }
+    private fun fastScan() {
+        scanJob?.cancel()
+        scanJob = runFastScanUseCase()
+            .onEach { summary ->
+                setState { copy(storageStats = summary) }
             }
             .launchIn(viewModelScope)
     }
@@ -45,11 +37,17 @@ class HomeViewModel @Inject constructor(
             is HomeEvent.CategoryClick -> {
 
             }
-            is HomeEvent.ScanClicked -> {
-                setEffect { HomeEffect.NavigateToScan }
+            is HomeEvent.SmartScanClicked -> {
+                setEffect { HomeEffect.NavigateToSmartScan }
+            }
+            is HomeEvent.FastScanClicked -> {
+                setEffect { HomeEffect.NavigateToFastScan }
             }
             is HomeEvent.SettingsClicked -> {
                 setEffect { HomeEffect.NavigateToSettings }
+            }
+            HomeEvent.StartScan -> {
+                fastScan()
             }
         }
     }

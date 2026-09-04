@@ -23,5 +23,6 @@
     <string name="text_capacity"> GB</string>
     <string name="text_used_capacity">used of %1$d GB</string>
     <string name="text_available_capacity">%1$.2f GB available</string>
-    <string name="text_scan_storage">Scan storage</string>
+    <string name="text_fast_scan_storage">Fast Scan Storage</string>
+    <string name="text_smart_scan_storage">Smart Scan Storage</string>
 </resources>

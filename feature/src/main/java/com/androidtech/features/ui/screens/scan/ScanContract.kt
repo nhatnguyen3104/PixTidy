@@ -3,10 +3,12 @@ package com.androidtech.features.ui.screens.scan
 import com.androidtech.base.viewmodel.UIEffect
 import com.androidtech.base.viewmodel.UIEvent
 import com.androidtech.base.viewmodel.UIState
-import com.androidtech.domain.model.media.ScanProgress
+import com.androidtech.domain.model.media.ScanLayer
 
 data class ScanState(
-    val scanProgress: ScanProgress = ScanProgress.Idle,
+    val scanLayer: ScanLayer = ScanLayer.FAST_SCAN,
+    val progressPercentage: Float = 0f,
+    val scannedFilesCount: Int = 0
 ) : UIState
 
 sealed class ScanEvent : UIEvent {

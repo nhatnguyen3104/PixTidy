@@ -1,5 +1,7 @@
 package com.androidtech.features.ui.screens.home
 
+import android.Manifest
+import android.os.Build
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -25,30 +27,22 @@ import androidx.navigation.compose.composable
 import com.androidtech.base.R
 import com.androidtech.base.extension.AppDestination
 import com.androidtech.base.extension.LocalNavController
+import com.androidtech.base.permission.rememberMultiplePermissions
 import com.androidtech.base.theme.*
 import com.androidtech.base.ui.animation.bounceClick
+import com.androidtech.base.utils.formatSize
+import com.androidtech.domain.model.media.ScanLayer
+import com.androidtech.domain.model.media.ScanState
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
 fun NavGraphBuilder.homeScreen() {
     composable(
         route = AppDestination.HomeScreen.route,
-
-        ) {
-        HomeScreen(
-        )
+    ) {
+        HomeScreen()
     }
 }
-
-/*@Composable
-@Preview
-private fun PreviewHomeScreen() {
-    HomeScreen(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Color.White)
-    )
-}*/
 
 @Composable
 fun HomeScreen(
@@ -58,6 +52,23 @@ fun HomeScreen(
     val lifecycleOwner = LocalLifecycleOwner.current
     val navController = LocalNavController.current
     val context = LocalContext.current
+
+    val permissions = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+        listOf(Manifest.permission.READ_MEDIA_IMAGES, Manifest.permission.READ_MEDIA_VIDEO)
+    } else {
+        listOf(Manifest.permission.READ_EXTERNAL_STORAGE)
+    }
+
+    val permissionState = rememberMultiplePermissions(
+        permissions = permissions.toTypedArray(),
+        onAllGranted = { viewModel.handleEvent(HomeEvent.StartScan) }
+    )
+
+    LaunchedEffect(Unit) {
+        if (!permissionState.allGranted) {
+            permissionState.requestAll()
+        }
+    }
 
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
@@ -72,8 +83,11 @@ fun HomeScreen(
     LaunchedEffect(viewModel.uiEffect, lifecycleOwner) {
         viewModel.uiEffect.flowWithLifecycle(lifecycleOwner.lifecycle).collect { effect ->
             when (effect) {
-                is HomeEffect.NavigateToScan -> {
-                    navController.navigate(AppDestination.ScanScreen.route)
+                is HomeEffect.NavigateToSmartScan -> {
+                    navController.navigate(AppDestination.ScanScreen.createRoute(ScanLayer.FAST_SCAN.name))
+                }
+                is HomeEffect.NavigateToFastScan -> {
+                    navController.navigate(AppDestination.ScanScreen.createRoute(ScanLayer.SMART_SCAN.name))
                 }
                 is HomeEffect.NavigateToSettings -> {
 
@@ -115,15 +129,6 @@ fun HomeContent(
                             style = Title20Bold,
                             color = MaterialTheme.colorScheme.onBackground
                         )
-
-                        /*if(uiState.isPremiumUser) {
-                            Icon(
-                                painter = painterResource(R.drawable.img_premium),
-                                contentDescription = null,
-                                tint = null,
-                                modifier = Modifier.size(20.dp)
-                            )
-                        }*/
                     }
                 },
                 actions = {
@@ -153,27 +158,47 @@ fun HomeContent(
         ) {
             Spacer(modifier = Modifier.height(12.dp))
 
-            // 1. Storage Progress Gauge
             StorageRingGauge(
-                usedGb = uiState.storageStats.usedGb,
-                totalGb = uiState.storageStats.totalGb,
-                availableGb = uiState.storageStats.freeGb
+                usedGb = uiState.storageStats.deviceUsedGb,
+                totalGb = uiState.storageStats.deviceTotalGb,
+                availableGb = uiState.storageStats.deviceFreeGb
             )
 
             Spacer(modifier = Modifier.height(24.dp))
 
-            // 2. Potential Cleanup Card
-            PotentialCleanupCard(potentialGb = uiState.storageStats.duplicatesSizeBytes.formatSize())
-
-            Spacer(modifier = Modifier.height(12.dp))
-
-            // 3. Scan Button CTA
             Button(
-                onClick = { onEvent(HomeEvent.ScanClicked) },
+                onClick = { onEvent(HomeEvent.SmartScanClicked) },
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(56.dp)
-                    .bounceClick(onClick = { onEvent(HomeEvent.ScanClicked) }),
+                    .bounceClick(onClick = { onEvent(HomeEvent.SmartScanClicked) }),
+                shape = RoundedCornerShape(28.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.secondary
+                )
+            ) {
+                Icon(
+                    imageVector = Icons.Outlined.AutoAwesome,
+                    contentDescription = null,
+                    modifier = Modifier.size(22.dp)
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+                Text(
+                    text = stringResource(R.string.text_smart_scan_storage),
+                    style = MaterialTheme.typography.titleMedium.copy(
+                        fontWeight = FontWeight.SemiBold
+                    )
+                )
+            }
+
+            Spacer(modifier = Modifier.height(12.dp))
+
+            Button(
+                onClick = { onEvent(HomeEvent.FastScanClicked) },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(56.dp)
+                    .bounceClick(onClick = { onEvent(HomeEvent.FastScanClicked) }),
                 shape = RoundedCornerShape(28.dp),
                 colors = ButtonDefaults.buttonColors(
                     containerColor = MaterialTheme.colorScheme.primary
@@ -186,7 +211,7 @@ fun HomeContent(
                 )
                 Spacer(modifier = Modifier.width(8.dp))
                 Text(
-                    text = stringResource(R.string.text_scan_storage),
+                    text = stringResource(R.string.text_fast_scan_storage),
                     style = MaterialTheme.typography.titleMedium.copy(
                         fontWeight = FontWeight.SemiBold
                     )
@@ -195,7 +220,6 @@ fun HomeContent(
 
             Spacer(modifier = Modifier.height(28.dp))
 
-            // 4. Smart Cleanup Grid
             Text(
                 text = "Smart cleanup",
                 style = MaterialTheme.typography.titleMedium.copy(
@@ -245,7 +269,7 @@ fun HomeContent(
                 )
                 CategoryCard(
                     title = "Screenshots",
-                    sizeText = uiState.storageStats.screenshotsSizeBytes.formatSize(),
+                    sizeText = uiState.storageStats.screenshotBytes.formatSize(),
                     icon = Icons.Outlined.Smartphone,
                     badgeColor = DocumentBadge,
                     modifier = Modifier.weight(1f),
@@ -255,7 +279,6 @@ fun HomeContent(
 
             Spacer(modifier = Modifier.height(28.dp))
 
-            // 5. Privacy Reassurance Banner
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.Center,
