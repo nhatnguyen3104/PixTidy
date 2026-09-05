@@ -4,14 +4,21 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.androidtech.base.viewmodel.BaseViewModel
 import com.androidtech.domain.model.media.ScanLayer
+import com.androidtech.domain.model.media.ScanProcess as DomainScanState
+import com.androidtech.domain.usecase.media.RunDeepSmartScanUseCase
+import com.androidtech.domain.usecase.media.RunSmartScanUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class ScanViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
+    private val runSmartScanUseCase: RunSmartScanUseCase,
+    private val runDeepSmartScanUseCase: RunDeepSmartScanUseCase
 ): BaseViewModel<ScanEvent, ScanState, ScanEffect> (savedStateHandle) {
 
     private var scanJob: Job? = null
@@ -31,28 +38,49 @@ class ScanViewModel @Inject constructor(
     override fun handleEvent(event: ScanEvent) {
         when (event) {
             is ScanEvent.StartScan -> {
-                //startScan()
+                startScan()
             }
             is ScanEvent.CancelScan -> cancelScan()
             is ScanEvent.NavigateBack -> setEffect { ScanEffect.NavigateBack }
         }
     }
 
-    /*private fun startScan() {
+    private fun startScan() {
         if (scanJob?.isActive == true) return
         
         val mode = getScanMode()
         val scanFlow = when (mode) {
-            ScanMode.FAST -> fastScanUseCase.execute()
-            ScanMode.SMART -> smartScanUseCase.execute()
+            ScanLayer.SMART_SCAN -> runSmartScanUseCase()
+            ScanLayer.DEEP_SMART_SCAN -> runDeepSmartScanUseCase()
+            else -> return
         }
 
         scanJob = scanFlow
-            .onEach { progress ->
-                setState { copy(scanProgress = progress) }
+            .onEach {  domainState ->
+                val uiProgress = when (domainState) {
+                    is DomainScanState.Idle -> DomainScanState.Idle
+                    is DomainScanState.Scanning -> {
+                        DomainScanState.Scanning(
+                            progress = domainState.progress
+                                .copy(currentStepMessage = domainState.progress.currentStepMessage)
+                        )
+                    }
+                    is DomainScanState.Success -> {
+                        DomainScanState.Success(
+                            insights = domainState.insights,
+                            totalReclaimableBytes = domainState.totalReclaimableBytes
+                        )
+                    }
+                    is DomainScanState.Error -> {
+                        DomainScanState.Error(
+                            throwable = domainState.throwable
+                        )
+                    }
+                }
+                setState { copy(scanProcess = uiProgress) }
             }
             .launchIn(viewModelScope)
-    }*/
+    }
 
     private fun cancelScan() {
         viewModelScope.launch {

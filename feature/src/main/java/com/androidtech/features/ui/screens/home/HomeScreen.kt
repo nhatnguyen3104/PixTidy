@@ -32,7 +32,6 @@ import com.androidtech.base.theme.*
 import com.androidtech.base.ui.animation.bounceClick
 import com.androidtech.base.utils.formatSize
 import com.androidtech.domain.model.media.ScanLayer
-import com.androidtech.domain.model.media.ScanState
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
@@ -84,10 +83,10 @@ fun HomeScreen(
         viewModel.uiEffect.flowWithLifecycle(lifecycleOwner.lifecycle).collect { effect ->
             when (effect) {
                 is HomeEffect.NavigateToSmartScan -> {
-                    navController.navigate(AppDestination.ScanScreen.createRoute(ScanLayer.FAST_SCAN.name))
-                }
-                is HomeEffect.NavigateToFastScan -> {
                     navController.navigate(AppDestination.ScanScreen.createRoute(ScanLayer.SMART_SCAN.name))
+                }
+                is HomeEffect.NavigateToDeepScan -> {
+                    navController.navigate(AppDestination.ScanScreen.createRoute(ScanLayer.DEEP_SMART_SCAN.name))
                 }
                 is HomeEffect.NavigateToSettings -> {
 
@@ -167,11 +166,11 @@ fun HomeContent(
             Spacer(modifier = Modifier.height(24.dp))
 
             Button(
-                onClick = { onEvent(HomeEvent.SmartScanClicked) },
+                onClick = { onEvent(HomeEvent.DeepScanClicked) },
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(56.dp)
-                    .bounceClick(onClick = { onEvent(HomeEvent.SmartScanClicked) }),
+                    .bounceClick(onClick = { onEvent(HomeEvent.DeepScanClicked) }),
                 shape = RoundedCornerShape(28.dp),
                 colors = ButtonDefaults.buttonColors(
                     containerColor = MaterialTheme.colorScheme.secondary
@@ -184,7 +183,7 @@ fun HomeContent(
                 )
                 Spacer(modifier = Modifier.width(8.dp))
                 Text(
-                    text = stringResource(R.string.text_smart_scan_storage),
+                    text = stringResource(R.string.text_deep_scan_storage),
                     style = MaterialTheme.typography.titleMedium.copy(
                         fontWeight = FontWeight.SemiBold
                     )
@@ -194,11 +193,11 @@ fun HomeContent(
             Spacer(modifier = Modifier.height(12.dp))
 
             Button(
-                onClick = { onEvent(HomeEvent.FastScanClicked) },
+                onClick = { onEvent(HomeEvent.SmartScanClicked) },
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(56.dp)
-                    .bounceClick(onClick = { onEvent(HomeEvent.FastScanClicked) }),
+                    .bounceClick(onClick = { onEvent(HomeEvent.SmartScanClicked) }),
                 shape = RoundedCornerShape(28.dp),
                 colors = ButtonDefaults.buttonColors(
                     containerColor = MaterialTheme.colorScheme.primary
@@ -211,7 +210,7 @@ fun HomeContent(
                 )
                 Spacer(modifier = Modifier.width(8.dp))
                 Text(
-                    text = stringResource(R.string.text_fast_scan_storage),
+                    text = stringResource(R.string.text_smart_scan_storage),
                     style = MaterialTheme.typography.titleMedium.copy(
                         fontWeight = FontWeight.SemiBold
                     )

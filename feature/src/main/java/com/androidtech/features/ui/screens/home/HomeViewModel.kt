@@ -40,8 +40,8 @@ class HomeViewModel @Inject constructor(
             is HomeEvent.SmartScanClicked -> {
                 setEffect { HomeEffect.NavigateToSmartScan }
             }
-            is HomeEvent.FastScanClicked -> {
-                setEffect { HomeEffect.NavigateToFastScan }
+            is HomeEvent.DeepScanClicked -> {
+                setEffect { HomeEffect.NavigateToDeepScan }
             }
             is HomeEvent.SettingsClicked -> {
                 setEffect { HomeEffect.NavigateToSettings }

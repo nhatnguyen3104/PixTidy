@@ -35,91 +35,186 @@ fun ScanProgressGauge(
         label = "progressAnimation"
     )
 
+    // Pulse animation for the percentage text
     val infiniteTransition = rememberInfiniteTransition(label = "pulseTransition")
     val pulseScale by infiniteTransition.animateFloat(
-        initialValue = 0.98f,
-        targetValue = 1.02f,
+        initialValue = 1f,
+        targetValue = 1.06f,
         animationSpec = infiniteRepeatable(
-            animation = tween(1200, easing = FastOutSlowInEasing),
+            animation = tween(1000, easing = FastOutSlowInEasing),
             repeatMode = RepeatMode.Reverse
         ),
         label = "pulseScale"
     )
 
+    // Glow effect animation
+    val glowAlpha by infiniteTransition.animateFloat(
+        initialValue = 0.3f,
+        targetValue = 0.7f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(1500, easing = FastOutSlowInEasing),
+            repeatMode = RepeatMode.Reverse
+        ),
+        label = "glowAlpha"
+    )
+
     Box(
         contentAlignment = Alignment.Center,
-        modifier = modifier.size(260.dp)
+        modifier = modifier.size(280.dp)
     ) {
         val primaryColor = MaterialTheme.colorScheme.primary
-        val trackColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.6f)
-        val innerCircleColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.25f)
+        val primaryLight = MaterialTheme.colorScheme.primary.copy(alpha = 0.15f)
+        val trackColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.4f)
+        val surfaceColor = MaterialTheme.colorScheme.surface
 
         Canvas(modifier = Modifier.fillMaxSize()) {
             val centerPoint = Offset(size.width / 2, size.height / 2)
-            val outerRadius = size.width / 2 - 12.dp.toPx()
-            val middleRadius = outerRadius - 26.dp.toPx()
-            val innerRadius = middleRadius - 26.dp.toPx()
+            val outerRadius = size.width / 2 - 16.dp.toPx()
+            val middleRadius = outerRadius - 30.dp.toPx()
+            val innerRadius = middleRadius - 28.dp.toPx()
 
-            // 1. Vòng tròn mảnh trong cùng (Inner Subtle Ring)
+            // 1. Outer shadow/glow ring
             drawCircle(
-                color = innerCircleColor,
+                color = primaryColor.copy(alpha = glowAlpha * 0.3f),
+                radius = outerRadius + 12.dp.toPx(),
+                center = centerPoint,
+                style = Stroke(width = 20.dp.toPx(), cap = StrokeCap.Round)
+            )
+
+            // 2. Outer track ring (background)
+            drawCircle(
+                color = trackColor,
+                radius = outerRadius,
+                center = centerPoint,
+                style = Stroke(width = 12.dp.toPx(), cap = StrokeCap.Round)
+            )
+
+            // 3. Gradient progress arc with shimmer effect
+            val startAngle = -90f
+            val sweepAngle = animatedProgress * 360f
+
+            // Progress arc with gradient-like appearance using layered strokes
+            if (animatedProgress > 0f) {
+                // Main progress arc
+                drawArc(
+                    color = primaryColor,
+                    startAngle = startAngle,
+                    sweepAngle = sweepAngle,
+                    useCenter = false,
+                    style = Stroke(width = 12.dp.toPx(), cap = StrokeCap.Round)
+                )
+
+                // Secondary thinner arc for depth effect
+                drawArc(
+                    color = primaryColor.copy(alpha = 0.3f),
+                    startAngle = startAngle,
+                    sweepAngle = sweepAngle,
+                    useCenter = false,
+                    style = Stroke(width = 24.dp.toPx(), cap = StrokeCap.Round)
+                )
+            }
+
+            // 4. Inner decorative rings
+            drawCircle(
+                color = primaryLight,
+                radius = middleRadius,
+                center = centerPoint,
+                style = Stroke(width = 1.5.dp.toPx())
+            )
+
+            drawCircle(
+                color = primaryLight.copy(alpha = 0.5f),
                 radius = innerRadius,
                 center = centerPoint,
                 style = Stroke(width = 1.dp.toPx())
             )
 
-            // 2. Vòng tròn mảnh giữa (Middle Subtle Ring)
+            // 5. Center dot accent
             drawCircle(
-                color = innerCircleColor,
-                radius = middleRadius,
-                center = centerPoint,
-                style = Stroke(width = 1.dp.toPx())
+                color = primaryColor.copy(alpha = 0.1f),
+                radius = innerRadius - 12.dp.toPx(),
+                center = centerPoint
             )
 
-            // 3. Vòng nền xám ngoài cùng (Outer Track Ring)
-            drawCircle(
-                color = trackColor,
-                radius = outerRadius,
-                center = centerPoint,
-                style = Stroke(width = 10.dp.toPx())
-            )
-
-            // 4. Vòng tiến trình xanh biển chạy theo % (Active Arc)
-            val startAngle = -90f // Bắt đầu từ đỉnh 12 giờ
-            val sweepAngle = animatedProgress * 360f
-
-            drawArc(
-                color = primaryColor,
-                startAngle = startAngle,
-                sweepAngle = sweepAngle,
-                useCenter = false,
-                style = Stroke(width = 10.dp.toPx(), cap = StrokeCap.Round)
-            )
-
-            // 5. Chấm tròn trang trí ở đầu tiến trình (Progress Handle Dot)
-            if (animatedProgress > 0f) {
+            // 6. Progress handle dot with glow
+            if (animatedProgress > 0.01f) {
                 val endAngleRad = Math.toRadians((startAngle + sweepAngle).toDouble())
                 val handleX = centerPoint.x + outerRadius * cos(endAngleRad).toFloat()
                 val handleY = centerPoint.y + outerRadius * sin(endAngleRad).toFloat()
 
+                // Glow behind handle
+                drawCircle(
+                    color = primaryColor.copy(alpha = 0.2f),
+                    radius = 18.dp.toPx(),
+                    center = Offset(handleX, handleY)
+                )
+
+                // Main handle dot
                 drawCircle(
                     color = primaryColor,
-                    radius = 8.dp.toPx(),
+                    radius = 10.dp.toPx(),
                     center = Offset(handleX, handleY)
+                )
+
+                // Inner highlight on handle
+                drawCircle(
+                    color = Color.White.copy(alpha = 0.4f),
+                    radius = 4.dp.toPx(),
+                    center = Offset(handleX - 2.dp.toPx(), handleY - 2.dp.toPx())
+                )
+            }
+
+            // 7. Tick marks around the gauge (optional decorative)
+            val tickCount = 12
+            for (i in 0 until tickCount) {
+                val angle = -90f + (i * 360f / tickCount)
+                val angleRad = Math.toRadians(angle.toDouble())
+                val innerTickRadius = outerRadius - 18.dp.toPx()
+                val outerTickRadius = outerRadius - 8.dp.toPx()
+                val isActive = (i / 12f) <= animatedProgress
+
+                val x1 = centerPoint.x + innerTickRadius * cos(angleRad).toFloat()
+                val y1 = centerPoint.y + innerTickRadius * sin(angleRad).toFloat()
+                val x2 = centerPoint.x + outerTickRadius * cos(angleRad).toFloat()
+                val y2 = centerPoint.y + outerTickRadius * sin(angleRad).toFloat()
+
+                drawLine(
+                    color = if (isActive) primaryColor.copy(alpha = 0.6f) else trackColor,
+                    start = Offset(x1, y1),
+                    end = Offset(x2, y2),
+                    strokeWidth = 2.dp.toPx(),
+                    cap = StrokeCap.Round
                 )
             }
         }
 
-        // Percentage Text Center
-        Text(
-            text = "${(animatedProgress * 100).toInt()}%",
-            style = MaterialTheme.typography.displaySmall.copy(
-                fontWeight = FontWeight.Medium,
-                fontSize = 28.sp,
-                color = MaterialTheme.colorScheme.primary
-            ),
-            modifier = Modifier.scale(pulseScale)
-        )
+        // Percentage text with enhanced styling
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
+            Text(
+                text = "${(animatedProgress * 100).toInt()}%",
+                style = MaterialTheme.typography.displayLarge.copy(
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 36.sp,
+                    color = MaterialTheme.colorScheme.primary,
+                    letterSpacing = 0.sp
+                ),
+                modifier = Modifier.scale(pulseScale)
+            )
+
+            // Subtitle text
+            Text(
+                text = if (animatedProgress >= 1f) "Complete ✓" else "Scanning...",
+                style = MaterialTheme.typography.labelMedium.copy(
+                    color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
+                    fontSize = 12.sp,
+                    letterSpacing = 0.5.sp
+                ),
+                modifier = Modifier.padding(top = 4.dp)
+            )
+        }
     }
 }
 

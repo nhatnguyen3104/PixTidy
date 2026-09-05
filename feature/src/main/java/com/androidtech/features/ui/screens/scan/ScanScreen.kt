@@ -1,10 +1,15 @@
 package com.androidtech.features.ui.screens.scan
 
+import androidx.compose.animation.*
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.material.icons.filled.ErrorOutline
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -30,6 +35,7 @@ import com.androidtech.base.extension.AppDestination
 import com.androidtech.base.extension.LocalNavController
 import com.androidtech.base.theme.Title20Bold
 import com.androidtech.domain.model.media.ScanLayer
+import com.androidtech.domain.model.media.ScanProcess
 
 fun NavGraphBuilder.scanScreen() {
     composable(
@@ -79,7 +85,7 @@ fun ScanContent(
     val titleRes = if (uiState.scanLayer == ScanLayer.SMART_SCAN) {
         R.string.text_smart_scan_storage
     } else {
-        R.string.text_fast_scan_storage
+        R.string.text_deep_scan_storage
     }
 
     Scaffold(
@@ -112,15 +118,15 @@ fun ScanContent(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
-            /*AnimatedContent(
-                targetState = uiState.scanProgress,
+            AnimatedContent(
+                targetState = uiState.scanProcess,
                 transitionSpec = {
                     fadeIn(animationSpec = tween(300)) togetherWith fadeOut(animationSpec = tween(300))
                 },
                 label = "ScanProgressAnimation"
-            ) { progress ->
-                when (progress) {
-                    is ScanProgress.Idle -> {
+            ) { process ->
+                when (process) {
+                    is ScanProcess.Idle -> {
                         ScanInfoPlaceholder(
                             title = "Ready to Scan",
                             description = "Press the button below to start finding duplicates.",
@@ -128,9 +134,9 @@ fun ScanContent(
                         )
                     }
 
-                    is ScanProgress.Scanning -> {
+                    is ScanProcess.Scanning -> {
                         Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                            ScanProgressGauge(progress = progress.progressPercentage / 100f)
+                            ScanProgressGauge(progress = process.progress.progressPercentage / 100f)
                             Spacer(modifier = Modifier.height(32.dp))
                             Text(
                                 text = "Scanning Storage...",
@@ -139,7 +145,7 @@ fun ScanContent(
                             )
                             Spacer(modifier = Modifier.height(8.dp))
                             Text(
-                                text = progress.currentFileName,
+                                text = process.progress.currentStepMessage,
                                 style = MaterialTheme.typography.bodyMedium,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                                 textAlign = TextAlign.Center,
@@ -147,7 +153,7 @@ fun ScanContent(
                             )
                             Spacer(modifier = Modifier.height(16.dp))
                             Text(
-                                text = "Items found: ${progress.totalCount}",
+                                text = "Items found: ${process.progress.totalItems}",
                                 style = MaterialTheme.typography.bodyLarge,
                                 fontWeight = FontWeight.Medium,
                                 color = MaterialTheme.colorScheme.primary
@@ -155,19 +161,19 @@ fun ScanContent(
                         }
                     }
 
-                    is ScanProgress.Completed -> {
+                    is ScanProcess.Success -> {
                         ScanInfoPlaceholder(
                             title = "Scan Completed",
-                            description = "Found ${progress.duplicateGroups.size} groups of duplicates.",
+                            description = "Found ${process.insights.size} groups of duplicates.",
                             icon = Icons.Default.CheckCircle,
                             color = MaterialTheme.colorScheme.primary
                         )
                     }
 
-                    is ScanProgress.Error -> {
+                    is ScanProcess.Error -> {
                         ScanInfoPlaceholder(
                             title = "Scan Failed",
-                            description = progress.message,
+                            description = process.throwable.message ?: "Unknown error",
                             icon = Icons.Default.ErrorOutline,
                             color = MaterialTheme.colorScheme.error
                         )
@@ -177,7 +183,7 @@ fun ScanContent(
 
             Spacer(modifier = Modifier.height(48.dp))
 
-            if (uiState.scanProgress is ScanProgress.Scanning) {
+            if (uiState.scanProcess is ScanProcess.Scanning) {
                 Button(
                     onClick = { onEvent(ScanEvent.CancelScan) },
                     modifier = Modifier
@@ -191,7 +197,7 @@ fun ScanContent(
                 ) {
                     Text(text = "Cancel Scan", fontWeight = FontWeight.Bold)
                 }
-            } else if (uiState.scanProgress is ScanProgress.Completed || uiState.scanProgress is ScanProgress.Error) {
+            } else if (uiState.scanProcess is ScanProcess.Success || uiState.scanProcess is ScanProcess.Error) {
                 Button(
                     onClick = { onEvent(ScanEvent.NavigateBack) },
                     modifier = Modifier
@@ -201,7 +207,7 @@ fun ScanContent(
                 ) {
                     Text(text = "Go Back", fontWeight = FontWeight.Bold)
                 }
-            }*/
+            }
         }
     }
 }

@@ -12,14 +12,14 @@ data class HomeState(
 
 sealed class HomeEvent : UIEvent {
     data class CategoryClick (val category: String) : HomeEvent()
+    object DeepScanClicked : HomeEvent()
     object SmartScanClicked : HomeEvent()
-    object FastScanClicked : HomeEvent()
     object SettingsClicked : HomeEvent()
     object StartScan : HomeEvent()
 }
 
 sealed class HomeEffect : UIEffect {
-    object NavigateToFastScan : HomeEffect()
+    object NavigateToDeepScan : HomeEffect()
     object NavigateToSmartScan : HomeEffect()
     object NavigateToSettings : HomeEffect()
 }

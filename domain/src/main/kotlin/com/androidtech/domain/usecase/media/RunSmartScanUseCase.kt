@@ -5,7 +5,7 @@ import com.androidtech.domain.engine.RecommendationEngine
 import com.androidtech.domain.model.media.MediaItem
 import com.androidtech.domain.model.media.ScanLayer
 import com.androidtech.domain.model.media.ScanProgress
-import com.androidtech.domain.model.media.ScanState
+import com.androidtech.domain.model.media.ScanProcess
 import com.androidtech.domain.model.media.SimilarGroup
 import com.androidtech.domain.repository.MediaStoreRepository
 import com.androidtech.domain.utils.PerceptualHashUtils
@@ -29,7 +29,7 @@ import javax.inject.Inject
 /**
  * Smart Scan: the full six-stage pipeline —
  *  a) fast metadata filter, b) exact duplicates, c) similar photos, d) quality analysis,
- *  e) screenshot classification, f) recommendation scoring — emitted as a single [ScanState]
+ *  e) screenshot classification, f) recommendation scoring — emitted as a single [ScanProcess]
  * stream so the UI needs only one collector.
  *
  * Memory/backpressure strategy: candidates are bucketed then processed with a bounded [Semaphore]
@@ -43,7 +43,7 @@ class RunSmartScanUseCase @Inject constructor(
     private val recommendationEngine: RecommendationEngine
 ) {
 
-    operator fun invoke(): Flow<ScanState> = callbackFlow {
+    operator fun invoke(): Flow<ScanProcess> = callbackFlow {
         trySend(scanning(0, 1, "Preparing scan\u2026"))
 
         val job = launch {
@@ -52,7 +52,7 @@ class RunSmartScanUseCase @Inject constructor(
             } catch (ce: CancellationException) {
                 throw ce
             } catch (t: Throwable) {
-                trySend(ScanState.Error(t))
+                trySend(ScanProcess.Error(t))
             } finally {
                 close()
             }
@@ -61,7 +61,7 @@ class RunSmartScanUseCase @Inject constructor(
         awaitClose { job.cancel() }
     }.flowOn(Dispatchers.Default)
 
-    private suspend fun runPipeline(emit: (ScanState) -> Unit) = coroutineScope {
+    private suspend fun runPipeline(emit: (ScanProcess) -> Unit) = coroutineScope {
         // Stage a: candidate fetch + fast metadata filter
         emit(scanning(0, 1, "Reading media library\u2026"))
         val allCandidates = mediaStoreRepository.fetchCandidatesForSmartScan()
@@ -118,7 +118,7 @@ class RunSmartScanUseCase @Inject constructor(
         )
         val totalReclaimable = insights.sumOf { it.reclaimableBytes }
 
-        emit(ScanState.Success(insights = insights, totalReclaimableBytes = totalReclaimable))
+        emit(ScanProcess.Success(insights = insights, totalReclaimableBytes = totalReclaimable))
     }
 
     /** Groups items by exact content hash within each pre-bucketed (equal-size) group. */
@@ -243,7 +243,7 @@ class RunSmartScanUseCase @Inject constructor(
     }
 
     private fun scanning(processed: Int, total: Int, message: String) =
-        ScanState.Scanning(ScanProgress.of(ScanLayer.SMART_SCAN, processed, total, message))
+        ScanProcess.Scanning(ScanProgress.of(ScanLayer.SMART_SCAN, processed, total, message))
 
     private companion object {
         const val MAX_CONCURRENT_DECODES = 4

@@ -1,16 +1,16 @@
 package com.androidtech.domain.model.media
 
 /** Overall lifecycle state emitted by the Smart Scan / Deep Smart Scan pipelines. */
-sealed interface ScanState {
+sealed interface ScanProcess {
 
-    data object Idle : ScanState
+    data object Idle : ScanProcess
 
-    data class Scanning(val progress: ScanProgress) : ScanState
+    data class Scanning(val progress: ScanProgress) : ScanProcess
 
     data class Success(
         val insights: List<SmartInsight>,
         val totalReclaimableBytes: Long
-    ) : ScanState
+    ) : ScanProcess
 
-    data class Error(val throwable: Throwable) : ScanState
+    data class Error(val throwable: Throwable) : ScanProcess
 }

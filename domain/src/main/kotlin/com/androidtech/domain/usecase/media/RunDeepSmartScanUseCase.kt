@@ -8,7 +8,7 @@ import com.androidtech.domain.model.media.InsightType
 import com.androidtech.domain.model.media.MediaItem
 import com.androidtech.domain.model.media.ScanLayer
 import com.androidtech.domain.model.media.ScanProgress
-import com.androidtech.domain.model.media.ScanState
+import com.androidtech.domain.model.media.ScanProcess
 import com.androidtech.domain.model.media.SmartInsight
 import com.androidtech.domain.repository.MediaStoreRepository
 import com.androidtech.domain.utils.PerceptualHashUtils
@@ -49,14 +49,14 @@ class RunDeepSmartScanUseCase @Inject constructor(
     private val runSmartScanUseCase: RunSmartScanUseCase
 ) {
 
-    operator fun invoke(): Flow<ScanState> = callbackFlow {
+    operator fun invoke(): Flow<ScanProcess> = callbackFlow {
         val job = launch(Dispatchers.Default) {
             try {
                 runDeepPipeline { state -> trySend(state) }
             } catch (ce: CancellationException) {
                 throw ce
             } catch (t: Throwable) {
-                trySend(ScanState.Error(t))
+                trySend(ScanProcess.Error(t))
             } finally {
                 close()
             }
@@ -64,7 +64,7 @@ class RunDeepSmartScanUseCase @Inject constructor(
         awaitClose { job.cancel() }
     }.flowOn(Dispatchers.Default)
 
-    private suspend fun runDeepPipeline(emit: (ScanState) -> Unit) = coroutineScope {
+    private suspend fun runDeepPipeline(emit: (ScanProcess) -> Unit) = coroutineScope {
         // Reuse the entire Smart Scan pipeline for its insights (duplicates/similar/blurry/
         // screenshots/large videos) rather than re-implementing it — Deep Smart Scan only adds
         // the two stages below on top.
@@ -73,13 +73,13 @@ class RunDeepSmartScanUseCase @Inject constructor(
 
         runSmartScanUseCase().collect { state ->
             when (state) {
-                is ScanState.Scanning -> emit(state) // pass through; same progress shape
-                is ScanState.Success -> {
+                is ScanProcess.Scanning -> emit(state) // pass through; same progress shape
+                is ScanProcess.Success -> {
                     smartScanInsights = state.insights
                     smartScanReclaimable = state.totalReclaimableBytes
                 }
-                is ScanState.Error -> throw state.throwable
-                ScanState.Idle -> Unit
+                is ScanProcess.Error -> throw state.throwable
+                ScanProcess.Idle -> Unit
             }
         }
 
@@ -107,7 +107,7 @@ class RunDeepSmartScanUseCase @Inject constructor(
         val combinedInsights = smartScanInsights + deepInsights
         val combinedReclaimable = smartScanReclaimable + deepInsights.sumOf { it.reclaimableBytes }
 
-        emit(ScanState.Success(insights = combinedInsights, totalReclaimableBytes = combinedReclaimable))
+        emit(ScanProcess.Success(insights = combinedInsights, totalReclaimableBytes = combinedReclaimable))
     }
 
     private suspend fun findDuplicateVideos(
@@ -231,7 +231,7 @@ class RunDeepSmartScanUseCase @Inject constructor(
     }
 
     private fun deepScanning(processed: Int, total: Int, message: String) =
-        ScanState.Scanning(ScanProgress.of(ScanLayer.DEEP_SMART_SCAN, processed, total, message))
+        ScanProcess.Scanning(ScanProgress.of(ScanLayer.DEEP_SMART_SCAN, processed, total, message))
 
     private companion object {
         const val MAX_CONCURRENT_VIDEO_DECODES = 2 // MediaMetadataRetriever is heavier than BitmapFactory
