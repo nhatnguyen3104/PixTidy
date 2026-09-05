@@ -53,6 +53,29 @@ class MediaStoreRepositoryImpl @Inject constructor(
         }
     }
 
+    override suspend fun fetchTotalMediaSizeBytes(): Long = withContext(Dispatchers.IO) {
+        sumSizeColumn(IMAGES_COLLECTION) + sumSizeColumn(VIDEO_COLLECTION)
+    }
+
+    /** Single-column pass (`SIZE` only) — cheap even on large libraries, no [MediaItem] mapping. */
+    private fun sumSizeColumn(collectionUri: Uri): Long {
+        var total = 0L
+        resolver.query(
+            collectionUri,
+            arrayOf(MediaStore.MediaColumns.SIZE),
+            null,
+            null,
+            null
+        )?.use { cursor ->
+            val sizeIndex = cursor.getColumnIndex(MediaStore.MediaColumns.SIZE)
+            if (sizeIndex < 0) return@use
+            while (cursor.moveToNext()) {
+                if (!cursor.isNull(sizeIndex)) total += cursor.getLong(sizeIndex)
+            }
+        }
+        return total
+    }
+
     override suspend fun deleteItems(uris: List<String>): Result<Unit> = withContext(Dispatchers.IO) {
         try {
             DataLogger.d("deleteItems: attempting to delete ${uris.size} items")

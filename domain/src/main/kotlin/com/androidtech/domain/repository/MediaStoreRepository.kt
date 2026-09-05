@@ -28,4 +28,11 @@ interface MediaStoreRepository {
      * layer can resolve it via IntentSender; below API 29, direct ContentResolver.delete is used.
      */
     suspend fun deleteItems(uris: List<String>): Result<Unit>
+
+    /**
+     * Sum of `MediaStore.MediaColumns.SIZE` across all images and videos — a single lightweight
+     * pass over one column, not a full [fetchCandidatesForSmartScan]-style materialization, so
+     * this stays fast enough to run on every app launch alongside [SystemStorageRepository].
+     */
+    suspend fun fetchTotalMediaSizeBytes(): Long
 }

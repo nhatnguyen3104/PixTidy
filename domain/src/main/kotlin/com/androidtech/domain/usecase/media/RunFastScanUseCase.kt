@@ -2,36 +2,56 @@ package com.androidtech.domain.usecase.media
 
 import com.androidtech.domain.model.media.FastScanSummary
 import com.androidtech.domain.model.media.MediaItem
+import com.androidtech.domain.model.media.StorageSummary
 import com.androidtech.domain.repository.MediaStoreRepository
-import com.androidtech.domain.repository.StorageRepository
+import com.androidtech.domain.repository.SystemStorageRepository
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.drop
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.scan
-import kotlinx.coroutines.Dispatchers
 import javax.inject.Inject
 
 /**
- * Fast Scan: a raw MediaStore metadata pass with no bitmap decoding, no hashing — just counting.
- * Emits a running [FastScanSummary] as batches stream in from [MediaStoreRepository.fetchAllMediaFast],
- * so the UI can render a first result in well under a second and watch totals climb rather than
- * blocking on the full library.
+ * Fast Scan: a raw MediaStore metadata pass with no bitmap decoding, no hashing — just counting —
+ * combined with system-wide storage totals, so the very first screen the user sees after launch
+ * has both "how much space do I have" and "what's on it" without waiting for Smart Scan.
+ *
+ * [StorageSummary] (total/used/free device bytes + total media bytes) is fetched once, up front,
+ * concurrently with the very first MediaStore batch via [async] — both [SystemStorageRepository.fetchDeviceStorage]
+ * (a StatFs/StorageStatsManager syscall) and [MediaStoreRepository.fetchTotalMediaSizeBytes] (a
+ * single-column pass, not a full record materialization) are cheap enough that running them
+ * alongside the first batch keeps the whole thing well under the 500ms target. It does not change
+ * per batch afterward — unlike [FastScanSummary.totalStorageBytes], which is a running count of
+ * *this scan's* progress, [FastScanSummary.storageSummary] reflects the device's actual current state.
  */
 class RunFastScanUseCase @Inject constructor(
     private val mediaStoreRepository: MediaStoreRepository,
-    private val storageRepository: StorageRepository,
+    private val systemStorageRepository: SystemStorageRepository
 ) {
 
-    operator fun invoke(): Flow<FastScanSummary> {
-        val storageStats = storageRepository.getDeviceStorageStats()
-        val initialSummary = FastScanSummary.EMPTY.copy(
-            deviceTotalBytes = storageStats.totalBytes,
-            deviceUsedBytes = storageStats.usedBytes,
-            deviceFreeBytes = storageStats.freeBytes
-        )
+    operator fun invoke(): Flow<FastScanSummary> = flow {
+        coroutineScope {
+            val storageSummaryDeferred = async { buildStorageSummary() }
 
-        return mediaStoreRepository.fetchAllMediaFast()
-            .scan(initialSummary) { accumulated, batch -> accumulated.plusBatch(batch) }
-            .flowOn(Dispatchers.Default) // summing is cheap but keep it off the caller's dispatcher
+            mediaStoreRepository.fetchAllMediaFast()
+                .scan(FastScanSummary.EMPTY) { accumulated, batch -> accumulated.plusBatch(batch) }
+                .drop(1) // drop the seed emitted by scan() before any real batch has arrived
+                .collect { runningSummary ->
+                    // Resolves immediately after the first await; every batch after the first
+                    // sees an already-completed Deferred, so this costs nothing further.
+                    emit(runningSummary.copy(storageSummary = storageSummaryDeferred.await()))
+                }
+        }
+    }.flowOn(Dispatchers.Default)
+
+    private suspend fun buildStorageSummary(): StorageSummary = coroutineScope {
+        val deviceStorageDeferred = async { systemStorageRepository.fetchDeviceStorage() }
+        val mediaSizeDeferred = async { mediaStoreRepository.fetchTotalMediaSizeBytes() }
+        deviceStorageDeferred.await().copy(mediaUsedBytes = mediaSizeDeferred.await())
     }
 
     private fun FastScanSummary.plusBatch(batch: List<MediaItem>): FastScanSummary {
@@ -79,7 +99,7 @@ class RunFastScanUseCase @Inject constructor(
     }
 
     private companion object {
-        const val LARGE_VIDEO_THRESHOLD_BYTES = 50L * 1024 * 1024 // 50MB
+        const val LARGE_VIDEO_THRESHOLD_BYTES = 100L * 1024 * 1024 // 100MB
         const val SCREENSHOT_HINT = "screenshot"
     }
 }
