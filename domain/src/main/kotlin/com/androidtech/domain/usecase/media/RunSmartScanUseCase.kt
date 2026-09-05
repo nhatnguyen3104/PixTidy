@@ -63,7 +63,7 @@ class RunSmartScanUseCase @Inject constructor(
 
     private suspend fun runPipeline(emit: (ScanProcess) -> Unit) = coroutineScope {
         // Stage a: candidate fetch + fast metadata filter
-        emit(scanning(0, 1, "Reading media library\u2026"))
+        emit(scanning(0, 1, "Reading media library\u2026", 2f))
         val allCandidates = mediaStoreRepository.fetchCandidatesForSmartScan()
         val candidates = allCandidates.filter { it.hasValidDimensions }
         val total = candidates.size.coerceAtLeast(1)
@@ -83,32 +83,38 @@ class RunSmartScanUseCase @Inject constructor(
 
         // Stage b: exact duplicates — bucket by size first (near-zero cost), only hash within a
         // bucket that has >= 2 members, since a unique size can never collide byte-for-byte.
-        emit(scanning(0, total, "Looking for exact duplicates\u2026"))
-        val sizeBuckets = nonScreenshotImages.groupBy { it.size }.filterValues { it.size >= 2 }
-        val duplicateGroups = findExactDuplicates(sizeBuckets.values.flatten()) { processed ->
-            emit(scanning(processed, total, "Looking for exact duplicates\u2026"))
+        val dupCandidates = sizeBuckets(nonScreenshotImages)
+        val dupTotal = dupCandidates.size.coerceAtLeast(1)
+        emit(scanning(0, dupTotal, "Looking for exact duplicates\u2026", 5f))
+        val duplicateGroups = findExactDuplicates(dupCandidates) { processed ->
+            val pct = calculateProgress(5f, 30f, processed, dupTotal)
+            emit(scanning(processed, dupTotal, "Looking for exact duplicates\u2026", pct))
         }
         val exactDuplicateIds = duplicateGroups.flatten().mapTo(HashSet()) { it.id }
         val nonDuplicateImages = nonScreenshotImages.filterNot { it.id in exactDuplicateIds }
 
         // Stage c: similar (not identical) photos — perceptual hash + Hamming clustering,
         // bucketed by rounded aspect ratio first to avoid an O(n^2) compare across the whole library.
-        emit(scanning(0, total, "Finding similar photos\u2026"))
+        val simTotal = nonDuplicateImages.size.coerceAtLeast(1)
+        emit(scanning(0, simTotal, "Finding similar photos\u2026", 35f))
         val similarGroups = findSimilarGroups(nonDuplicateImages) { processed ->
-            emit(scanning(processed, total, "Finding similar photos\u2026"))
+            val pct = calculateProgress(35f, 35f, processed, simTotal)
+            emit(scanning(processed, simTotal, "Finding similar photos\u2026", pct))
         }
         val similarGroupedIds = similarGroups.flatMap { it.items }.mapTo(HashSet()) { it.id }
 
         // Stage d: quality analysis on whatever is left ungrouped (a duplicate/similar item's
         // quality doesn't change the recommendation — the dup/similarity signal already dominates)
-        emit(scanning(0, total, "Checking photo quality\u2026"))
         val qualityCandidates = nonDuplicateImages.filterNot { it.id in similarGroupedIds }
+        val qualityTotal = qualityCandidates.size.coerceAtLeast(1)
+        emit(scanning(0, qualityTotal, "Checking photo quality\u2026", 70f))
         val blurryItems = findBlurryItems(qualityCandidates) { processed ->
-            emit(scanning(processed, total, "Checking photo quality\u2026"))
+            val pct = calculateProgress(70f, 25f, processed, qualityTotal)
+            emit(scanning(processed, qualityTotal, "Checking photo quality\u2026", pct))
         }
 
         // Stage f: recommendation scoring
-        emit(scanning(total, total, "Generating recommendations\u2026"))
+        emit(scanning(total, total, "Generating recommendations\u2026", 98f))
         val insights = recommendationEngine.generateInsights(
             duplicates = duplicateGroups,
             similarGroups = similarGroups,
@@ -119,6 +125,15 @@ class RunSmartScanUseCase @Inject constructor(
         val totalReclaimable = insights.sumOf { it.reclaimableBytes }
 
         emit(ScanProcess.Success(insights = insights, totalReclaimableBytes = totalReclaimable))
+    }
+
+    private fun sizeBuckets(items: List<MediaItem>): List<MediaItem> {
+        return items.groupBy { it.size }.filterValues { it.size >= 2 }.values.flatten()
+    }
+
+    private fun calculateProgress(start: Float, weight: Float, processed: Int, total: Int): Float {
+        val stagePct = if (total > 0) processed.toFloat() / total.toFloat() else 1f
+        return start + (stagePct * weight)
     }
 
     /** Groups items by exact content hash within each pre-bucketed (equal-size) group. */
@@ -242,8 +257,14 @@ class RunSmartScanUseCase @Inject constructor(
         return (ratio * 10).toInt() // buckets of 0.1 aspect-ratio granularity
     }
 
-    private fun scanning(processed: Int, total: Int, message: String) =
-        ScanProcess.Scanning(ScanProgress.of(ScanLayer.SMART_SCAN, processed, total, message))
+    private fun scanning(processed: Int, total: Int, message: String, percentage: Float? = null) =
+        ScanProcess.Scanning(
+            if (percentage != null) {
+                ScanProgress.fixed(ScanLayer.SMART_SCAN, processed, total, message, percentage)
+            } else {
+                ScanProgress.of(ScanLayer.SMART_SCAN, processed, total, message)
+            }
+        )
 
     private companion object {
         const val MAX_CONCURRENT_DECODES = 4

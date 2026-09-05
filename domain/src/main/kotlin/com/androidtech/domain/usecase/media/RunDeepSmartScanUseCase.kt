@@ -73,7 +73,16 @@ class RunDeepSmartScanUseCase @Inject constructor(
 
         runSmartScanUseCase().collect { state ->
             when (state) {
-                is ScanProcess.Scanning -> emit(state) // pass through; same progress shape
+                is ScanProcess.Scanning -> {
+                    // Map Smart Scan (0-100%) to Deep Scan (0-70%)
+                    val deepPct = state.progress.progressPercentage * 0.7f
+                    emit(deepScanning(
+                        state.progress.processedItems,
+                        state.progress.totalItems,
+                        state.progress.currentStepMessage,
+                        deepPct
+                    ))
+                }
                 is ScanProcess.Success -> {
                     smartScanInsights = state.insights
                     smartScanReclaimable = state.totalReclaimableBytes
@@ -85,22 +94,26 @@ class RunDeepSmartScanUseCase @Inject constructor(
 
         val alreadyFlaggedIds = smartScanInsights.flatMap { it.items }.mapTo(HashSet()) { it.id }
 
-        val candidates = mediaStoreRepository.fetchCandidatesForSmartScan()
+        val allCandidates = mediaStoreRepository.fetchCandidatesForSmartScan()
             .filter { it.hasValidDimensions }
-        val videos = candidates.filter { it.isVideo }
-        val imagesNotAlreadyFlagged = candidates.filter { it.isImage && it.id !in alreadyFlaggedIds }
-        val total = (videos.size + imagesNotAlreadyFlagged.size).coerceAtLeast(1)
+        val videos = allCandidates.filter { it.isVideo }
+        val imagesNotAlreadyFlagged = allCandidates.filter { it.isImage && it.id !in alreadyFlaggedIds }
+        
+        val videoTotal = videos.size.coerceAtLeast(1)
+        val imageTotal = imagesNotAlreadyFlagged.size.coerceAtLeast(1)
 
         // Stage: deep duplicate video detection via sampled-frame hashing
-        emit(deepScanning(0, total, "Comparing videos frame-by-frame\u2026"))
+        emit(deepScanning(0, videoTotal, "Comparing videos frame-by-frame\u2026", 70f))
         val deepDuplicateVideoInsight = findDuplicateVideos(videos) { processed ->
-            emit(deepScanning(processed, total, "Comparing videos frame-by-frame\u2026"))
+            val pct = 70f + (processed.toFloat() / videoTotal * 15f)
+            emit(deepScanning(processed, videoTotal, "Comparing videos frame-by-frame\u2026", pct))
         }
 
         // Stage: OCR / document detection on remaining images
-        emit(deepScanning(videos.size, total, "Scanning for documents & receipts\u2026"))
+        emit(deepScanning(0, imageTotal, "Scanning for documents & receipts\u2026", 85f))
         val documentInsight = findDocumentImages(imagesNotAlreadyFlagged) { processed ->
-            emit(deepScanning(videos.size + processed, total, "Scanning for documents & receipts\u2026"))
+            val pct = 85f + (processed.toFloat() / imageTotal * 15f)
+            emit(deepScanning(processed, imageTotal, "Scanning for documents & receipts\u2026", pct))
         }
 
         val deepInsights = listOfNotNull(deepDuplicateVideoInsight, documentInsight)
@@ -230,8 +243,14 @@ class RunDeepSmartScanUseCase @Inject constructor(
         )
     }
 
-    private fun deepScanning(processed: Int, total: Int, message: String) =
-        ScanProcess.Scanning(ScanProgress.of(ScanLayer.DEEP_SMART_SCAN, processed, total, message))
+    private fun deepScanning(processed: Int, total: Int, message: String, percentage: Float? = null) =
+        ScanProcess.Scanning(
+            if (percentage != null) {
+                ScanProgress.fixed(ScanLayer.DEEP_SMART_SCAN, processed, total, message, percentage)
+            } else {
+                ScanProgress.of(ScanLayer.DEEP_SMART_SCAN, processed, total, message)
+            }
+        )
 
     private companion object {
         const val MAX_CONCURRENT_VIDEO_DECODES = 2 // MediaMetadataRetriever is heavier than BitmapFactory

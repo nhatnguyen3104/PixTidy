@@ -22,5 +22,9 @@ data class ScanProgress(
             val pct = (processed.toFloat() / safeTotal.toFloat() * 100f).coerceIn(0f, 100f)
             return ScanProgress(layer, processed, total, message, pct)
         }
+
+        fun fixed(layer: ScanLayer, processed: Int, total: Int, message: String, percentage: Float): ScanProgress {
+            return ScanProgress(layer, processed, total, message, percentage.coerceIn(0f, 100f))
+        }
     }
 }

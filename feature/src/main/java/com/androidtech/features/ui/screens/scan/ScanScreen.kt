@@ -8,8 +8,8 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.CheckCircle
-import androidx.compose.material.icons.filled.ErrorOutline
+import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.outlined.History
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -17,6 +17,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -33,9 +34,12 @@ import androidx.navigation.navArgument
 import com.androidtech.base.R
 import com.androidtech.base.extension.AppDestination
 import com.androidtech.base.extension.LocalNavController
-import com.androidtech.base.theme.Title20Bold
+import com.androidtech.base.theme.*
+import com.androidtech.base.utils.formatSize
+import com.androidtech.domain.model.media.InsightType
 import com.androidtech.domain.model.media.ScanLayer
 import com.androidtech.domain.model.media.ScanProcess
+import com.androidtech.domain.model.media.SmartInsight
 
 fun NavGraphBuilder.scanScreen() {
     composable(
@@ -123,7 +127,8 @@ fun ScanContent(
                 transitionSpec = {
                     fadeIn(animationSpec = tween(300)) togetherWith fadeOut(animationSpec = tween(300))
                 },
-                label = "ScanProgressAnimation"
+                label = "ScanProgressAnimation",
+                contentKey = { state -> state::class.simpleName }
             ) { process ->
                 when (process) {
                     is ScanProcess.Idle -> {
@@ -162,12 +167,43 @@ fun ScanContent(
                     }
 
                     is ScanProcess.Success -> {
-                        ScanInfoPlaceholder(
-                            title = "Scan Completed",
-                            description = "Found ${process.insights.size} groups of duplicates.",
-                            icon = Icons.Default.CheckCircle,
-                            color = MaterialTheme.colorScheme.primary
-                        )
+                        Column(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            ReportHeroCard(
+                                totalCleanableSize = process.totalReclaimableBytes.formatSize()
+                            )
+
+                            Spacer(modifier = Modifier.height(32.dp))
+
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Text(
+                                    text = "Scan Insights",
+                                    style = MaterialTheme.typography.titleLarge,
+                                    fontWeight = FontWeight.Bold
+                                )
+                                Text(
+                                    text = "${process.insights.size} Groups",
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    color = MaterialTheme.colorScheme.primary
+                                )
+                            }
+
+                            Spacer(modifier = Modifier.height(16.dp))
+
+                            process.insights.forEach { insight ->
+                                ResultCategoryRow(
+                                    category = mapInsightToCategory(insight),
+                                    onClick = { /* Navigate to detail if needed */ }
+                                )
+                                Spacer(modifier = Modifier.height(12.dp))
+                            }
+                        }
                     }
 
                     is ScanProcess.Error -> {
@@ -213,11 +249,49 @@ fun ScanContent(
 }
 
 @Composable
+private fun mapInsightToCategory(insight: SmartInsight): ScanResultCategory {
+    val icon = when (insight.type) {
+        InsightType.EXACT_DUPLICATE -> Icons.Default.CopyAll
+        InsightType.SIMILAR_PHOTOS -> Icons.Default.PhotoLibrary
+        InsightType.SCREENSHOTS -> Icons.Default.Screenshot
+        InsightType.LARGE_VIDEOS -> Icons.Default.VideoFile
+        InsightType.BLURRY_PHOTOS -> Icons.Default.BlurOn
+        InsightType.DEEP_OCR_DOCUMENTS -> Icons.Default.Description
+    }
+
+    val badgeColor = when (insight.type) {
+        InsightType.EXACT_DUPLICATE -> DocumentBadge
+        InsightType.SIMILAR_PHOTOS -> ImageBadge
+        InsightType.SCREENSHOTS -> StorageBadge
+        InsightType.LARGE_VIDEOS -> VideoBadge
+        InsightType.BLURRY_PHOTOS -> ArchiveBadge
+        InsightType.DEEP_OCR_DOCUMENTS -> DocumentBadge
+    }.copy(alpha = 0.2f)
+
+    val iconTint = when (insight.type) {
+        InsightType.EXACT_DUPLICATE -> DocumentBadge
+        InsightType.SIMILAR_PHOTOS -> ImageBadge
+        InsightType.SCREENSHOTS -> StorageBadge
+        InsightType.LARGE_VIDEOS -> VideoBadge
+        InsightType.BLURRY_PHOTOS -> ArchiveBadge
+        InsightType.DEEP_OCR_DOCUMENTS -> DocumentBadge
+    }
+
+    return ScanResultCategory(
+        title = insight.title,
+        sizeText = "${insight.affectedItemsCount} items • ${insight.reclaimableBytes.formatSize()}",
+        icon = icon,
+        iconTint = iconTint,
+        badgeBgColor = badgeColor
+    )
+}
+
+@Composable
 private fun ScanInfoPlaceholder(
     title: String,
     description: String,
     icon: ImageVector,
-    color: androidx.compose.ui.graphics.Color = MaterialTheme.colorScheme.onSurfaceVariant
+    color: Color = MaterialTheme.colorScheme.onSurfaceVariant
 ) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
