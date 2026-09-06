@@ -3,10 +3,12 @@ package com.androidtech.domain.usecase.media
 import com.androidtech.domain.engine.ImageAnalyzerEngine
 import com.androidtech.domain.engine.RecommendationEngine
 import com.androidtech.domain.model.media.MediaItem
+import com.androidtech.domain.model.media.QualityScore
 import com.androidtech.domain.model.media.ScanLayer
 import com.androidtech.domain.model.media.ScanProgress
 import com.androidtech.domain.model.media.ScanProcess
 import com.androidtech.domain.model.media.SimilarGroup
+import com.androidtech.domain.repository.MediaAnalysisCacheRepository
 import com.androidtech.domain.repository.MediaStoreRepository
 import com.androidtech.domain.utils.PerceptualHashUtils
 import kotlinx.coroutines.CancellationException
@@ -24,6 +26,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Semaphore
 import kotlinx.coroutines.sync.withPermit
 import java.util.UUID
+import java.util.concurrent.atomic.AtomicInteger
 import javax.inject.Inject
 
 /**
@@ -36,10 +39,20 @@ import javax.inject.Inject
  * so at most [MAX_CONCURRENT_DECODES] bitmaps are ever decoded at once, regardless of library
  * size — this is the main OOM guard, since bitmap decode (not hashing) is what actually spikes
  * native memory.
+ *
+ * Incremental caching: pHash + quality are resolved together per item via [resolveAnalyses],
+ * which checks [MediaAnalysisCacheRepository] (keyed on mediaId + dateModified) before ever
+ * touching [ImageAnalyzerEngine]. This is a deliberate change from computing them in two
+ * independent stages: previously, quality analysis skipped any image already grouped as similar,
+ * to save decode work on a cold run. With caching, both fields are resolved together for the full
+ * non-exact-duplicate candidate set so each item's cache row is written exactly once. That costs a
+ * little more decode time on a device's very first (cold-cache) scan, but every scan after that —
+ * for any unchanged file — is served entirely from cache, which is the much larger win.
  */
 class RunSmartScanUseCase @Inject constructor(
     private val mediaStoreRepository: MediaStoreRepository,
     private val imageAnalyzerEngine: ImageAnalyzerEngine,
+    private val mediaAnalysisCacheRepository: MediaAnalysisCacheRepository,
     private val recommendationEngine: RecommendationEngine
 ) {
 
@@ -63,11 +76,18 @@ class RunSmartScanUseCase @Inject constructor(
 
     private suspend fun runPipeline(emit: (ScanProcess) -> Unit) = coroutineScope {
         // Stage a: candidate fetch + fast metadata filter
-        emit(scanning(0, 1, "Reading media library\u2026", 2f))
+        emit(scanning(0, 1, "Reading media library\u2026"))
         val allCandidates = mediaStoreRepository.fetchCandidatesForSmartScan()
         val candidates = allCandidates.filter { it.hasValidDimensions }
         val total = candidates.size.coerceAtLeast(1)
         ensureActive()
+
+        // Best-effort housekeeping: drop cache rows for media no longer on device. Not awaited —
+        // this must never block the scan; a rare miss against a row Room hasn't dropped yet is
+        // harmless, it just means one extra fresh analysis next time that item is seen.
+        launch {
+            runCatching { mediaAnalysisCacheRepository.pruneOrphaned(candidates.map { it.id }) }
+        }
 
         val images = candidates.filter { it.isImage }
         val videos = candidates.filter { it.isVideo }
@@ -83,38 +103,35 @@ class RunSmartScanUseCase @Inject constructor(
 
         // Stage b: exact duplicates — bucket by size first (near-zero cost), only hash within a
         // bucket that has >= 2 members, since a unique size can never collide byte-for-byte.
-        val dupCandidates = sizeBuckets(nonScreenshotImages)
-        val dupTotal = dupCandidates.size.coerceAtLeast(1)
-        emit(scanning(0, dupTotal, "Looking for exact duplicates\u2026", 5f))
-        val duplicateGroups = findExactDuplicates(dupCandidates) { processed ->
-            val pct = calculateProgress(5f, 30f, processed, dupTotal)
-            emit(scanning(processed, dupTotal, "Looking for exact duplicates\u2026", pct))
+        emit(scanning(0, total, "Looking for exact duplicates\u2026"))
+        val sizeBuckets = nonScreenshotImages.groupBy { it.size }.filterValues { it.size >= 2 }
+        val duplicateGroups = findExactDuplicates(sizeBuckets.values.flatten()) { processed ->
+            emit(scanning(processed, total, "Looking for exact duplicates\u2026"))
         }
         val exactDuplicateIds = duplicateGroups.flatten().mapTo(HashSet()) { it.id }
         val nonDuplicateImages = nonScreenshotImages.filterNot { it.id in exactDuplicateIds }
 
         // Stage c: similar (not identical) photos — perceptual hash + Hamming clustering,
         // bucketed by rounded aspect ratio first to avoid an O(n^2) compare across the whole library.
-        val simTotal = nonDuplicateImages.size.coerceAtLeast(1)
-        emit(scanning(0, simTotal, "Finding similar photos\u2026", 35f))
-        val similarGroups = findSimilarGroups(nonDuplicateImages) { processed ->
-            val pct = calculateProgress(35f, 35f, processed, simTotal)
-            emit(scanning(processed, simTotal, "Finding similar photos\u2026", pct))
+        // pHash and quality are resolved together here (cache-aware — see class KDoc) so each
+        // item's cache row is written once, covering both stage c and stage d's needs.
+        emit(scanning(0, total, "Finding similar photos\u2026"))
+        val analyses = resolveAnalyses(nonDuplicateImages) { processed ->
+            emit(scanning(processed, total, "Finding similar photos\u2026"))
         }
+        val similarGroups = findSimilarGroups(nonDuplicateImages, analyses)
         val similarGroupedIds = similarGroups.flatMap { it.items }.mapTo(HashSet()) { it.id }
 
         // Stage d: quality analysis on whatever is left ungrouped (a duplicate/similar item's
-        // quality doesn't change the recommendation — the dup/similarity signal already dominates)
-        val qualityCandidates = nonDuplicateImages.filterNot { it.id in similarGroupedIds }
-        val qualityTotal = qualityCandidates.size.coerceAtLeast(1)
-        emit(scanning(0, qualityTotal, "Checking photo quality\u2026", 70f))
-        val blurryItems = findBlurryItems(qualityCandidates) { processed ->
-            val pct = calculateProgress(70f, 25f, processed, qualityTotal)
-            emit(scanning(processed, qualityTotal, "Checking photo quality\u2026", pct))
+        // quality doesn't change the recommendation — the dup/similarity signal already dominates).
+        // No engine calls here — [analyses] already has everything from stage c above.
+        emit(scanning(total, total, "Checking photo quality\u2026"))
+        val blurryItems = nonDuplicateImages.filter { item ->
+            item.id !in similarGroupedIds && analyses[item.id]?.isBlurry == true
         }
 
         // Stage f: recommendation scoring
-        emit(scanning(total, total, "Generating recommendations\u2026", 98f))
+        emit(scanning(total, total, "Generating recommendations\u2026"))
         val insights = recommendationEngine.generateInsights(
             duplicates = duplicateGroups,
             similarGroups = similarGroups,
@@ -127,22 +144,13 @@ class RunSmartScanUseCase @Inject constructor(
         emit(ScanProcess.Success(insights = insights, totalReclaimableBytes = totalReclaimable))
     }
 
-    private fun sizeBuckets(items: List<MediaItem>): List<MediaItem> {
-        return items.groupBy { it.size }.filterValues { it.size >= 2 }.values.flatten()
-    }
-
-    private fun calculateProgress(start: Float, weight: Float, processed: Int, total: Int): Float {
-        val stagePct = if (total > 0) processed.toFloat() / total.toFloat() else 1f
-        return start + (stagePct * weight)
-    }
-
     /** Groups items by exact content hash within each pre-bucketed (equal-size) group. */
     private suspend fun findExactDuplicates(
         sizeBucketedCandidates: List<MediaItem>,
         onProgress: suspend (processed: Int) -> Unit
     ): List<List<MediaItem>> = coroutineScope {
         val semaphore = Semaphore(MAX_CONCURRENT_DECODES)
-        val processedCount = java.util.concurrent.atomic.AtomicInteger(0)
+        val processedCount = AtomicInteger(0)
 
         val hashed = sizeBucketedCandidates.map { item ->
             async {
@@ -160,24 +168,66 @@ class RunSmartScanUseCase @Inject constructor(
             .filter { it.size >= 2 }
     }
 
-    /** Buckets by rounded aspect ratio, then clusters within each bucket via Hamming distance. */
-    private suspend fun findSimilarGroups(
+    /** Cache-aware per-item analysis: pHash + quality resolved together, one cache row per item. */
+    private data class ResolvedAnalysis(val phash: String?, val isBlurry: Boolean)
+
+    private suspend fun resolveAnalyses(
         candidates: List<MediaItem>,
         onProgress: suspend (processed: Int) -> Unit
-    ): List<SimilarGroup> = coroutineScope {
+    ): Map<Long, ResolvedAnalysis> = coroutineScope {
         val semaphore = Semaphore(MAX_CONCURRENT_DECODES)
-        val processedCount = java.util.concurrent.atomic.AtomicInteger(0)
+        val processedCount = AtomicInteger(0)
 
-        val hashed = candidates.map { item ->
+        candidates.map { item ->
             async {
                 semaphore.withPermit {
                     currentCoroutineContext().ensureActive()
-                    val hash = runCatching { imageAnalyzerEngine.calculatePhash(item) }.getOrNull()
+                    val analysis = resolveSingleAnalysis(item)
                     onProgress(processedCount.incrementAndGet())
-                    hash?.let { item to it }
+                    item.id to analysis
                 }
             }
-        }.awaitAll().filterNotNull()
+        }.awaitAll().toMap()
+    }
+
+    private suspend fun resolveSingleAnalysis(item: MediaItem): ResolvedAnalysis {
+        val cached = runCatching {
+            mediaAnalysisCacheRepository.getValidCache(item.id, item.dateModified)
+        }.getOrNull()
+
+        if (cached != null) {
+            return ResolvedAnalysis(phash = cached.phash, isBlurry = cached.blurScore < BLURRY_SCORE_THRESHOLD)
+        }
+
+        // Cache MISS (no row, or the file's dateModified has changed since it was last analyzed):
+        // fall through to the real engine and persist the fresh result.
+        val phash = runCatching { imageAnalyzerEngine.calculatePhash(item) }.getOrNull()
+        val quality = runCatching { imageAnalyzerEngine.evaluateQuality(item) }.getOrNull() ?: QualityScore.UNKNOWN
+
+        runCatching {
+            mediaAnalysisCacheRepository.saveAnalysis(
+                mediaId = item.id,
+                dateModified = item.dateModified,
+                phash = phash,
+                blurScore = quality.score,
+                // This method only ever runs on nonScreenshotImages (screenshots are filtered out
+                // upstream by the cheap heuristic before resolveAnalyses is called), so the cached
+                // flag is always false here — accurate for every row this pipeline writes.
+                isScreenshot = false
+            )
+        }
+
+        return ResolvedAnalysis(phash = phash, isBlurry = quality.isBlurry)
+    }
+
+    /** Buckets by rounded aspect ratio, then clusters within each bucket via Hamming distance. */
+    private fun findSimilarGroups(
+        candidates: List<MediaItem>,
+        analyses: Map<Long, ResolvedAnalysis>
+    ): List<SimilarGroup> {
+        val hashed = candidates.mapNotNull { item ->
+            analyses[item.id]?.phash?.let { phash -> item to phash }
+        }
 
         val aspectBuckets = hashed.groupBy { (item, _) -> aspectBucketKey(item) }
 
@@ -185,7 +235,7 @@ class RunSmartScanUseCase @Inject constructor(
         for (bucket in aspectBuckets.values) {
             groups += clusterByHammingDistance(bucket)
         }
-        groups
+        return groups
     }
 
     /** Simple greedy single-link clustering: fine at bucket scale (dozens, not thousands). */
@@ -226,25 +276,6 @@ class RunSmartScanUseCase @Inject constructor(
         return result
     }
 
-    private suspend fun findBlurryItems(
-        candidates: List<MediaItem>,
-        onProgress: suspend (processed: Int) -> Unit
-    ): List<MediaItem> = coroutineScope {
-        val semaphore = Semaphore(MAX_CONCURRENT_DECODES)
-        val processedCount = java.util.concurrent.atomic.AtomicInteger(0)
-
-        candidates.map { item ->
-            async {
-                semaphore.withPermit {
-                    currentCoroutineContext().ensureActive()
-                    val quality = runCatching { imageAnalyzerEngine.evaluateQuality(item) }.getOrNull()
-                    onProgress(processedCount.incrementAndGet())
-                    if (quality?.isBlurry == true) item else null
-                }
-            }
-        }.awaitAll().filterNotNull()
-    }
-
     private fun isLikelyScreenshot(item: MediaItem): Boolean {
         val nameOrPathHit = item.path.lowercase().contains(SCREENSHOT_HINT) ||
                 item.name.lowercase().contains(SCREENSHOT_HINT)
@@ -257,19 +288,17 @@ class RunSmartScanUseCase @Inject constructor(
         return (ratio * 10).toInt() // buckets of 0.1 aspect-ratio granularity
     }
 
-    private fun scanning(processed: Int, total: Int, message: String, percentage: Float? = null) =
-        ScanProcess.Scanning(
-            if (percentage != null) {
-                ScanProgress.fixed(ScanLayer.SMART_SCAN, processed, total, message, percentage)
-            } else {
-                ScanProgress.of(ScanLayer.SMART_SCAN, processed, total, message)
-            }
-        )
+    private fun scanning(processed: Int, total: Int, message: String) =
+        ScanProcess.Scanning(ScanProgress.of(ScanLayer.SMART_SCAN, processed, total, message))
 
     private companion object {
         const val MAX_CONCURRENT_DECODES = 4
         const val LARGE_VIDEO_THRESHOLD_BYTES = 100L * 1024 * 1024
         const val SIMILARITY_HAMMING_THRESHOLD = 10 // out of 64 bits
         const val SCREENSHOT_HINT = "screenshot"
+        // A cached blurScore is QualityScore.score (0..100), not the raw Laplacian variance;
+        // this threshold is calibrated against BlurDetectorImpl's own variance->score mapping.
+        const val BLURRY_SCORE_THRESHOLD = 20
     }
 }
+

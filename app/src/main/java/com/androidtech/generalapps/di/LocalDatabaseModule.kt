@@ -3,10 +3,11 @@ package com.androidtech.generalapps.di
 import android.content.Context
 import androidx.room.Room
 import com.androidtech.data.local.database.LocalDatabase
-import com.androidtech.data.local.database.PdfDao
+import com.androidtech.data.local.database.MediaCacheDao
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 import kotlin.jvm.java
@@ -17,14 +18,18 @@ object LocalDatabaseModule {
 
     @Singleton
     @Provides
-    fun provideAppDatabase(context: Context): LocalDatabase =
+    fun provideAppDatabase( @ApplicationContext context: Context): LocalDatabase =
         Room.databaseBuilder(
             context,
             LocalDatabase::class.java,
             LocalDatabase.DATABASE_NAME
-        ).build()
+        )
+            // The cache is fully derivable by re-scanning, so a destructive fallback on schema
+            // change is an acceptable trade-off versus hand-writing migrations for a pure cache table.
+            .fallbackToDestructiveMigration()
+            .build()
 
     @Singleton
     @Provides
-    fun provicePdfDao(localDatabase: LocalDatabase): PdfDao = localDatabase.getPdfDao()
+    fun provideMediaCacheDao(localDatabase: LocalDatabase): MediaCacheDao = localDatabase.mediaCacheDao()
 }

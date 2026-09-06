@@ -2,10 +2,10 @@ package com.androidtech.data.local.database
 
 import androidx.room.Database
 import androidx.room.RoomDatabase
-import com.androidtech.data.model.PdfModel
+import com.androidtech.data.model.MediaAnalysisCacheEntity
 
 @Database(
-    entities = [PdfModel::class],
+    entities = [MediaAnalysisCacheEntity::class],
     version = 1,
     exportSchema = false
 )
@@ -15,5 +15,5 @@ abstract class LocalDatabase: RoomDatabase() {
         const val DATABASE_NAME = "General_db"
     }
 
-    abstract fun getPdfDao(): PdfDao
+    abstract fun mediaCacheDao(): MediaCacheDao
 }
