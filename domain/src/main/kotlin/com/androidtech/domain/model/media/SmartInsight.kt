@@ -1,7 +1,7 @@
 package com.androidtech.domain.model.media
 
-enum class InsightType {
-    EXACT_DUPLICATE,
+enum class SmartInsightType {
+    EXACT_DUPLICATES,
     SIMILAR_PHOTOS,
     SCREENSHOTS,
     LARGE_VIDEOS,
@@ -20,7 +20,7 @@ data class SmartInsight(
     val id: String,
     val title: String,
     val description: String,
-    val type: InsightType,
+    val type: SmartInsightType,
     val reclaimableBytes: Long,
     val affectedItemsCount: Int,
     val items: List<MediaItem>,

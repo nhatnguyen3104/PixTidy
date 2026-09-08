@@ -17,7 +17,9 @@ data class MediaItem(
     val dateModified: Long,
     val width: Int,
     val height: Int,
-    val duration: Long? = null
+    val duration: Long? = null,
+    val isBestKeep: Boolean = false,
+    val isSelected: Boolean = false
 ) {
     val isVideo: Boolean get() = mimeType.startsWith("video/")
     val isImage: Boolean get() = mimeType.startsWith("image/")

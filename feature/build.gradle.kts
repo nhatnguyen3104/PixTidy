@@ -59,6 +59,8 @@ dependencies {
     implementation(project(path = ":base"))
     implementation(project(path = ":monetization"))
 
+    // Coil
+    implementation(libs.io.coil.kt.compose)
 
     // Navigation
     implementation(libs.androidx.navigation.compose)

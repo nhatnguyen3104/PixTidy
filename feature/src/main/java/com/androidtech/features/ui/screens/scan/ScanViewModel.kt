@@ -37,11 +37,11 @@ class ScanViewModel @Inject constructor(
 
     override fun handleEvent(event: ScanEvent) {
         when (event) {
-            is ScanEvent.StartScan -> {
+            is ScanEvent.StartScanClick -> {
                 startScan()
             }
-            is ScanEvent.CancelScan -> cancelScan()
-            is ScanEvent.NavigateBack -> setEffect { ScanEffect.NavigateBack }
+            is ScanEvent.CancelScanClick -> cancelScan()
+            is ScanEvent.NavigateBackClick -> setEffect { ScanEffect.NavigateBack }
         }
     }
 

@@ -1,0 +1,227 @@
+package com.androidtech.features.ui.screens.duplicate
+
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.outlined.Delete
+import androidx.compose.material.icons.outlined.Star
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import coil.compose.AsyncImage
+import com.androidtech.base.theme.AppTheme
+import com.androidtech.base.ui.animation.bounceClick
+import com.androidtech.base.utils.formatSize
+import com.androidtech.domain.model.media.DuplicateGroup
+import com.androidtech.domain.model.media.MediaItem
+
+@Composable
+fun DuplicateGroupSection(
+    group: DuplicateGroup,
+    onPhotoToggle: (Long) -> Unit
+) {
+    Column {
+        // Group Header
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = group.originalItem.name,
+                style = MaterialTheme.typography.titleMedium.copy(
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 16.sp
+                )
+            )
+            Text(
+                text = group.totalSizeDifferenceBytes.formatSize(),
+                style = MaterialTheme.typography.bodyMedium.copy(
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    fontSize = 13.sp
+                )
+            )
+        }
+
+        Spacer(modifier = Modifier.height(12.dp))
+
+        // Grid 2
+        LazyVerticalGrid(
+            columns = GridCells.Fixed(2),
+            horizontalArrangement = Arrangement.spacedBy(12.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .heightIn(max = 1000.dp), // Dynamic height clamp
+            userScrollEnabled = false
+        ) {
+            items(group.duplicateItems, key = { it.id }) { duplicateItems ->
+                DuplicatePhotoCard(
+                    duplicateItem = duplicateItems,
+                    onToggle = { onPhotoToggle(duplicateItems.id) }
+                )
+            }
+        }
+    }
+}
+
+@Composable
+fun DuplicatePhotoCard(
+    duplicateItem: MediaItem,
+    onToggle: () -> Unit
+) {
+    val borderColor = if (duplicateItem.isSelected) MaterialTheme.colorScheme.primary else Color.Transparent
+    val borderWidth = if (duplicateItem.isSelected) 3.dp else 0.dp
+
+    Box(
+        modifier = Modifier
+            .aspectRatio(1f)
+            .clip(RoundedCornerShape(16.dp))
+            .border(borderWidth, borderColor, RoundedCornerShape(16.dp))
+            .clickable { onToggle() }
+    ) {
+        // Thumbnail Image
+        AsyncImage(
+            model = duplicateItem.uri,
+            contentDescription = null,
+            contentScale = ContentScale.Crop,
+            modifier = Modifier.fillMaxSize()
+        )
+
+        // Top-Left Checkbox
+        Box(
+            modifier = Modifier
+                .padding(10.dp)
+                .size(22.dp)
+                .clip(RoundedCornerShape(4.dp))
+                .background(
+                    if (duplicateItem.isSelected) MaterialTheme.colorScheme.primary else Color.White.copy(
+                        alpha = 0.85f
+                    )
+                ),
+            contentAlignment = Alignment.Center
+        ) {
+            if (duplicateItem.isSelected) {
+                Text(
+                    text = "✓",
+                    color = Color.White,
+                    fontSize = 13.sp,
+                    fontWeight = FontWeight.Bold
+                )
+            }
+        }
+
+        // Bottom-Left "Best Shot / Keep" Star Badge
+        if (duplicateItem.isBestKeep) {
+            Box(
+                modifier = Modifier
+                    .align(Alignment.BottomStart)
+                    .padding(10.dp)
+                    .size(28.dp)
+                    .clip(CircleShape)
+                    .background(Color.White),
+                contentAlignment = Alignment.Center
+            ) {
+                Icon(
+                    imageVector = Icons.Outlined.Star,
+                    contentDescription = "Recommended to keep",
+                    tint = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.size(18.dp)
+                )
+            }
+        }
+    }
+}
+
+@Composable
+fun DeleteBottomBar(
+    selectedCount: Int,
+    sizeText: String,
+    onDeleteClick: () -> Unit
+) {
+    Surface(
+        color = MaterialTheme.colorScheme.surface,
+        shadowElevation = 8.dp
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 20.dp, vertical = 14.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Column {
+                Text(
+                    text = "$selectedCount selected",
+                    style = MaterialTheme.typography.titleMedium.copy(
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 16.sp
+                    )
+                )
+                Text(
+                    text = sizeText,
+                    style = MaterialTheme.typography.bodySmall.copy(
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                )
+            }
+
+            // Action Delete Button (Soft Red Background)
+            Button(
+                onClick = onDeleteClick,
+                modifier = Modifier
+                    .height(48.dp)
+                    .bounceClick(onClick = onDeleteClick),
+                shape = RoundedCornerShape(24.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.error.copy(0.1f),
+                    contentColor = MaterialTheme.colorScheme.error
+                )
+            ) {
+                Icon(
+                    imageVector = Icons.Outlined.Delete,
+                    contentDescription = null,
+                    modifier = Modifier.size(18.dp)
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+                Text(
+                    text = "Delete $selectedCount photos",
+                    style = MaterialTheme.typography.titleMedium.copy(
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 14.sp
+                    )
+                )
+            }
+        }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun DeleteBottomBarPreview() {
+    AppTheme {
+        DeleteBottomBar(
+            selectedCount = 5,
+            sizeText = "1.2 GB",
+            onDeleteClick = {}
+        )
+    }
+}

@@ -25,4 +25,9 @@
     <string name="text_available_capacity">%1$.2f GB available</string>
     <string name="text_smart_scan_storage">Smart Scan Storage</string>
     <string name="text_deep_scan_storage">Deep Scan Storage</string>
+
+    <string name="text_duplicate_photos">Duplicate Photos</string>
+    <string name="text_duplicate_photos_description">%1$d groups • %2$s</string>
+    <string name="text_similar_photos">Similar Photos</string>
+
 </resources>

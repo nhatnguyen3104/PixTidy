@@ -36,7 +36,7 @@ import com.androidtech.base.extension.AppDestination
 import com.androidtech.base.extension.LocalNavController
 import com.androidtech.base.theme.*
 import com.androidtech.base.utils.formatSize
-import com.androidtech.domain.model.media.InsightType
+import com.androidtech.domain.model.media.SmartInsightType
 import com.androidtech.domain.model.media.ScanLayer
 import com.androidtech.domain.model.media.ScanProcess
 import com.androidtech.domain.model.media.SmartInsight
@@ -60,7 +60,7 @@ fun ScanScreen(
     val snackbarHostState = remember { SnackbarHostState() }
 
     LaunchedEffect(Unit) {
-        viewModel.handleEvent(ScanEvent.StartScan)
+        viewModel.handleEvent(ScanEvent.StartScanClick)
     }
 
     LaunchedEffect(viewModel.uiEffect, lifecycleOwner) {
@@ -103,7 +103,7 @@ fun ScanContent(
                     )
                 },
                 navigationIcon = {
-                    IconButton(onClick = { onEvent(ScanEvent.NavigateBack) }) {
+                    IconButton(onClick = { onEvent(ScanEvent.NavigateBackClick) }) {
                         Icon(imageVector = Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
                     }
                 },
@@ -114,7 +114,7 @@ fun ScanContent(
         containerColor = MaterialTheme.colorScheme.background
     ) { paddingValues ->
         Column(
-            modifier = Modifier
+            modifier = modifier
                 .fillMaxSize()
                 .padding(paddingValues)
                 .verticalScroll(rememberScrollState())
@@ -221,7 +221,7 @@ fun ScanContent(
 
             if (uiState.scanProcess is ScanProcess.Scanning) {
                 Button(
-                    onClick = { onEvent(ScanEvent.CancelScan) },
+                    onClick = { onEvent(ScanEvent.CancelScanClick) },
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(56.dp),
@@ -235,7 +235,7 @@ fun ScanContent(
                 }
             } else if (uiState.scanProcess is ScanProcess.Success || uiState.scanProcess is ScanProcess.Error) {
                 Button(
-                    onClick = { onEvent(ScanEvent.NavigateBack) },
+                    onClick = { onEvent(ScanEvent.NavigateBackClick) },
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(56.dp),
@@ -251,30 +251,30 @@ fun ScanContent(
 @Composable
 private fun mapInsightToCategory(insight: SmartInsight): ScanResultCategory {
     val icon = when (insight.type) {
-        InsightType.EXACT_DUPLICATE -> Icons.Default.CopyAll
-        InsightType.SIMILAR_PHOTOS -> Icons.Default.PhotoLibrary
-        InsightType.SCREENSHOTS -> Icons.Default.Screenshot
-        InsightType.LARGE_VIDEOS -> Icons.Default.VideoFile
-        InsightType.BLURRY_PHOTOS -> Icons.Default.BlurOn
-        InsightType.DEEP_OCR_DOCUMENTS -> Icons.Default.Description
+        SmartInsightType.EXACT_DUPLICATES -> Icons.Default.CopyAll
+        SmartInsightType.SIMILAR_PHOTOS -> Icons.Default.PhotoLibrary
+        SmartInsightType.SCREENSHOTS -> Icons.Default.Screenshot
+        SmartInsightType.LARGE_VIDEOS -> Icons.Default.VideoFile
+        SmartInsightType.BLURRY_PHOTOS -> Icons.Default.BlurOn
+        SmartInsightType.DEEP_OCR_DOCUMENTS -> Icons.Default.Description
     }
 
     val badgeColor = when (insight.type) {
-        InsightType.EXACT_DUPLICATE -> DocumentBadge
-        InsightType.SIMILAR_PHOTOS -> ImageBadge
-        InsightType.SCREENSHOTS -> StorageBadge
-        InsightType.LARGE_VIDEOS -> VideoBadge
-        InsightType.BLURRY_PHOTOS -> ArchiveBadge
-        InsightType.DEEP_OCR_DOCUMENTS -> DocumentBadge
+        SmartInsightType.EXACT_DUPLICATES -> DocumentBadge
+        SmartInsightType.SIMILAR_PHOTOS -> ImageBadge
+        SmartInsightType.SCREENSHOTS -> StorageBadge
+        SmartInsightType.LARGE_VIDEOS -> VideoBadge
+        SmartInsightType.BLURRY_PHOTOS -> ArchiveBadge
+        SmartInsightType.DEEP_OCR_DOCUMENTS -> DocumentBadge
     }.copy(alpha = 0.2f)
 
     val iconTint = when (insight.type) {
-        InsightType.EXACT_DUPLICATE -> DocumentBadge
-        InsightType.SIMILAR_PHOTOS -> ImageBadge
-        InsightType.SCREENSHOTS -> StorageBadge
-        InsightType.LARGE_VIDEOS -> VideoBadge
-        InsightType.BLURRY_PHOTOS -> ArchiveBadge
-        InsightType.DEEP_OCR_DOCUMENTS -> DocumentBadge
+        SmartInsightType.EXACT_DUPLICATES -> DocumentBadge
+        SmartInsightType.SIMILAR_PHOTOS -> ImageBadge
+        SmartInsightType.SCREENSHOTS -> StorageBadge
+        SmartInsightType.LARGE_VIDEOS -> VideoBadge
+        SmartInsightType.BLURRY_PHOTOS -> ArchiveBadge
+        SmartInsightType.DEEP_OCR_DOCUMENTS -> DocumentBadge
     }
 
     return ScanResultCategory(

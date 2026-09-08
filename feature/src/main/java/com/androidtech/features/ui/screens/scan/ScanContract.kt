@@ -12,9 +12,9 @@ data class ScanState(
 ) : UIState
 
 sealed class ScanEvent : UIEvent {
-    data object StartScan : ScanEvent()
-    data object CancelScan : ScanEvent()
-    data object NavigateBack : ScanEvent()
+    data object StartScanClick : ScanEvent()
+    data object CancelScanClick : ScanEvent()
+    data object NavigateBackClick : ScanEvent()
 }
 
 sealed class ScanEffect : UIEffect {
