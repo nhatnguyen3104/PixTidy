@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.room.Room
 import com.androidtech.data.local.database.LocalDatabase
 import com.androidtech.data.local.database.MediaCacheDao
+import com.androidtech.data.local.database.ScanResultsDao
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -32,4 +33,8 @@ object LocalDatabaseModule {
     @Singleton
     @Provides
     fun provideMediaCacheDao(localDatabase: LocalDatabase): MediaCacheDao = localDatabase.mediaCacheDao()
+
+    @Singleton
+    @Provides
+    fun provideScanResultsDao(localDatabase: LocalDatabase): ScanResultsDao = localDatabase.scanResultsDao()
 }

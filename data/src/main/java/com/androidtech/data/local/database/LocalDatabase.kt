@@ -1,14 +1,20 @@
 package com.androidtech.data.local.database
 
-import androidx.room.Database
-import androidx.room.RoomDatabase
+import androidx.room.*
 import com.androidtech.data.model.MediaAnalysisCacheEntity
+import com.androidtech.data.model.ScanSummaryEntity
+import com.androidtech.data.model.SmartInsightEntity
 
 @Database(
-    entities = [MediaAnalysisCacheEntity::class],
+    entities = [
+        MediaAnalysisCacheEntity::class,
+        ScanSummaryEntity::class,
+        SmartInsightEntity::class
+    ],
     version = 1,
     exportSchema = false
 )
+@TypeConverters(ScanResultConverters::class)
 abstract class LocalDatabase: RoomDatabase() {
 
     companion object {
@@ -16,4 +22,5 @@ abstract class LocalDatabase: RoomDatabase() {
     }
 
     abstract fun mediaCacheDao(): MediaCacheDao
+    abstract fun scanResultsDao(): ScanResultsDao
 }

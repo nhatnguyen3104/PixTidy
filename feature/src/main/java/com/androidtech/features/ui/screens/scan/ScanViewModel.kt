@@ -5,10 +5,14 @@ import androidx.lifecycle.viewModelScope
 import com.androidtech.base.viewmodel.BaseViewModel
 import com.androidtech.domain.model.media.ScanLayer
 import com.androidtech.domain.model.media.ScanProcess as DomainScanState
+import com.androidtech.domain.model.media.SmartInsightType
+import com.androidtech.domain.usecase.media.GetLatestScanResultsUseCase
 import com.androidtech.domain.usecase.media.RunDeepSmartScanUseCase
 import com.androidtech.domain.usecase.media.RunSmartScanUseCase
+import com.androidtech.domain.usecase.media.SaveScanResultsUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
@@ -18,7 +22,9 @@ import javax.inject.Inject
 class ScanViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val runSmartScanUseCase: RunSmartScanUseCase,
-    private val runDeepSmartScanUseCase: RunDeepSmartScanUseCase
+    private val runDeepSmartScanUseCase: RunDeepSmartScanUseCase,
+    private val getLatestScanResultsUseCase: GetLatestScanResultsUseCase,
+    private val saveScanResultsUseCase: SaveScanResultsUseCase
 ): BaseViewModel<ScanEvent, ScanState, ScanEffect> (savedStateHandle) {
 
     private var scanJob: Job? = null
@@ -66,6 +72,7 @@ class ScanViewModel @Inject constructor(
                         )
                     }
                     is DomainScanState.Success -> {
+                        saveLatestResults(domainState)
                         DomainScanState.Success(
                             insights = domainState.insights,
                             totalReclaimableBytes = domainState.totalReclaimableBytes
@@ -92,5 +99,48 @@ class ScanViewModel @Inject constructor(
     override fun onViewModelClearing() {
         super.onViewModelClearing()
         scanJob?.cancel()
+    }
+
+    private fun saveLatestResults(success: DomainScanState.Success) {
+        viewModelScope.launch {
+            val currentSummary = getLatestScanResultsUseCase().firstOrNull() 
+                ?: com.androidtech.domain.model.media.FastScanSummary.EMPTY
+
+            var duplicatesBytes = 0L
+            var screenshotCount = 0
+            var screenshotBytes = 0L
+            var largeVideoCount = 0
+            var largeVideoBytes = 0L
+
+            success.insights.forEach { insight ->
+                when (insight.type) {
+                    SmartInsightType.EXACT_DUPLICATES -> {
+                        duplicatesBytes += insight.reclaimableBytes
+                    }
+                    SmartInsightType.SIMILAR_PHOTOS -> {
+                        duplicatesBytes += insight.reclaimableBytes
+                    }
+                    SmartInsightType.SCREENSHOTS -> {
+                        screenshotCount = insight.affectedItemsCount
+                        screenshotBytes = insight.reclaimableBytes
+                    }
+                    SmartInsightType.LARGE_VIDEOS -> {
+                        largeVideoCount = insight.affectedItemsCount
+                        largeVideoBytes = insight.reclaimableBytes
+                    }
+                    else -> {}
+                }
+            }
+
+            val updatedSummary = currentSummary.copy(
+                duplicatesSizeBytes = duplicatesBytes,
+                screenshotCount = if (screenshotCount > 0) screenshotCount else currentSummary.screenshotCount,
+                screenshotBytes = if (screenshotBytes > 0) screenshotBytes else currentSummary.screenshotBytes,
+                largeVideoCount = if (largeVideoCount > 0) largeVideoCount else currentSummary.largeVideoCount,
+                largeVideoBytes = if (largeVideoBytes > 0) largeVideoBytes else currentSummary.largeVideoBytes
+            )
+            
+            saveScanResultsUseCase(updatedSummary, success.insights)
+        }
     }
 }

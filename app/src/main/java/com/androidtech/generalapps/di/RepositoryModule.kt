@@ -3,17 +3,11 @@ package com.androidtech.generalapps.di
 import com.androidtech.data.analyzer.ImageAnalyzerEngineImpl
 import com.androidtech.data.engine.DeepAnalysisEngineImpl
 import com.androidtech.data.engine.RecommendationEngineImpl
-import com.androidtech.data.repository.MediaAnalysisCacheRepositoryImpl
-import com.androidtech.data.repository.MediaStoreRepositoryImpl
-import com.androidtech.data.repository.RemoteConfigRepositoryImp
-import com.androidtech.data.repository.SystemStorageRepositoryImpl
+import com.androidtech.data.repository.*
 import com.androidtech.domain.engine.DeepAnalysisEngine
 import com.androidtech.domain.engine.ImageAnalyzerEngine
 import com.androidtech.domain.engine.RecommendationEngine
-import com.androidtech.domain.repository.MediaAnalysisCacheRepository
-import com.androidtech.domain.repository.MediaStoreRepository
-import com.androidtech.domain.repository.RemoteConfigRepository
-import com.androidtech.domain.repository.SystemStorageRepository
+import com.androidtech.domain.repository.*
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -36,7 +30,10 @@ interface RepositoryModule {
     fun bindMediaAnalysisCacheRepository(impl: MediaAnalysisCacheRepositoryImpl): MediaAnalysisCacheRepository
 
     @Binds
-    abstract fun bindImageAnalyzerEngine(impl: ImageAnalyzerEngineImpl): ImageAnalyzerEngine
+    fun bindScanResultsRepository(impl: ScanResultsRepositoryImpl): ScanResultsRepository
+
+    @Binds
+    fun bindImageAnalyzerEngine(impl: ImageAnalyzerEngineImpl): ImageAnalyzerEngine
 
     @Binds
     abstract fun bindDeepAnalysisEngine(impl: DeepAnalysisEngineImpl): DeepAnalysisEngine
