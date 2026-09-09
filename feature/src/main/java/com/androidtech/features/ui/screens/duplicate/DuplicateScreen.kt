@@ -19,29 +19,80 @@ import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material.icons.outlined.Star
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.LocalLifecycleOwner
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.flowWithLifecycle
+import androidx.navigation.NavGraphBuilder
+import androidx.navigation.compose.composable
 import coil.compose.AsyncImage
 import com.androidtech.base.R
+import com.androidtech.base.extension.AppDestination
+import com.androidtech.base.extension.LocalNavController
 import com.androidtech.base.theme.Body16Medium
 import com.androidtech.base.theme.Title20Bold
 import com.androidtech.base.utils.formatSize
 import com.androidtech.features.ui.screens.home.HomeEvent
+import com.androidtech.features.ui.screens.home.HomeScreen
 import com.androidtech.features.ui.screens.scan.ScanEvent
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
+
+fun NavGraphBuilder.duplicateScreen() {
+    composable(
+        route = AppDestination.DuplicateScreen.route,
+    ) {
+        DuplicateScreen()
+    }
+}
 
 @Composable
 fun DuplicateScreen (
     viewModel: DuplicateViewModel = hiltViewModel()
 ) {
+    val uiState = viewModel.uiState.collectAsStateWithLifecycle()
+    val lifecycleOwner = LocalLifecycleOwner.current
+    val navController = LocalNavController.current
+    val context = LocalContext.current
+
+    val snackbarHostState = remember { SnackbarHostState() }
+    val scope = rememberCoroutineScope()
+    var snackbarJob by remember { mutableStateOf<Job?>(null) }
+    fun showSnackbar(message: String) {
+        snackbarJob?.cancel()
+        snackbarJob = scope.launch {
+            snackbarHostState.showSnackbar(message)
+        }
+    }
+
+    LaunchedEffect(viewModel.uiEffect, lifecycleOwner) {
+        viewModel.uiEffect.flowWithLifecycle(lifecycleOwner.lifecycle).collect { effect ->
+            when (effect) {
+                is DuplicateEffect.NavigateBack -> {
+                    navController.popBackStack()
+                }
+            }
+        }
+    }
+
+    DuplicateContent(
+        uiState = uiState.value,
+        onEvent = { viewModel.handleEvent(it) },
+        snackbarHostState = snackbarHostState
+    )
+
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -110,28 +161,19 @@ fun DuplicateContent(
         },
         containerColor = MaterialTheme.colorScheme.background
     ) { paddingValues ->
-        Column(
+        LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
-                .verticalScroll(rememberScrollState())
                 .padding(horizontal = 20.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
+            verticalArrangement = Arrangement.spacedBy(24.dp),
+            contentPadding = PaddingValues(bottom = 24.dp)
         ) {
-            LazyColumn(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(paddingValues)
-                    .padding(horizontal = 16.dp),
-                verticalArrangement = Arrangement.spacedBy(24.dp),
-                contentPadding = PaddingValues(bottom = 24.dp)
-            ) {
-                items(duplicateGroups, key = { it.groupId }) { group ->
-                    DuplicateGroupSection(
-                        group = group,
-                        onPhotoToggle = { photoId -> onEvent(DuplicateEvent.TogglePhotoSelection( photoId )) }
-                    )
-                }
+            items(duplicateGroups, key = { it.groupId }) { group ->
+                DuplicateGroupSection(
+                    group = group,
+                    onPhotoToggle = { photoId -> onEvent(DuplicateEvent.TogglePhotoSelection( photoId )) }
+                )
             }
         }
     }

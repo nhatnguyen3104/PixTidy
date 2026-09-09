@@ -63,21 +63,30 @@ fun DuplicateGroupSection(
 
         Spacer(modifier = Modifier.height(12.dp))
 
-        // Grid 2
-        LazyVerticalGrid(
-            columns = GridCells.Fixed(2),
-            horizontalArrangement = Arrangement.spacedBy(12.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp),
-            modifier = Modifier
-                .fillMaxWidth()
-                .heightIn(max = 1000.dp), // Dynamic height clamp
-            userScrollEnabled = false
+        // Grid of duplicate items
+        val chunkedItems = group.duplicateItems.chunked(2)
+        Column(
+            modifier = Modifier.fillMaxWidth(),
+            verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            items(group.duplicateItems, key = { it.id }) { duplicateItems ->
-                DuplicatePhotoCard(
-                    duplicateItem = duplicateItems,
-                    onToggle = { onPhotoToggle(duplicateItems.id) }
-                )
+            chunkedItems.forEach { rowItems ->
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    rowItems.forEach { duplicateItem ->
+                        Box(modifier = Modifier.weight(1f)) {
+                            DuplicatePhotoCard(
+                                duplicateItem = duplicateItem,
+                                onToggle = { onPhotoToggle(duplicateItem.id) }
+                            )
+                        }
+                    }
+                    // Fill empty space if the last row has only one item
+                    if (rowItems.size < 2) {
+                        Spacer(modifier = Modifier.weight(1f))
+                    }
+                }
             }
         }
     }

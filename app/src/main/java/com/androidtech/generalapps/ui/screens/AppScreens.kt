@@ -9,6 +9,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
 import com.androidtech.base.extension.AppDestination
 import com.androidtech.base.extension.LocalNavController
+import com.androidtech.features.ui.screens.duplicate.duplicateScreen
 import com.androidtech.features.ui.screens.home.homeScreen
 import com.androidtech.features.ui.screens.scan.scanScreen
 
@@ -29,6 +30,7 @@ fun AppScreens(
             ) {
                 homeScreen()
                 scanScreen()
+                duplicateScreen()
             }
         }
     }

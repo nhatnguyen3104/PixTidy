@@ -6,6 +6,7 @@ plugins {
     alias(libs.plugins.com.google.devtools.ksp)
     alias(libs.plugins.com.google.dagger.hilt.android)
     alias(libs.plugins.com.google.gms.google.services)
+    alias(libs.plugins.kotlin.serialization)
 }
 
 android {

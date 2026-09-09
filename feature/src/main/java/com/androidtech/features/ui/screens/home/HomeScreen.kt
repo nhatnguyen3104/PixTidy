@@ -91,6 +91,9 @@ fun HomeScreen(
                 is HomeEffect.NavigateToSettings -> {
 
                 }
+                is HomeEffect.NavigateToDuplicate -> {
+                    navController.navigate(AppDestination.DuplicateScreen.route)
+                }
             }
         }
     }
@@ -240,7 +243,7 @@ fun HomeContent(
                     icon = Icons.Outlined.ContentCopy,
                     badgeColor = ImageBadge,
                     modifier = Modifier.weight(1f),
-                    onClick = { onEvent(HomeEvent.CategoryClick("duplicates")) }
+                    onClick = { onEvent(HomeEvent.CategoryClick(Category.DUPLICATE)) }
                 )
                 CategoryCard(
                     title = "Similar photos",
@@ -248,7 +251,7 @@ fun HomeContent(
                     icon = Icons.Outlined.Collections,
                     badgeColor = AudioBadge,
                     modifier = Modifier.weight(1f),
-                    onClick = { onEvent(HomeEvent.CategoryClick("duplicates")) }
+                    onClick = { onEvent(HomeEvent.CategoryClick(Category.SIMILAR)) }
                 )
             }
 
@@ -264,7 +267,7 @@ fun HomeContent(
                     icon = Icons.Outlined.VideoLibrary,
                     badgeColor = VideoBadge,
                     modifier = Modifier.weight(1f),
-                    onClick = { onEvent(HomeEvent.CategoryClick("duplicates")) }
+                    onClick = { onEvent(HomeEvent.CategoryClick(Category.LARGE_VIDEOS)) }
                 )
                 CategoryCard(
                     title = "Screenshots",
@@ -272,7 +275,7 @@ fun HomeContent(
                     icon = Icons.Outlined.Smartphone,
                     badgeColor = DocumentBadge,
                     modifier = Modifier.weight(1f),
-                    onClick = { onEvent(HomeEvent.CategoryClick("duplicates")) }
+                    onClick = { onEvent(HomeEvent.CategoryClick(Category.SCREENSHOTS)) }
                 )
             }
 

@@ -43,7 +43,14 @@ class RecommendationEngineImpl @Inject constructor() : RecommendationEngine {
     private fun buildExactDuplicateInsight(duplicateGroups: List<DuplicateGroup>): SmartInsight? {
         if (duplicateGroups.isEmpty()) return null
 
-        val allItems = duplicateGroups.flatMap { it.allItems }
+        val allItems = duplicateGroups.flatMap { group ->
+            group.allItems.map { item ->
+                item.copy(
+                    groupId = group.groupId,
+                    isBestKeep = item.id == group.originalItem.id
+                )
+            }
+        }
         val toDeleteCount = duplicateGroups.sumOf { it.duplicateItems.size }
         val reclaimableBytes = duplicateGroups.sumOf { it.totalSizeDifferenceBytes }
 
@@ -68,7 +75,14 @@ class RecommendationEngineImpl @Inject constructor() : RecommendationEngine {
     private fun buildSimilarPhotosInsight(groups: List<SimilarGroup>): SmartInsight? {
         if (groups.isEmpty()) return null
 
-        val allItems = groups.flatMap { it.items }
+        val allItems = groups.flatMap { group ->
+            group.items.map { item ->
+                item.copy(
+                    groupId = group.groupId,
+                    isBestKeep = item.id == group.bestCandidateId
+                )
+            }
+        }
         val toDelete = groups.flatMap { group -> group.items.filterNot { it.id == group.bestCandidateId } }
         val avgConfidence = groups.map(::confidenceFor).average().toFloat()
 

@@ -4,6 +4,7 @@ plugins {
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.com.google.devtools.ksp)
     alias(libs.plugins.com.google.dagger.hilt.android)
+    alias(libs.plugins.kotlin.serialization)
 }
 
 android {
@@ -69,4 +70,6 @@ dependencies {
     // Hilt
     implementation(libs.dagger.hilt)
     ksp(libs.dagger.hilt.android.compiler)
+    // Serialization
+    implementation(libs.org.jetbrains.kotlinx.serialization.json)
 }

@@ -18,6 +18,7 @@ data class MediaItem(
     val width: Int,
     val height: Int,
     val duration: Long? = null,
+    val groupId: String? = null,
     val isBestKeep: Boolean = false,
     val isSelected: Boolean = false
 ) {

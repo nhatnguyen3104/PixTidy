@@ -67,7 +67,7 @@ class HomeViewModel @Inject constructor(
     override fun handleEvent(event: HomeEvent) {
         when(event) {
             is HomeEvent.CategoryClick -> {
-
+                handleCategoryClick(event.category)
             }
             is HomeEvent.SmartScanClicked -> {
                 setEffect { HomeEffect.NavigateToSmartScan }
@@ -78,8 +78,25 @@ class HomeViewModel @Inject constructor(
             is HomeEvent.SettingsClicked -> {
                 setEffect { HomeEffect.NavigateToSettings }
             }
-            HomeEvent.FastScan -> {
+            is HomeEvent.FastScan -> {
                 fastScan()
+            }
+        }
+    }
+
+    private fun handleCategoryClick(category: Category) {
+        when (category) {
+            Category.DUPLICATE -> {
+                setEffect { HomeEffect.NavigateToDuplicate }
+            }
+            Category.SIMILAR -> {
+
+            }
+            Category.LARGE_VIDEOS -> {
+
+            }
+            Category.SCREENSHOTS -> {
+
             }
         }
     }

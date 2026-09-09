@@ -11,7 +11,7 @@ data class HomeState(
 ): UIState
 
 sealed class HomeEvent : UIEvent {
-    data class CategoryClick (val category: String) : HomeEvent()
+    data class CategoryClick (val category: Category) : HomeEvent()
     object DeepScanClicked : HomeEvent()
     object SmartScanClicked : HomeEvent()
     object SettingsClicked : HomeEvent()
@@ -22,4 +22,13 @@ sealed class HomeEffect : UIEffect {
     object NavigateToDeepScan : HomeEffect()
     object NavigateToSmartScan : HomeEffect()
     object NavigateToSettings : HomeEffect()
+
+    object NavigateToDuplicate : HomeEffect()
+}
+
+enum class Category {
+    DUPLICATE,
+    SIMILAR,
+    LARGE_VIDEOS,
+    SCREENSHOTS
 }
