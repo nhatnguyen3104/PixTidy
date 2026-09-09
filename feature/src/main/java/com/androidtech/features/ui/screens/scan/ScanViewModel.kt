@@ -117,7 +117,7 @@ class ScanViewModel @Inject constructor(
 
             success.insights.forEach { insight ->
                 when (insight.type) {
-                    SmartInsightType.EXACT_DUPLICATES -> {
+                    SmartInsightType.EXACT_DUPLICATES, SmartInsightType.DUPLICATE_VIDEOS -> {
                         duplicatesBytes += insight.reclaimableBytes
                     }
                     SmartInsightType.SIMILAR_PHOTOS -> {

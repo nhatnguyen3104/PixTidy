@@ -257,6 +257,7 @@ private fun mapInsightToCategory(insight: SmartInsight): ScanResultCategory {
         SmartInsightType.LARGE_VIDEOS -> Icons.Default.VideoFile
         SmartInsightType.BLURRY_PHOTOS -> Icons.Default.BlurOn
         SmartInsightType.DEEP_OCR_DOCUMENTS -> Icons.Default.Description
+        SmartInsightType.DUPLICATE_VIDEOS -> Icons.Default.VideoLibrary
     }
 
     val badgeColor = when (insight.type) {
@@ -266,6 +267,7 @@ private fun mapInsightToCategory(insight: SmartInsight): ScanResultCategory {
         SmartInsightType.LARGE_VIDEOS -> VideoBadge
         SmartInsightType.BLURRY_PHOTOS -> ArchiveBadge
         SmartInsightType.DEEP_OCR_DOCUMENTS -> DocumentBadge
+        SmartInsightType.DUPLICATE_VIDEOS -> VideoBadge
     }.copy(alpha = 0.2f)
 
     val iconTint = when (insight.type) {
@@ -275,6 +277,7 @@ private fun mapInsightToCategory(insight: SmartInsight): ScanResultCategory {
         SmartInsightType.LARGE_VIDEOS -> VideoBadge
         SmartInsightType.BLURRY_PHOTOS -> ArchiveBadge
         SmartInsightType.DEEP_OCR_DOCUMENTS -> DocumentBadge
+        SmartInsightType.DUPLICATE_VIDEOS -> VideoBadge
     }
 
     return ScanResultCategory(

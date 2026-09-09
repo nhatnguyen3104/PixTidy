@@ -134,7 +134,16 @@ class RunDeepSmartScanUseCase @Inject constructor(
         val duplicateGroups = clusterVideosByFrameSimilarity(sampled)
         if (duplicateGroups.isEmpty()) return@coroutineScope null
 
-        val allItems = duplicateGroups.flatten()
+        val allItems = duplicateGroups.flatMap { group ->
+            val groupId = UUID.randomUUID().toString()
+            val keep = group.maxBy { it.size }
+            group.map { item ->
+                item.copy(
+                    groupId = groupId,
+                    isBestKeep = item.id == keep.id
+                )
+            }
+        }
         val reclaimable = duplicateGroups.sumOf { group ->
             val keep = group.maxBy { it.size }
             group.filterNot { it.id == keep.id }.sumOf { it.size }
@@ -144,7 +153,7 @@ class RunDeepSmartScanUseCase @Inject constructor(
             id = UUID.randomUUID().toString(),
             title = "Duplicate videos",
             description = "${allItems.size} videos across ${duplicateGroups.size} group(s) look like the same recording.",
-            type = SmartInsightType.SIMILAR_PHOTOS, // videos share the perceptual-similarity concept; no dedicated video type in the given enum
+            type = SmartInsightType.DUPLICATE_VIDEOS,
             reclaimableBytes = reclaimable,
             affectedItemsCount = allItems.size,
             items = allItems,

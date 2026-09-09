@@ -6,7 +6,8 @@ enum class SmartInsightType {
     SCREENSHOTS,
     LARGE_VIDEOS,
     BLURRY_PHOTOS,
-    DEEP_OCR_DOCUMENTS
+    DEEP_OCR_DOCUMENTS,
+    DUPLICATE_VIDEOS
 }
 
 /**

@@ -18,34 +18,35 @@ class GetLatestDuplicateGroupsUseCase @Inject constructor(
 ) : UIStateUseCase<Unit, List<DuplicateGroup>>() {
 
     override fun run(param: Unit): Flow<UiState<List<DuplicateGroup>>> {
-        return getLatestSmartInsightsUseCase(SmartInsightType.EXACT_DUPLICATES).map { uiState ->
+        return getLatestSmartInsightsUseCase(null).map { uiState ->
             when (uiState) {
                 is UiState.Idle -> UiState.Idle
                 is UiState.Loading -> UiState.Loading(uiState.progress)
                 is UiState.Error -> UiState.Error(uiState.failure)
                 is UiState.Success -> {
-                    val insight = uiState.data.firstOrNull()
-                    if (insight == null) {
-                        UiState.Success(emptyList())
-                    } else {
-                        val groups = insight.items
-                            .groupBy { it.groupId }
-                            .mapNotNull { (groupId, items) ->
-                                if (groupId == null) return@mapNotNull null
-                                val original = items.find { it.isBestKeep } ?: items.first()
-                                val duplicates = items.filterNot { it.id == original.id }
-                                if (duplicates.isEmpty()) return@mapNotNull null
-
-                                DuplicateGroup(
-                                    groupId = groupId,
-                                    originalItem = original,
-                                    duplicateItems = duplicates,
-                                    totalSizeDifferenceBytes = duplicates.sumOf { it.size },
-                                    hash = "" // Hash not strictly needed for UI display if we have ID/Group
-                                )
-                            }
-                        UiState.Success(groups)
+                    val duplicateInsights = uiState.data.filter { 
+                        it.type == SmartInsightType.EXACT_DUPLICATES || 
+                        it.type == SmartInsightType.DUPLICATE_VIDEOS 
                     }
+                    
+                    val groups = duplicateInsights
+                        .flatMap { it.items }
+                        .groupBy { it.groupId }
+                        .mapNotNull { (groupId, items) ->
+                            if (groupId == null) return@mapNotNull null
+                            val original = items.find { it.isBestKeep } ?: items.first()
+                            val duplicates = items.filterNot { it.id == original.id }
+                            if (duplicates.isEmpty()) return@mapNotNull null
+
+                            DuplicateGroup(
+                                groupId = groupId,
+                                originalItem = original,
+                                duplicateItems = duplicates,
+                                totalSizeDifferenceBytes = duplicates.sumOf { it.size },
+                                hash = "" // Hash not strictly needed for UI display if we have ID/Group
+                            )
+                        }
+                    UiState.Success(groups)
                 }
             }
         }
