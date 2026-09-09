@@ -15,7 +15,7 @@ sealed class HomeEvent : UIEvent {
     object DeepScanClicked : HomeEvent()
     object SmartScanClicked : HomeEvent()
     object SettingsClicked : HomeEvent()
-    object StartScan : HomeEvent()
+    object FastScan : HomeEvent()
 }
 
 sealed class HomeEffect : UIEffect {

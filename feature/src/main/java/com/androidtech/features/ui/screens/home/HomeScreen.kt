@@ -60,7 +60,7 @@ fun HomeScreen(
 
     val permissionState = rememberMultiplePermissions(
         permissions = permissions.toTypedArray(),
-        onAllGranted = { viewModel.handleEvent(HomeEvent.StartScan) }
+        onAllGranted = { viewModel.handleEvent(HomeEvent.FastScan) }
     )
 
     LaunchedEffect(Unit) {

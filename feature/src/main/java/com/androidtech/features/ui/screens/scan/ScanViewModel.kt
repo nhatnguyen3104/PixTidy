@@ -3,6 +3,8 @@ package com.androidtech.features.ui.screens.scan
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.androidtech.base.viewmodel.BaseViewModel
+import com.androidtech.domain.extensions.UiState
+import com.androidtech.domain.model.media.FastScanSummary
 import com.androidtech.domain.model.media.ScanLayer
 import com.androidtech.domain.model.media.ScanProcess as DomainScanState
 import com.androidtech.domain.model.media.SmartInsightType
@@ -103,8 +105,9 @@ class ScanViewModel @Inject constructor(
 
     private fun saveLatestResults(success: DomainScanState.Success) {
         viewModelScope.launch {
-            val currentSummary = getLatestScanResultsUseCase().firstOrNull() 
-                ?: com.androidtech.domain.model.media.FastScanSummary.EMPTY
+            val uiState = getLatestScanResultsUseCase(Unit).firstOrNull()
+            val currentSummary = (uiState as? UiState.Success)?.data
+                ?: FastScanSummary.EMPTY
 
             var duplicatesBytes = 0L
             var screenshotCount = 0
@@ -140,7 +143,8 @@ class ScanViewModel @Inject constructor(
                 largeVideoBytes = if (largeVideoBytes > 0) largeVideoBytes else currentSummary.largeVideoBytes
             )
             
-            saveScanResultsUseCase(updatedSummary, success.insights)
+            saveScanResultsUseCase(SaveScanResultsUseCase.Params(updatedSummary, success.insights))
+                .launchIn(this)
         }
     }
 }
