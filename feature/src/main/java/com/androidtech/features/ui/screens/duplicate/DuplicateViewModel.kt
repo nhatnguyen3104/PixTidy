@@ -51,8 +51,24 @@ class DuplicateViewModel @Inject constructor(
                 //deletePhotos(event.selectedPhotoIds)
             }
             is DuplicateEvent.TogglePhotoSelection -> {
-                //togglePhotoSelection(event.photoId)
+                togglePhotoSelection(event.photoId)
             }
         }
+    }
+
+    private fun togglePhotoSelection(photoId: Long) {
+        val currentGroups = uiState.value.duplicateGroups
+        val updatedGroups = currentGroups.map { group ->
+            if (group.duplicateItems.any { it.id == photoId }) {
+                group.copy(
+                    duplicateItems = group.duplicateItems.map { item ->
+                        if (item.id == photoId) item.copy(isSelected = !item.isSelected) else item
+                    }
+                )
+            } else {
+                group
+            }
+        }
+        setState { copy(duplicateGroups = updatedGroups) }
     }
 }

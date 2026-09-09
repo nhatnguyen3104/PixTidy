@@ -124,27 +124,17 @@ fun DuplicatePhotoCard(
 
         // Top-Left Checkbox (Only if selectable)
         if (isSelectable) {
-            Box(
+            Checkbox(
+                checked = duplicateItem.isSelected,
+                onCheckedChange = { onToggle() },
                 modifier = Modifier
-                    .padding(10.dp)
-                    .size(22.dp)
-                    .clip(RoundedCornerShape(4.dp))
-                    .background(
-                        if (duplicateItem.isSelected) MaterialTheme.colorScheme.primary else Color.White.copy(
-                            alpha = 0.85f
-                        )
-                    ),
-                contentAlignment = Alignment.Center
-            ) {
-                if (duplicateItem.isSelected) {
-                    Text(
-                        text = "✓",
-                        color = Color.White,
-                        fontSize = 13.sp,
-                        fontWeight = FontWeight.Bold
-                    )
-                }
-            }
+                    .padding(4.dp)
+                    .align(Alignment.TopStart),
+                colors = CheckboxDefaults.colors(
+                    checkedColor = MaterialTheme.colorScheme.primary,
+                    uncheckedColor = Color.White.copy(alpha = 0.8f)
+                )
+            )
         }
 
         // Bottom-Left "Best Shot / Keep" Star Badge
