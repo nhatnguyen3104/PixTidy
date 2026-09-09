@@ -63,8 +63,10 @@ fun DuplicateGroupSection(
 
         Spacer(modifier = Modifier.height(12.dp))
 
-        // Grid of duplicate items
-        val chunkedItems = group.duplicateItems.chunked(2)
+        // Grid of items: Original (non-selectable) + Duplicates
+        val allItems = listOf(group.originalItem) + group.duplicateItems
+        val chunkedItems = allItems.chunked(2)
+        
         Column(
             modifier = Modifier.fillMaxWidth(),
             verticalArrangement = Arrangement.spacedBy(12.dp)
@@ -74,11 +76,13 @@ fun DuplicateGroupSection(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
-                    rowItems.forEach { duplicateItem ->
+                    rowItems.forEach { item ->
+                        val isOriginal = item.id == group.originalItem.id
                         Box(modifier = Modifier.weight(1f)) {
                             DuplicatePhotoCard(
-                                duplicateItem = duplicateItem,
-                                onToggle = { onPhotoToggle(duplicateItem.id) }
+                                duplicateItem = item,
+                                isSelectable = !isOriginal,
+                                onToggle = { if (!isOriginal) onPhotoToggle(item.id) }
                             )
                         }
                     }
@@ -95,17 +99,20 @@ fun DuplicateGroupSection(
 @Composable
 fun DuplicatePhotoCard(
     duplicateItem: MediaItem,
+    isSelectable: Boolean = true,
     onToggle: () -> Unit
 ) {
-    val borderColor = if (duplicateItem.isSelected) MaterialTheme.colorScheme.primary else Color.Transparent
-    val borderWidth = if (duplicateItem.isSelected) 3.dp else 0.dp
+    val borderColor = if (duplicateItem.isSelected && isSelectable) MaterialTheme.colorScheme.primary else Color.Transparent
+    val borderWidth = if (duplicateItem.isSelected && isSelectable) 3.dp else 0.dp
 
     Box(
         modifier = Modifier
             .aspectRatio(1f)
             .clip(RoundedCornerShape(16.dp))
             .border(borderWidth, borderColor, RoundedCornerShape(16.dp))
-            .clickable { onToggle() }
+            .then(
+                if (isSelectable) Modifier.clickable { onToggle() } else Modifier
+            )
     ) {
         // Thumbnail Image
         AsyncImage(
@@ -115,26 +122,28 @@ fun DuplicatePhotoCard(
             modifier = Modifier.fillMaxSize()
         )
 
-        // Top-Left Checkbox
-        Box(
-            modifier = Modifier
-                .padding(10.dp)
-                .size(22.dp)
-                .clip(RoundedCornerShape(4.dp))
-                .background(
-                    if (duplicateItem.isSelected) MaterialTheme.colorScheme.primary else Color.White.copy(
-                        alpha = 0.85f
+        // Top-Left Checkbox (Only if selectable)
+        if (isSelectable) {
+            Box(
+                modifier = Modifier
+                    .padding(10.dp)
+                    .size(22.dp)
+                    .clip(RoundedCornerShape(4.dp))
+                    .background(
+                        if (duplicateItem.isSelected) MaterialTheme.colorScheme.primary else Color.White.copy(
+                            alpha = 0.85f
+                        )
+                    ),
+                contentAlignment = Alignment.Center
+            ) {
+                if (duplicateItem.isSelected) {
+                    Text(
+                        text = "✓",
+                        color = Color.White,
+                        fontSize = 13.sp,
+                        fontWeight = FontWeight.Bold
                     )
-                ),
-            contentAlignment = Alignment.Center
-        ) {
-            if (duplicateItem.isSelected) {
-                Text(
-                    text = "✓",
-                    color = Color.White,
-                    fontSize = 13.sp,
-                    fontWeight = FontWeight.Bold
-                )
+                }
             }
         }
 
