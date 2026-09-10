@@ -21,7 +21,7 @@ class HomeViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val runFastScanUseCase: RunFastScanUseCase,
     private val getLatestScanResultsUseCase: GetLatestScanResultsUseCase
-): BaseViewModel<HomeEvent, HomeState, HomeEffect>(savedStateHandle) {
+) : BaseViewModel<HomeEvent, HomeState, HomeEffect>(savedStateHandle) {
     override fun createInitializeState(): HomeState = HomeState()
 
     private var scanJob: Job? = null
@@ -35,9 +35,8 @@ class HomeViewModel @Inject constructor(
         getLatestScanResultsUseCase(Unit)
             .filterIsInstance<UiState.Success<FastScanSummary?>>()
             .onEach { state ->
-                state.data?.let { summary ->
-                    setState { copy(storageStats = summary) }
-                }
+                val summary = state.data ?: FastScanSummary.EMPTY
+                setState { copy(storageStats = summary) }
             }
             .launchIn(viewModelScope)
     }
@@ -52,10 +51,18 @@ class HomeViewModel @Inject constructor(
         ) { fresh, cached ->
             fresh.copy(
                 duplicatesSizeBytes = cached?.duplicatesSizeBytes ?: 0L,
-                screenshotCount = if ((cached?.screenshotCount ?: 0) > 0) cached!!.screenshotCount else fresh.screenshotCount,
-                screenshotBytes = if ((cached?.screenshotBytes ?: 0L) > 0L) cached!!.screenshotBytes else fresh.screenshotBytes,
-                largeVideoCount = if ((cached?.largeVideoCount ?: 0) > 0) cached!!.largeVideoCount else fresh.largeVideoCount,
-                largeVideoBytes = if ((cached?.largeVideoBytes ?: 0L) > 0L) cached!!.largeVideoBytes else fresh.largeVideoBytes
+                screenshotCount = if ((cached?.screenshotCount
+                        ?: 0) > 0
+                ) cached!!.screenshotCount else fresh.screenshotCount,
+                screenshotBytes = if ((cached?.screenshotBytes
+                        ?: 0L) > 0L
+                ) cached!!.screenshotBytes else fresh.screenshotBytes,
+                largeVideoCount = if ((cached?.largeVideoCount
+                        ?: 0) > 0
+                ) cached!!.largeVideoCount else fresh.largeVideoCount,
+                largeVideoBytes = if ((cached?.largeVideoBytes
+                        ?: 0L) > 0L
+                ) cached!!.largeVideoBytes else fresh.largeVideoBytes
             )
         }
             .onEach { summary ->
@@ -65,19 +72,23 @@ class HomeViewModel @Inject constructor(
     }
 
     override fun handleEvent(event: HomeEvent) {
-        when(event) {
+        when (event) {
             is HomeEvent.CategoryClick -> {
                 handleCategoryClick(event.category)
             }
+
             is HomeEvent.SmartScanClicked -> {
                 setEffect { HomeEffect.NavigateToSmartScan }
             }
+
             is HomeEvent.DeepScanClicked -> {
                 setEffect { HomeEffect.NavigateToDeepScan }
             }
+
             is HomeEvent.SettingsClicked -> {
                 setEffect { HomeEffect.NavigateToSettings }
             }
+
             is HomeEvent.FastScan -> {
                 fastScan()
             }
@@ -89,12 +100,15 @@ class HomeViewModel @Inject constructor(
             Category.DUPLICATE -> {
                 setEffect { HomeEffect.NavigateToDuplicate }
             }
+
             Category.SIMILAR -> {
 
             }
+
             Category.LARGE_VIDEOS -> {
 
             }
+
             Category.SCREENSHOTS -> {
 
             }
