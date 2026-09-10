@@ -27,6 +27,9 @@ interface ScanResultsDao {
     @Query("DELETE FROM smart_insights")
     suspend fun deleteAllInsights()
 
+    @Query("DELETE FROM scan_summary")
+    suspend fun deleteSummary()
+
     @Transaction
     suspend fun updateScanResults(summary: ScanSummaryEntity, insights: List<SmartInsightEntity>) {
         insertSummary(summary)
@@ -37,7 +40,6 @@ interface ScanResultsDao {
     @Transaction
     suspend fun clearAllResults() {
         deleteAllInsights()
-        // We could delete summary or reset it. Let's delete for now if we want a fresh start.
-        // But usually we just want to clear insights if things were cleaned.
+        deleteSummary()
     }
 }
