@@ -2,18 +2,23 @@ package com.androidtech.features.ui.screens.duplicate
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
+import com.androidtech.base.utils.formatSize
 import com.androidtech.base.viewmodel.BaseViewModel
 import com.androidtech.domain.extensions.UiState
+import com.androidtech.domain.model.media.MediaItem
 import com.androidtech.domain.usecase.media.GetLatestDuplicateGroupsUseCase
+import com.androidtech.domain.usecase.media.PerformSafeCleanupUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class DuplicateViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
-    private val getLatestDuplicateGroupsUseCase: GetLatestDuplicateGroupsUseCase
+    private val getLatestDuplicateGroupsUseCase: GetLatestDuplicateGroupsUseCase,
+    private val performSafeCleanupUseCase: PerformSafeCleanupUseCase
 ): BaseViewModel<DuplicateEvent, DuplicateState, DuplicateEffect>(savedStateHandle) {
     override fun createInitializeState(): DuplicateState = DuplicateState()
 
@@ -48,11 +53,43 @@ class DuplicateViewModel @Inject constructor(
                 setEffect { DuplicateEffect.NavigateBack }
             }
             is DuplicateEvent.DeleteClick -> {
-                //deletePhotos(event.selectedPhotoIds)
+                deletePhotos(event.selectedPhotoIds)
             }
             is DuplicateEvent.TogglePhotoSelection -> {
                 togglePhotoSelection(event.photoId)
             }
+        }
+    }
+
+    private fun deletePhotos(selectedPhotoIds: List<Long>) {
+        if (selectedPhotoIds.isEmpty()) return
+
+        viewModelScope.launch {
+            setState { copy(isLoading = true) }
+
+            // Tìm các MediaItem dựa trên ID đã chọn
+            val itemsToDelete = mutableListOf<MediaItem>()
+            uiState.value.duplicateGroups.forEach { group ->
+                if (group.originalItem.id in selectedPhotoIds) {
+                    itemsToDelete.add(group.originalItem)
+                }
+                group.duplicateItems.forEach { item ->
+                    if (item.id in selectedPhotoIds) {
+                        itemsToDelete.add(item)
+                    }
+                }
+            }
+
+            performSafeCleanupUseCase(itemsToDelete, confirmed = true)
+                .onSuccess { result ->
+                    setState { copy(isLoading = false) }
+                    val message = "Đã dọn dẹp ${result.itemsDeletedCount} tệp, giải phóng ${result.bytesReclaimed.formatSize()}"
+                    setEffect { DuplicateEffect.ShowSnackbar(message) }
+                }
+                .onFailure { error ->
+                    setState { copy(isLoading = false) }
+                    setEffect { DuplicateEffect.ShowSnackbar("Lỗi khi xóa: ${error.message}") }
+                }
         }
     }
 

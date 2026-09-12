@@ -6,26 +6,36 @@ import android.app.AppOpsManager
 import android.content.Context
 import android.content.Context.APP_OPS_SERVICE
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.os.Build
 import android.provider.Settings
+import androidx.core.content.ContextCompat
 import androidx.core.net.toUri
 import com.androidtech.base.permission.Permission
 import java.security.MessageDigest
 
 
 fun Context.isPermissionGranted(permission: Permission): Boolean =
-    when (permission) {
+    ContextCompat.checkSelfPermission(this, permission.permission)  == PackageManager.PERMISSION_GRANTED
+    /*when (permission) {
+        is Permission.Camera -> true
+        is Permission.ReadExternalStorage -> true
+        is Permission.WriteExternalStorage -> true
+        is Permission.RecordAudio -> true
+        is Permission.ReadMediaImages -> true
+        is Permission.ReadMediaVideos -> true
         else -> false
-    }
+    }*/
 
 fun Context.isServiceRunning(serviceName: String): Boolean {
     val manager = getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
-    manager.getRunningServices(Int.MAX_VALUE).forEach { serviceInfo ->
+    return manager.getRunningServices(Int.MAX_VALUE).any { it.service.className == serviceName}
+    /*.forEach { serviceInfo ->
         if (serviceName == serviceInfo.service.className) {
             true
         }
     }
-    return false
+    return false*/
 }
 
 fun Context.requestSystemAlertWindowPermission() {

@@ -2,8 +2,10 @@ package com.androidtech.base.permission
 
 import android.Manifest
 import android.content.pm.PackageManager
+import android.os.Build
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.RequiresApi
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
@@ -14,7 +16,19 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.core.content.ContextCompat
 
 sealed class Permission(val permission: String) {
+
     data object Camera : Permission(Manifest.permission.CAMERA)
+
+    data object ReadExternalStorage : Permission(Manifest.permission.READ_EXTERNAL_STORAGE)
+    data object WriteExternalStorage : Permission(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+    data object RecordAudio : Permission(Manifest.permission.RECORD_AUDIO)
+
+    // For android 12 -
+    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
+    data object ReadMediaImages : Permission(Manifest.permission.READ_MEDIA_IMAGES)
+    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
+    data object ReadMediaVideos : Permission(Manifest.permission.READ_MEDIA_VIDEO)
+
 }
 
 class SinglePermissionState(
@@ -40,6 +54,11 @@ fun rememberPermissionGranted(permission: String): MutableState<Boolean> {
             ContextCompat.checkSelfPermission(content, permission) == PackageManager.PERMISSION_GRANTED
         )
     }
+}
+// Overload
+@Composable
+fun rememberPermissionGranted(permission: Permission): MutableState<Boolean> {
+    return rememberPermissionGranted(permission.permission)
 }
 
 @Composable
@@ -69,6 +88,15 @@ fun rememberSinglePermission(
             request = { launcher.launch(permission) }
         )
     }
+}
+// Overload
+@Composable
+fun rememberSinglePermission(
+    permission: Permission,
+    onGranted: () -> Unit = {},
+    onDenied: () -> Unit = {}
+): SinglePermissionState {
+    return rememberSinglePermission(permission.permission, onGranted, onDenied)
 }
 
 @Composable
@@ -102,4 +130,18 @@ fun rememberMultiplePermissions(
             requestAll = { launcher.launch(permissions.toList().toTypedArray()) }
         )
     }
+}
+// Overload
+@Composable
+fun rememberMultiplePermissions(
+    vararg permissions: Permission,
+    onAllGranted: () -> Unit = {},
+    onAnyDenied: (List<String>) -> Unit = {}
+): MultiplePermissionsState {
+    val permissionStrings = permissions.map { it.permission }.toTypedArray()
+    return rememberMultiplePermissions(
+        permissions = permissionStrings,
+        onAllGranted = onAllGranted,
+        onAnyDenied = onAnyDenied
+    )
 }

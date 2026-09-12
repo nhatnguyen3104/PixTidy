@@ -83,6 +83,9 @@ fun DuplicateScreen (
                 is DuplicateEffect.NavigateBack -> {
                     navController.popBackStack()
                 }
+                is DuplicateEffect.ShowSnackbar -> {
+                    showSnackbar(effect.message)
+                }
             }
         }
     }
@@ -159,6 +162,7 @@ fun DuplicateContent(
                 )
             }
         },
+        snackbarHost = { SnackbarHost(snackbarHostState) },
         containerColor = MaterialTheme.colorScheme.background
     ) { paddingValues ->
         LazyColumn(

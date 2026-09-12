@@ -27,6 +27,7 @@ import androidx.navigation.compose.composable
 import com.androidtech.base.R
 import com.androidtech.base.extension.AppDestination
 import com.androidtech.base.extension.LocalNavController
+import com.androidtech.base.permission.Permission
 import com.androidtech.base.permission.rememberMultiplePermissions
 import com.androidtech.base.theme.*
 import com.androidtech.base.ui.animation.bounceClick
@@ -53,9 +54,9 @@ fun HomeScreen(
     val context = LocalContext.current
 
     val permissions = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-        listOf(Manifest.permission.READ_MEDIA_IMAGES, Manifest.permission.READ_MEDIA_VIDEO)
+        listOf(Permission.ReadMediaImages, Permission.ReadMediaVideos)
     } else {
-        listOf(Manifest.permission.READ_EXTERNAL_STORAGE)
+        listOf(Permission.ReadExternalStorage)
     }
 
     val permissionState = rememberMultiplePermissions(
