@@ -24,6 +24,8 @@ sealed class HomeEffect : UIEffect {
     object NavigateToSettings : HomeEffect()
 
     object NavigateToDuplicate : HomeEffect()
+
+    object RequestStoragePermissions : HomeEffect()
 }
 
 enum class Category {

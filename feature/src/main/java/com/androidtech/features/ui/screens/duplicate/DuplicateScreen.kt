@@ -41,6 +41,8 @@ import coil.compose.AsyncImage
 import com.androidtech.base.R
 import com.androidtech.base.extension.AppDestination
 import com.androidtech.base.extension.LocalNavController
+import com.androidtech.base.permission.Permission
+import com.androidtech.base.permission.rememberSinglePermission
 import com.androidtech.base.theme.Body16Medium
 import com.androidtech.base.theme.Title20Bold
 import com.androidtech.base.utils.formatSize
@@ -67,6 +69,14 @@ fun DuplicateScreen (
     val navController = LocalNavController.current
     val context = LocalContext.current
 
+    val writePermissionState = rememberSinglePermission(
+        permission = Permission.WriteExternalStorage,
+        onGranted = {
+            val selectedPhotos = uiState.value.duplicateGroups.flatMap { it.selectedDuplicateItems } .map { it.id }
+            viewModel.handleEvent(DuplicateEvent.DeleteClick(selectedPhotos))
+        }
+    )
+
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
     var snackbarJob by remember { mutableStateOf<Job?>(null) }
@@ -85,6 +95,13 @@ fun DuplicateScreen (
                 }
                 is DuplicateEffect.ShowSnackbar -> {
                     showSnackbar(effect.message)
+                }
+                is DuplicateEffect.RequestWritePermission -> {
+                    if (writePermissionState.isGranted) {
+                        viewModel.handleEvent(DuplicateEvent.DeleteClick(effect.selectedPhotoIds))
+                    } else {
+                        writePermissionState.request()
+                    }
                 }
             }
         }

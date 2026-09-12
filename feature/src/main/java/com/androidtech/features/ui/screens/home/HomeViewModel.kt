@@ -28,6 +28,7 @@ class HomeViewModel @Inject constructor(
 
     init {
         observeScanResults()
+        setEffect { HomeEffect.RequestStoragePermissions }
         fastScan()
     }
 

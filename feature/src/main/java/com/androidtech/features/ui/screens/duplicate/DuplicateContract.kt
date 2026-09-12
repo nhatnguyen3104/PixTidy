@@ -20,4 +20,5 @@ sealed class DuplicateEvent : UIEvent {
 sealed class DuplicateEffect : UIEffect {
     object NavigateBack : DuplicateEffect()
     data class ShowSnackbar(val message: String) : DuplicateEffect()
+    data class RequestWritePermission(val selectedPhotoIds: List<Long>) : DuplicateEffect()
 }

@@ -64,12 +64,6 @@ fun HomeScreen(
         onAllGranted = { viewModel.handleEvent(HomeEvent.FastScan) }
     )
 
-    LaunchedEffect(Unit) {
-        if (!permissionState.allGranted) {
-            permissionState.requestAll()
-        }
-    }
-
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
     var snackbarJob by remember { mutableStateOf<Job?>(null) }
@@ -83,6 +77,11 @@ fun HomeScreen(
     LaunchedEffect(viewModel.uiEffect, lifecycleOwner) {
         viewModel.uiEffect.flowWithLifecycle(lifecycleOwner.lifecycle).collect { effect ->
             when (effect) {
+                is HomeEffect.RequestStoragePermissions -> {
+                    if (!permissionState.allGranted) {
+                        permissionState.requestAll()
+                    }
+                }
                 is HomeEffect.NavigateToSmartScan -> {
                     navController.navigate(AppDestination.ScanScreen.createRoute(ScanLayer.SMART_SCAN.name))
                 }

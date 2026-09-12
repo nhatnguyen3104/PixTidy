@@ -1,5 +1,6 @@
 package com.androidtech.features.ui.screens.duplicate
 
+import android.os.Build
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.androidtech.base.utils.formatSize
@@ -53,7 +54,11 @@ class DuplicateViewModel @Inject constructor(
                 setEffect { DuplicateEffect.NavigateBack }
             }
             is DuplicateEvent.DeleteClick -> {
-                deletePhotos(event.selectedPhotoIds)
+                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
+                    setEffect { DuplicateEffect.RequestWritePermission(event.selectedPhotoIds) }
+                } else {
+                    deletePhotos(event.selectedPhotoIds)
+                }
             }
             is DuplicateEvent.TogglePhotoSelection -> {
                 togglePhotoSelection(event.photoId)
