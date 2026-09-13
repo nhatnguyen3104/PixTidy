@@ -94,6 +94,9 @@ fun HomeScreen(
                 is HomeEffect.NavigateToDuplicate -> {
                     navController.navigate(AppDestination.DuplicateScreen.route)
                 }
+                is HomeEffect.NavigateToSimilar -> {
+                    navController.navigate(AppDestination.SimilarScreen.route)
+                }
             }
         }
     }

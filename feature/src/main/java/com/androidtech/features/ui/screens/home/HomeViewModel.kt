@@ -103,7 +103,7 @@ class HomeViewModel @Inject constructor(
             }
 
             Category.SIMILAR -> {
-
+                setEffect { HomeEffect.NavigateToSimilar }
             }
 
             Category.LARGE_VIDEOS -> {

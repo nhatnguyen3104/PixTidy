@@ -46,6 +46,7 @@ import com.androidtech.base.permission.rememberSinglePermission
 import com.androidtech.base.theme.Body16Medium
 import com.androidtech.base.theme.Title20Bold
 import com.androidtech.base.utils.formatSize
+import com.androidtech.features.ui.components.DeleteBottomBar
 import com.androidtech.features.ui.screens.home.HomeEvent
 import com.androidtech.features.ui.screens.home.HomeScreen
 import com.androidtech.features.ui.screens.scan.ScanEvent

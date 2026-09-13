@@ -24,6 +24,7 @@ sealed class HomeEffect : UIEffect {
     object NavigateToSettings : HomeEffect()
 
     object NavigateToDuplicate : HomeEffect()
+    object NavigateToSimilar : HomeEffect()
 
     object RequestStoragePermissions : HomeEffect()
 }
