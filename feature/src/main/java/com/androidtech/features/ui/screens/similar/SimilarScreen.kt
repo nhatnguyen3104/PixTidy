@@ -1,5 +1,8 @@
 package com.androidtech.features.ui.screens.similar
 
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.IntentSenderRequest
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -65,6 +68,16 @@ fun SimilarScreen(
         }
     }
 
+    val intentSenderLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.StartIntentSenderForResult()
+    ) { activityResult ->
+        if (activityResult.resultCode == android.app.Activity.RESULT_OK) {
+            val selectedPhotos = uiState.value.similarGroups.flatMap { it.items }.filter { it.isSelected }.map { it.id }
+            viewModel.handleEvent(SimilarEvent.ConfirmCacheCleanup(selectedPhotos))
+            showSnackbar("Xóa thành công các tệp đã chọn")
+        }
+    }
+
     LaunchedEffect(viewModel.uiEffect, lifecycleOwner) {
         viewModel.uiEffect.flowWithLifecycle(lifecycleOwner.lifecycle).collect { effect ->
             when (effect) {
@@ -80,6 +93,11 @@ fun SimilarScreen(
                     } else {
                         writePermissionState.request()
                     }
+                }
+                is SimilarEffect.LaunchIntentSender -> {
+                    intentSenderLauncher.launch(
+                        IntentSenderRequest.Builder(effect.intentSender).build()
+                    )
                 }
             }
         }

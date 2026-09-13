@@ -5,6 +5,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.androidtech.base.utils.formatSize
 import com.androidtech.base.viewmodel.BaseViewModel
+import com.androidtech.data.repository.RequiresUserConfirmationException
 import com.androidtech.domain.extensions.UiState
 import com.androidtech.domain.model.media.MediaItem
 import com.androidtech.domain.usecase.media.GetLatestDuplicateGroupsUseCase
@@ -63,6 +64,22 @@ class DuplicateViewModel @Inject constructor(
             is DuplicateEvent.TogglePhotoSelection -> {
                 togglePhotoSelection(event.photoId)
             }
+            is DuplicateEvent.ConfirmCacheCleanup -> {
+                confirmCacheCleanup(event.photoIds)
+            }
+        }
+    }
+
+    private fun confirmCacheCleanup(photoIds: List<Long>) {
+        viewModelScope.launch {
+            val itemsToRemove = mutableListOf<MediaItem>()
+            uiState.value.duplicateGroups.forEach { group ->
+                if (group.originalItem.id in photoIds) itemsToRemove.add(group.originalItem)
+                group.duplicateItems.forEach { item ->
+                    if (item.id in photoIds) itemsToRemove.add(item)
+                }
+            }
+            performSafeCleanupUseCase.updateCacheOnly(itemsToRemove)
         }
     }
 
@@ -72,7 +89,7 @@ class DuplicateViewModel @Inject constructor(
         viewModelScope.launch {
             setState { copy(isLoading = true) }
 
-            // Tìm các MediaItem dựa trên ID đã chọn
+            // Find MediaItems with ID selected
             val itemsToDelete = mutableListOf<MediaItem>()
             uiState.value.duplicateGroups.forEach { group ->
                 if (group.originalItem.id in selectedPhotoIds) {
@@ -93,7 +110,11 @@ class DuplicateViewModel @Inject constructor(
                 }
                 .onFailure { error ->
                     setState { copy(isLoading = false) }
-                    setEffect { DuplicateEffect.ShowSnackbar("Lỗi khi xóa: ${error.message}") }
+                    if (error is RequiresUserConfirmationException) {
+                        setEffect { DuplicateEffect.LaunchIntentSender(error.intentSender) }
+                    } else {
+                        setEffect { DuplicateEffect.ShowSnackbar("Lỗi khi xóa: ${error.message}") }
+                    }
                 }
         }
     }

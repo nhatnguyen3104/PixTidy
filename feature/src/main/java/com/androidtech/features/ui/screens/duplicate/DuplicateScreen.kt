@@ -1,5 +1,8 @@
 package com.androidtech.features.ui.screens.duplicate
 
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.IntentSenderRequest
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -88,6 +91,16 @@ fun DuplicateScreen (
         }
     }
 
+    val intentSenderLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.StartIntentSenderForResult()
+    ) { activityResult ->
+        if (activityResult.resultCode == android.app.Activity.RESULT_OK) {
+            val selectedPhotos = uiState.value.duplicateGroups.flatMap { it.selectedDuplicateItems }.map { it.id }
+            viewModel.handleEvent(DuplicateEvent.ConfirmCacheCleanup(selectedPhotos))
+            showSnackbar("Xóa thành công các tệp đã chọn")
+        }
+    }
+
     LaunchedEffect(viewModel.uiEffect, lifecycleOwner) {
         viewModel.uiEffect.flowWithLifecycle(lifecycleOwner.lifecycle).collect { effect ->
             when (effect) {
@@ -103,6 +116,11 @@ fun DuplicateScreen (
                     } else {
                         writePermissionState.request()
                     }
+                }
+                is DuplicateEffect.LaunchIntentSender -> {
+                    intentSenderLauncher.launch(
+                        IntentSenderRequest.Builder(effect.intentSender).build()
+                    )
                 }
             }
         }

@@ -29,14 +29,21 @@ class PerformSafeCleanupUseCase @Inject constructor(
         val totalBytes = items.sumOf { it.size }
 
         return mediaStoreRepository.deleteItems(uris).map {
-            // After successful physical deletion, we MUST clear the cached results
-            // because the summary and insights are now stale.
-            scanResultsRepository.clearResults()
+            // After successful physical deletion, update the cached results incrementally
+            scanResultsRepository.updateResultsAfterDeletion(items)
 
             CleanupResult(
                 itemsDeletedCount = items.size,
                 bytesReclaimed = totalBytes
             )
         }
+    }
+
+    /**
+     * Updates the database cache directly. Used when physical deletion was already 
+     * performed successfully by the Android system via IntentSender confirmation dialog.
+     */
+    suspend fun updateCacheOnly(items: List<MediaItem>) {
+        scanResultsRepository.updateResultsAfterDeletion(items)
     }
 }

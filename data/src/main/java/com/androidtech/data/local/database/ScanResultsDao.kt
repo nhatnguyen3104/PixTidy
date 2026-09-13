@@ -15,11 +15,17 @@ interface ScanResultsDao {
     @Query("SELECT * FROM scan_summary WHERE id = 1")
     fun getLatestSummary(): Flow<ScanSummaryEntity?>
 
+    @Query("SELECT * FROM scan_summary WHERE id = 1")
+    suspend fun getLatestSummaryOneShot(): ScanSummaryEntity?
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertSummary(summary: ScanSummaryEntity)
 
     @Query("SELECT * FROM smart_insights")
     fun getAllInsights(): Flow<List<SmartInsightEntity>>
+
+    @Query("SELECT * FROM smart_insights")
+    suspend fun getAllInsightsOneShot(): List<SmartInsightEntity>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertInsights(insights: List<SmartInsightEntity>)

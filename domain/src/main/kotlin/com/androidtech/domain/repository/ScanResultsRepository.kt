@@ -1,6 +1,7 @@
 package com.androidtech.domain.repository
 
 import com.androidtech.domain.model.media.FastScanSummary
+import com.androidtech.domain.model.media.MediaItem
 import com.androidtech.domain.model.media.SmartInsight
 import kotlinx.coroutines.flow.Flow
 
@@ -29,4 +30,9 @@ interface ScanResultsRepository {
      * Clears the cached results (e.g. after a full cleanup).
      */
     suspend fun clearResults()
+
+    /**
+     * Updates the cached scan summary and smart insights dynamically after items are deleted.
+     */
+    suspend fun updateResultsAfterDeletion(deletedItems: List<MediaItem>)
 }

@@ -5,6 +5,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.androidtech.base.utils.formatSize
 import com.androidtech.base.viewmodel.BaseViewModel
+import com.androidtech.data.repository.RequiresUserConfirmationException
 import com.androidtech.domain.extensions.UiState
 import com.androidtech.domain.model.media.MediaItem
 import com.androidtech.domain.usecase.media.GetLatestSimilarGroupsUseCase
@@ -63,6 +64,21 @@ class SimilarViewModel @Inject constructor(
             is SimilarEvent.TogglePhotoSelection -> {
                 togglePhotoSelection(event.photoId)
             }
+            is SimilarEvent.ConfirmCacheCleanup -> {
+                confirmCacheCleanup(event.photoIds)
+            }
+        }
+    }
+
+    private fun confirmCacheCleanup(photoIds: List<Long>) {
+        viewModelScope.launch {
+            val itemsToRemove = mutableListOf<MediaItem>()
+            uiState.value.similarGroups.forEach { group ->
+                group.items.forEach { item ->
+                    if (item.id in photoIds) itemsToRemove.add(item)
+                }
+            }
+            performSafeCleanupUseCase.updateCacheOnly(itemsToRemove)
         }
     }
 
@@ -89,7 +105,11 @@ class SimilarViewModel @Inject constructor(
                 }
                 .onFailure { error ->
                     setState { copy(isLoading = false) }
-                    setEffect { SimilarEffect.ShowSnackbar("Lỗi khi xóa: ${error.message}") }
+                    if (error is com.androidtech.data.repository.RequiresUserConfirmationException) {
+                        setEffect { SimilarEffect.LaunchIntentSender(error.intentSender) }
+                    } else {
+                        setEffect { SimilarEffect.ShowSnackbar("Lỗi khi xóa: ${error.message}") }
+                    }
                 }
         }
     }

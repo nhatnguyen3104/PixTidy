@@ -46,6 +46,40 @@ class ScanResultsRepositoryImpl @Inject constructor(
         scanResultsDao.clearAllResults()
     }
 
+    override suspend fun updateResultsAfterDeletion(deletedItems: List<MediaItem>) {
+        if (deletedItems.isEmpty()) return
+
+        val summaryEntity = scanResultsDao.getLatestSummaryOneShot()
+        val currentSummary = summaryEntity?.toDomain() ?: FastScanSummary.EMPTY
+        
+        val insightEntities = scanResultsDao.getAllInsightsOneShot()
+        val currentInsights = insightEntities.map { it.toDomain() }
+
+        val deletedIds = deletedItems.map { it.id }.toSet()
+        val totalDeletedBytes = deletedItems.sumOf { it.size }
+        val totalDeletedCount = deletedItems.size
+
+        val updatedSummary = currentSummary.copy(
+            totalMediaCount = (currentSummary.totalMediaCount - totalDeletedCount).coerceAtLeast(0),
+            totalStorageBytes = (currentSummary.totalStorageBytes - totalDeletedBytes).coerceAtLeast(0L),
+            duplicatesSizeBytes = (currentSummary.duplicatesSizeBytes - totalDeletedBytes).coerceAtLeast(0L),
+            photosSizeBytes = (currentSummary.photosSizeBytes - totalDeletedBytes).coerceAtLeast(0L)
+        )
+
+        val updatedInsights = currentInsights.map { insight ->
+            val remainingItems = insight.items.filterNot { it.id in deletedIds }
+            val removedItemsBytes = insight.items.filter { it.id in deletedIds }.sumOf { it.size }
+            
+            insight.copy(
+                items = remainingItems,
+                affectedItemsCount = remainingItems.size,
+                reclaimableBytes = (insight.reclaimableBytes - removedItemsBytes).coerceAtLeast(0L)
+            )
+        }.filter { it.affectedItemsCount > 0 }
+
+        saveResults(updatedSummary, updatedInsights)
+    }
+
     private fun ScanSummaryEntity.toDomain(): FastScanSummary {
         val storageSummary = try {
             storageSummaryJson.let { storageSummaryAdapter.fromJson(it) } ?: StorageSummary.UNKNOWN
