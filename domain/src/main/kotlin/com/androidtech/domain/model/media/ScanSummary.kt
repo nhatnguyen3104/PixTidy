@@ -3,15 +3,12 @@ package com.androidtech.domain.model.media
 import kotlin.math.round
 
 /**
- * Lightweight, cumulative snapshot produced by [com.androidtech.domain.usecase.RunFastScanUseCase].
- * Emitted repeatedly as MediaStore batches stream in, converging to the final totals — this is
- * what makes Fast Scan feel instant even on libraries with 50k+ items.
- *
- * [storageSummary] is system-wide (total/used/free device storage, not just media) and is fetched
- * once up front rather than accumulated per-batch — see [com.androidtech.domain.usecase.RunFastScanUseCase]
- * for why.
+ * Lightweight, cumulative snapshot produced by scan pipelines.
+ * Emitted repeatedly as MediaStore batches stream in, converging to the final totals.
  */
-data class FastScanSummary(
+data class ScanSummary(
+    val lastScanLevel: ScanLayer,
+    val newItemsCount: Int = 0,
     val totalMediaCount: Int,
     val totalStorageBytes: Long,
     val screenshotCount: Int,
@@ -24,7 +21,9 @@ data class FastScanSummary(
     val storageSummary: StorageSummary
 ) {
     companion object {
-        val EMPTY = FastScanSummary(
+        val EMPTY = ScanSummary(
+            lastScanLevel = ScanLayer.NONE,
+            newItemsCount = 0,
             totalMediaCount = 0,
             totalStorageBytes = 0L,
             screenshotCount = 0,

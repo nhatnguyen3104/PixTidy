@@ -132,7 +132,7 @@ class RunSmartScanUseCase @Inject constructor(
     }
 
     private fun scanning(processed: Int, total: Int, message: String) =
-        ScanProcess.Scanning(ScanProgress.of(ScanLayer.SMART_SCAN, processed, total, message))
+        ScanProcess.Scanning(ScanProgress.of(ScanLayer.SMART, processed, total, message))
 
     private companion object {
         const val LARGE_VIDEO_THRESHOLD_BYTES = 100L * 1024 * 1024

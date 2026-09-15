@@ -4,7 +4,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.androidtech.base.viewmodel.BaseViewModel
 import com.androidtech.domain.extensions.UiState
-import com.androidtech.domain.model.media.FastScanSummary
+import com.androidtech.domain.model.media.ScanSummary
 import com.androidtech.domain.usecase.media.GetLatestScanResultsUseCase
 import com.androidtech.domain.usecase.media.RunFastScanUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -34,9 +34,9 @@ class HomeViewModel @Inject constructor(
 
     private fun observeScanResults() {
         getLatestScanResultsUseCase(Unit)
-            .filterIsInstance<UiState.Success<FastScanSummary?>>()
+            .filterIsInstance<UiState.Success<ScanSummary?>>()
             .onEach { state ->
-                val summary = state.data ?: FastScanSummary.EMPTY
+                val summary = state.data ?: ScanSummary.EMPTY
                 setState { copy(storageStats = summary) }
             }
             .launchIn(viewModelScope)
@@ -47,10 +47,11 @@ class HomeViewModel @Inject constructor(
         scanJob = combine(
             runFastScanUseCase(),
             getLatestScanResultsUseCase(Unit)
-                .filterIsInstance<UiState.Success<FastScanSummary?>>()
+                .filterIsInstance<UiState.Success<ScanSummary?>>()
                 .map { it.data }
         ) { fresh, cached ->
             fresh.copy(
+                lastScanLevel = cached?.lastScanLevel ?: fresh.lastScanLevel,
                 duplicatesSizeBytes = cached?.duplicatesSizeBytes ?: 0L,
                 screenshotCount = if ((cached?.screenshotCount
                         ?: 0) > 0

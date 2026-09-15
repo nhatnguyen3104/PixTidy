@@ -3,11 +3,11 @@ package com.androidtech.features.ui.screens.home
 import com.androidtech.base.viewmodel.UIEffect
 import com.androidtech.base.viewmodel.UIEvent
 import com.androidtech.base.viewmodel.UIState
-import com.androidtech.domain.model.media.FastScanSummary
+import com.androidtech.domain.model.media.ScanSummary
 
 data class HomeState(
     val isLoading: Boolean = false,
-    val storageStats: FastScanSummary = FastScanSummary.EMPTY,
+    val storageStats: ScanSummary = ScanSummary.EMPTY,
 ): UIState
 
 sealed class HomeEvent : UIEvent {

@@ -3,7 +3,7 @@ package com.androidtech.data.repository
 import com.androidtech.data.local.database.ScanResultsDao
 import com.androidtech.data.model.ScanSummaryEntity
 import com.androidtech.data.model.SmartInsightEntity
-import com.androidtech.domain.model.media.FastScanSummary
+import com.androidtech.domain.model.media.ScanSummary
 import com.androidtech.domain.model.media.MediaItem
 import com.androidtech.domain.model.media.SmartInsight
 import com.androidtech.domain.model.media.StorageSummary
@@ -26,7 +26,7 @@ class ScanResultsRepositoryImpl @Inject constructor(
         Types.newParameterizedType(List::class.java, MediaItem::class.java)
     )
 
-    override fun getLatestResults(): Flow<FastScanSummary?> =
+    override fun getLatestResults(): Flow<ScanSummary?> =
         scanResultsDao.getLatestSummary().map { entity ->
             entity?.toDomain()
         }
@@ -36,7 +36,7 @@ class ScanResultsRepositoryImpl @Inject constructor(
             entities.map { it.toDomain() }
         }
 
-    override suspend fun saveResults(summary: FastScanSummary, insights: List<SmartInsight>) {
+    override suspend fun saveResults(summary: ScanSummary, insights: List<SmartInsight>) {
         val summaryEntity = summary.toEntity()
         val insightEntities = insights.map { it.toEntity() }
         scanResultsDao.updateScanResults(summaryEntity, insightEntities)
@@ -49,8 +49,8 @@ class ScanResultsRepositoryImpl @Inject constructor(
     override suspend fun updateResultsAfterDeletion(deletedItems: List<MediaItem>) {
         if (deletedItems.isEmpty()) return
 
-        val summaryEntity = scanResultsDao.getLatestSummaryOneShot()
-        val currentSummary = summaryEntity?.toDomain() ?: FastScanSummary.EMPTY
+        val summaryEntity = scanResultsDao.getLatestSummaryOneShot() ?: return
+        val currentSummary = summaryEntity.toDomain()
         
         val insightEntities = scanResultsDao.getAllInsightsOneShot()
         val currentInsights = insightEntities.map { it.toDomain() }
@@ -80,13 +80,15 @@ class ScanResultsRepositoryImpl @Inject constructor(
         saveResults(updatedSummary, updatedInsights)
     }
 
-    private fun ScanSummaryEntity.toDomain(): FastScanSummary {
+    private fun ScanSummaryEntity.toDomain(): ScanSummary {
         val storageSummary = try {
             storageSummaryJson.let { storageSummaryAdapter.fromJson(it) } ?: StorageSummary.UNKNOWN
         } catch (e: Exception) {
             StorageSummary.UNKNOWN
         }
-        return FastScanSummary(
+        return ScanSummary(
+            lastScanLevel = lastScanLevel,
+            newItemsCount = newItemsCount,
             totalMediaCount = totalMediaCount,
             totalStorageBytes = totalStorageBytes,
             screenshotCount = screenshotCount,
@@ -100,8 +102,10 @@ class ScanResultsRepositoryImpl @Inject constructor(
         )
     }
 
-    private fun FastScanSummary.toEntity(): ScanSummaryEntity {
+    private fun ScanSummary.toEntity(): ScanSummaryEntity {
         return ScanSummaryEntity(
+            lastScanLevel = lastScanLevel,
+            newItemsCount = newItemsCount,
             totalMediaCount = totalMediaCount,
             totalStorageBytes = totalStorageBytes,
             screenshotCount = screenshotCount,

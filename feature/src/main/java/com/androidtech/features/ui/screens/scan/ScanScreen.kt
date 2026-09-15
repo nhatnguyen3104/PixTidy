@@ -86,7 +86,7 @@ fun ScanContent(
     snackbarHostState: SnackbarHostState,
     modifier: Modifier = Modifier,
 ) {
-    val titleRes = if (uiState.scanLayer == ScanLayer.SMART_SCAN) {
+    val titleRes = if (uiState.scanLayer == ScanLayer.SMART) {
         R.string.text_smart_scan_storage
     } else {
         R.string.text_deep_scan_storage

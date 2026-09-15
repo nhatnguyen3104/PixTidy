@@ -7,7 +7,7 @@ import com.androidtech.domain.model.media.ScanLayer
 import com.androidtech.domain.model.media.ScanProcess
 
 data class ScanState(
-    val scanLayer: ScanLayer = ScanLayer.FAST_SCAN,
+    val scanLayer: ScanLayer = ScanLayer.FAST,
     val scanProcess: ScanProcess = ScanProcess.Idle
 ) : UIState
 

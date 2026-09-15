@@ -12,6 +12,7 @@ import javax.inject.Inject
 class GetLatestSmartInsightsUseCase @Inject constructor(
     private val scanResultsRepository: ScanResultsRepository
 ) : UIStateUseCase<SmartInsightType?, List<SmartInsight>>() {
+
     override fun run(param: SmartInsightType?): Flow<UiState<List<SmartInsight>>> {
         return scanResultsRepository.getLatestInsights().map { insights ->
             val filtered = if (param != null) {

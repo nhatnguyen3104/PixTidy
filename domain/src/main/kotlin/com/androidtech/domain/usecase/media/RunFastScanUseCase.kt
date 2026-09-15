@@ -1,9 +1,12 @@
 package com.androidtech.domain.usecase.media
 
-import com.androidtech.domain.model.media.FastScanSummary
+import com.androidtech.domain.model.media.ScanSummary
 import com.androidtech.domain.model.media.MediaItem
+import com.androidtech.domain.model.media.ScanLayer
 import com.androidtech.domain.model.media.StorageSummary
+import com.androidtech.domain.repository.MediaAnalysisCacheRepository
 import com.androidtech.domain.repository.MediaStoreRepository
+import com.androidtech.domain.repository.ScanResultsRepository
 import com.androidtech.domain.repository.SystemStorageRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -12,39 +15,56 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.onCompletion
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.scan
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 /**
- * Fast Scan: a raw MediaStore metadata pass with no bitmap decoding, no hashing — just counting —
- * combined with system-wide storage totals, so the very first screen the user sees after launch
- * has both "how much space do I have" and "what's on it" without waiting for Smart Scan.
+ * Fast Scan: Performs a raw MediaStore metadata pass to synchronize the library state
+ * and provide an instant storage snapshot.
  *
- * [StorageSummary] (total/used/free device bytes + total media bytes) is fetched once, up front,
- * concurrently with the very first MediaStore batch via [async] — both [SystemStorageRepository.fetchDeviceStorage]
- * (a StatFs/StorageStatsManager syscall) and [MediaStoreRepository.fetchTotalMediaSizeBytes] (a
- * single-column pass, not a full record materialization) are cheap enough that running them
- * alongside the first batch keeps the whole thing well under the 500ms target. It does not change
- * per batch afterward — unlike [FastScanSummary.totalStorageBytes], which is a running count of
- * *this scan's* progress, [FastScanSummary.storageSummary] reflects the device's actual current state.
+ * It serves as the "Sync" layer, updating Room with current file counts and identifying
+ * newly added items that haven't been analyzed by Smart Scan yet.
  */
 class RunFastScanUseCase @Inject constructor(
     private val mediaStoreRepository: MediaStoreRepository,
-    private val systemStorageRepository: SystemStorageRepository
+    private val systemStorageRepository: SystemStorageRepository,
+    private val mediaAnalysisCacheRepository: MediaAnalysisCacheRepository,
+    private val scanResultsRepository: ScanResultsRepository
 ) {
 
-    operator fun invoke(): Flow<FastScanSummary> = flow {
+    operator fun invoke(): Flow<ScanSummary> = flow {
         coroutineScope {
             val storageSummaryDeferred = async { buildStorageSummary() }
+            val allMediaIds = mutableListOf<Long>()
+            var lastEmittedSummary: ScanSummary? = null
 
             mediaStoreRepository.fetchAllMediaFast()
-                .scan(FastScanSummary.EMPTY) { accumulated, batch -> accumulated.plusBatch(batch) }
-                .drop(1) // drop the seed emitted by scan() before any real batch has arrived
-                .collect { runningSummary ->
-                    // Resolves immediately after the first await; every batch after the first
-                    // sees an already-completed Deferred, so this costs nothing further.
-                    emit(runningSummary.copy(storageSummary = storageSummaryDeferred.await()))
+                .scan(ScanSummary.EMPTY.copy(lastScanLevel = ScanLayer.FAST)) { accumulated, batch ->
+                    allMediaIds.addAll(batch.map { it.id })
+                    accumulated.plusBatch(batch)
                 }
+                .drop(1)
+                .onEach { runningSummary ->
+                    val summaryWithStorage = runningSummary.copy(storageSummary = storageSummaryDeferred.await())
+                    lastEmittedSummary = summaryWithStorage
+                    emit(summaryWithStorage)
+                }
+                .onCompletion {
+                    // Sync: Prune orphaned cache entries
+                    launch {
+                        mediaAnalysisCacheRepository.pruneOrphaned(allMediaIds)
+                    }
+                    // Persist the final sync result to Room
+                    lastEmittedSummary?.let { final ->
+                        launch {
+                            scanResultsRepository.saveResults(final, emptyList())
+                        }
+                    }
+                }
+                .collect {}
         }
     }.flowOn(Dispatchers.Default)
 
@@ -54,7 +74,7 @@ class RunFastScanUseCase @Inject constructor(
         deviceStorageDeferred.await().copy(mediaUsedBytes = mediaSizeDeferred.await())
     }
 
-    private fun FastScanSummary.plusBatch(batch: List<MediaItem>): FastScanSummary {
+    private fun ScanSummary.plusBatch(batch: List<MediaItem>): ScanSummary {
         var addedBytes = 0L
         var addedScreenshots = 0
         var addedScreenshotBytes = 0L
@@ -92,7 +112,6 @@ class RunFastScanUseCase @Inject constructor(
         )
     }
 
-    /** Cheap path/name heuristic — the real classifier (dimension-ratio aware) runs in Smart Scan. */
     private fun isLikelyScreenshot(item: MediaItem): Boolean {
         val needle = SCREENSHOT_HINT
         return item.path.lowercase().contains(needle) || item.name.lowercase().contains(needle)

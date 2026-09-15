@@ -239,7 +239,7 @@ class RunDeepSmartScanUseCase @Inject constructor(
     }
 
     private fun deepScanning(processed: Int, total: Int, message: String) =
-        ScanProcess.Scanning(ScanProgress.of(ScanLayer.DEEP_SMART_SCAN, processed, total, message))
+        ScanProcess.Scanning(ScanProgress.of(ScanLayer.DEEP, processed, total, message))
 
     private companion object {
         const val MAX_CONCURRENT_VIDEO_DECODES = 2 // MediaMetadataRetriever is heavier than BitmapFactory

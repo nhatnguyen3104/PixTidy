@@ -4,7 +4,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.androidtech.base.viewmodel.BaseViewModel
 import com.androidtech.domain.extensions.UiState
-import com.androidtech.domain.model.media.FastScanSummary
+import com.androidtech.domain.model.media.ScanSummary
 import com.androidtech.domain.model.media.ScanLayer
 import com.androidtech.domain.model.media.ScanProcess as DomainScanState
 import com.androidtech.domain.model.media.SmartInsightType
@@ -36,9 +36,9 @@ class ScanViewModel @Inject constructor(
             try {
                 ScanLayer.valueOf(it)
             } catch (e: Exception) {
-                ScanLayer.FAST_SCAN
+                ScanLayer.FAST
             }
-        } ?: ScanLayer.FAST_SCAN
+        } ?: ScanLayer.FAST
     }
 
     override fun createInitializeState(): ScanState = ScanState(scanLayer = getScanMode())
@@ -58,8 +58,8 @@ class ScanViewModel @Inject constructor(
         
         val mode = getScanMode()
         val scanFlow = when (mode) {
-            ScanLayer.SMART_SCAN -> runSmartScanUseCase()
-            ScanLayer.DEEP_SMART_SCAN -> runDeepSmartScanUseCase()
+            ScanLayer.SMART -> runSmartScanUseCase()
+            ScanLayer.DEEP -> runDeepSmartScanUseCase()
             else -> return
         }
 
@@ -74,7 +74,7 @@ class ScanViewModel @Inject constructor(
                         )
                     }
                     is DomainScanState.Success -> {
-                        saveLatestResults(domainState)
+                        saveLatestResults(mode, domainState)
                         DomainScanState.Success(
                             insights = domainState.insights,
                             totalReclaimableBytes = domainState.totalReclaimableBytes
@@ -103,11 +103,11 @@ class ScanViewModel @Inject constructor(
         scanJob?.cancel()
     }
 
-    private fun saveLatestResults(success: DomainScanState.Success) {
+    private fun saveLatestResults(mode: ScanLayer, success: DomainScanState.Success) {
         viewModelScope.launch {
             val uiState = getLatestScanResultsUseCase(Unit).firstOrNull()
             val currentSummary = (uiState as? UiState.Success)?.data
-                ?: FastScanSummary.EMPTY
+                ?: ScanSummary.EMPTY.copy(lastScanLevel = mode)
 
             var duplicatesBytes = 0L
             var screenshotCount = 0
@@ -136,6 +136,7 @@ class ScanViewModel @Inject constructor(
             }
 
             val updatedSummary = currentSummary.copy(
+                lastScanLevel = mode,
                 duplicatesSizeBytes = duplicatesBytes,
                 screenshotCount = if (screenshotCount > 0) screenshotCount else currentSummary.screenshotCount,
                 screenshotBytes = if (screenshotBytes > 0) screenshotBytes else currentSummary.screenshotBytes,

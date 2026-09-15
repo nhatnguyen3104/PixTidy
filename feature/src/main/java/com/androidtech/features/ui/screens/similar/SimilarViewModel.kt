@@ -30,13 +30,13 @@ class SimilarViewModel @Inject constructor(
 
     private fun loadSimilarPhotos() {
         getLatestSimilarGroupsUseCase(Unit)
-            .onEach { uiState ->
-                when (uiState) {
+            .onEach { result ->
+                when (result) {
                     is UiState.Loading -> setState { copy(isLoading = true) }
                     is UiState.Success -> setState {
                         copy(
                             isLoading = false,
-                            similarGroups = uiState.data
+                            similarGroups = result.data
                         )
                     }
                     is UiState.Error -> setState { copy(isLoading = false) }

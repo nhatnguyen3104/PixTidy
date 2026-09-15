@@ -83,10 +83,10 @@ fun HomeScreen(
                     }
                 }
                 is HomeEffect.NavigateToSmartScan -> {
-                    navController.navigate(AppDestination.ScanScreen.createRoute(ScanLayer.SMART_SCAN.name))
+                    navController.navigate(AppDestination.ScanScreen.createRoute(ScanLayer.SMART.name))
                 }
                 is HomeEffect.NavigateToDeepScan -> {
-                    navController.navigate(AppDestination.ScanScreen.createRoute(ScanLayer.DEEP_SMART_SCAN.name))
+                    navController.navigate(AppDestination.ScanScreen.createRoute(ScanLayer.DEEP.name))
                 }
                 is HomeEffect.NavigateToSettings -> {
 

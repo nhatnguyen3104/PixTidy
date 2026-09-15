@@ -20,4 +20,14 @@ data class SimilarGroup(
             "bestCandidateId $bestCandidateId must reference an item within the group"
         }
     }
+
+    /** List item similar selected */
+    val selectedSimilarItems: List<MediaItem> get() = items.filter { it.isSelected }
+
+    /** Count of item similar selected */
+    val selectedSimilarItemsCount: Int get() = items.count {it.isSelected}
+
+    /** Size of item similar selected */
+    val totalSelectedSize: Long get() = selectedSimilarItems.sumOf { it.size }
+
 }

@@ -3,11 +3,14 @@ package com.androidtech.data.model
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import com.androidtech.domain.model.media.ScanLayer
 import com.androidtech.domain.model.media.SmartInsightType
 
 @Entity(tableName = "scan_summary")
 data class ScanSummaryEntity(
-    @PrimaryKey val id: Int = 1, // We only keep one latest summary
+    @PrimaryKey val id: Int = 1,
+    @ColumnInfo(name = "last_scan_level") val lastScanLevel: ScanLayer,
+    @ColumnInfo(name = "new_items_count") val newItemsCount: Int = 0,
     @ColumnInfo(name = "total_media_count") val totalMediaCount: Int,
     @ColumnInfo(name = "total_storage_bytes") val totalStorageBytes: Long,
     @ColumnInfo(name = "screenshot_count") val screenshotCount: Int,
