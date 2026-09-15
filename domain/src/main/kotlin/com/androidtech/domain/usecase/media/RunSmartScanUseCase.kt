@@ -8,9 +8,11 @@ import com.androidtech.domain.model.media.QualityScore
 import com.androidtech.domain.model.media.ScanLayer
 import com.androidtech.domain.model.media.ScanProgress
 import com.androidtech.domain.model.media.ScanProcess
+import com.androidtech.domain.model.media.ScanSummary
 import com.androidtech.domain.model.media.SimilarGroup
 import com.androidtech.domain.repository.MediaAnalysisCacheRepository
 import com.androidtech.domain.repository.MediaStoreRepository
+import com.androidtech.domain.repository.SystemStorageRepository
 import com.androidtech.domain.utils.PerceptualHashUtils
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
@@ -46,7 +48,8 @@ class RunSmartScanUseCase @Inject constructor(
     private val mediaStoreRepository: MediaStoreRepository,
     private val imageAnalyzerEngine: ImageAnalyzerEngine,
     private val mediaAnalysisCacheRepository: MediaAnalysisCacheRepository,
-    private val recommendationEngine: RecommendationEngine
+    private val recommendationEngine: RecommendationEngine,
+    private val systemStorageRepository: SystemStorageRepository
 ) {
 
     operator fun invoke(): Flow<ScanProcess> = callbackFlow {
@@ -120,9 +123,29 @@ class RunSmartScanUseCase @Inject constructor(
             screenshots = screenshots,
             largeVideos = largeVideos
         )
+
+        val storageSummary = systemStorageRepository.fetchDeviceStorage()
+        val totalMediaSize = allCandidates.sumOf { it.size }
+
+        val summary = ScanSummary(
+            lastScanLevel = ScanLayer.SMART,
+            newItemsCount = 0, // Not tracked in this use case yet
+            totalMediaCount = allCandidates.size,
+            totalStorageBytes = totalMediaSize,
+            screenshotCount = screenshots.size,
+            screenshotBytes = screenshots.sumOf { it.size },
+            largeVideoCount = largeVideos.size,
+            largeVideoBytes = largeVideos.sumOf { it.size },
+            photosSizeBytes = images.sumOf { it.size },
+            videosSizeBytes = videos.sumOf { it.size },
+            duplicatesSizeBytes = duplicateGroups.sumOf { it.totalSizeDifferenceBytes },
+            similaritySizeBytes = similarGroups.sumOf { it.potentialSavingsBytes },
+            storageSummary = storageSummary.copy(mediaUsedBytes = totalMediaSize)
+        )
+
         val totalReclaimable = insights.sumOf { it.reclaimableBytes }
 
-        emit(ScanProcess.Success(insights = insights, totalReclaimableBytes = totalReclaimable))
+        emit(ScanProcess.Success(summary = summary, insights = insights, totalReclaimableBytes = totalReclaimable))
     }
 
     private fun isLikelyScreenshot(item: MediaItem): Boolean {

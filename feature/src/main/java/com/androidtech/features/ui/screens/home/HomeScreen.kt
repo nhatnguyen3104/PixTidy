@@ -240,9 +240,10 @@ fun HomeContent(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(12.dp)
             ) {
+                val duplicatesSize = uiState.storageStats.duplicatesSizeBytes ?: 0L
                 CategoryCard(
                     title = "Duplicate photos",
-                    sizeText = uiState.storageStats.duplicatesSizeBytes.formatSize(),
+                    sizeText = duplicatesSize.formatSize(),
                     icon = Icons.Outlined.ContentCopy,
                     badgeColor = ImageBadge,
                     modifier = Modifier.weight(1f),

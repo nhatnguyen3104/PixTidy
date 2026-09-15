@@ -8,6 +8,7 @@ sealed interface ScanProcess {
     data class Scanning(val progress: ScanProgress) : ScanProcess
 
     data class Success(
+        val summary: ScanSummary,
         val insights: List<SmartInsight>,
         val totalReclaimableBytes: Long
     ) : ScanProcess

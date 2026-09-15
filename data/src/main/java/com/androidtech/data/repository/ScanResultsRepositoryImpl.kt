@@ -62,7 +62,7 @@ class ScanResultsRepositoryImpl @Inject constructor(
         val updatedSummary = currentSummary.copy(
             totalMediaCount = (currentSummary.totalMediaCount - totalDeletedCount).coerceAtLeast(0),
             totalStorageBytes = (currentSummary.totalStorageBytes - totalDeletedBytes).coerceAtLeast(0L),
-            duplicatesSizeBytes = (currentSummary.duplicatesSizeBytes - totalDeletedBytes).coerceAtLeast(0L),
+            duplicatesSizeBytes = (currentSummary.duplicatesSizeBytes?.minus(totalDeletedBytes))?.coerceAtLeast(0L),
             photosSizeBytes = (currentSummary.photosSizeBytes - totalDeletedBytes).coerceAtLeast(0L)
         )
 
@@ -98,6 +98,7 @@ class ScanResultsRepositoryImpl @Inject constructor(
             photosSizeBytes = photosSizeBytes,
             videosSizeBytes = videosSizeBytes,
             duplicatesSizeBytes = duplicatesSizeBytes,
+            similaritySizeBytes = similaritySizeBytes,
             storageSummary = storageSummary
         )
     }
@@ -115,6 +116,7 @@ class ScanResultsRepositoryImpl @Inject constructor(
             photosSizeBytes = photosSizeBytes,
             videosSizeBytes = videosSizeBytes,
             duplicatesSizeBytes = duplicatesSizeBytes,
+            similaritySizeBytes = similaritySizeBytes,
             storageSummaryJson = storageSummaryAdapter.toJson(storageSummary)
         )
     }

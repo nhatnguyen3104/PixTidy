@@ -8,9 +8,11 @@ import com.androidtech.domain.model.media.MediaItem
 import com.androidtech.domain.model.media.ScanLayer
 import com.androidtech.domain.model.media.ScanProgress
 import com.androidtech.domain.model.media.ScanProcess
+import com.androidtech.domain.model.media.ScanSummary
 import com.androidtech.domain.model.media.SmartInsight
 import com.androidtech.domain.model.media.SmartInsightType
 import com.androidtech.domain.repository.MediaStoreRepository
+import com.androidtech.domain.repository.SystemStorageRepository
 import com.androidtech.domain.utils.PerceptualHashUtils
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
@@ -29,6 +31,7 @@ import kotlinx.coroutines.sync.withPermit
 import java.util.UUID
 import java.util.concurrent.atomic.AtomicInteger
 import javax.inject.Inject
+import kotlin.collections.sumOf
 
 /**
  * Deep Smart Scan: everything in Smart Scan, plus the expensive analyses users opt into
@@ -45,7 +48,8 @@ class RunDeepSmartScanUseCase @Inject constructor(
     private val mediaStoreRepository: MediaStoreRepository,
     private val deepAnalysisEngine: DeepAnalysisEngine,
     private val recommendationEngine: RecommendationEngine,
-    private val runSmartScanUseCase: RunSmartScanUseCase
+    private val runSmartScanUseCase: RunSmartScanUseCase,
+    private val systemStorageRepository: SystemStorageRepository
 ) {
 
     operator fun invoke(): Flow<ScanProcess> = callbackFlow {
@@ -106,7 +110,26 @@ class RunDeepSmartScanUseCase @Inject constructor(
         val combinedInsights = smartScanInsights + deepInsights
         val combinedReclaimable = smartScanReclaimable + deepInsights.sumOf { it.reclaimableBytes }
 
-        emit(ScanProcess.Success(insights = combinedInsights, totalReclaimableBytes = combinedReclaimable))
+        val storageSummary = systemStorageRepository.fetchDeviceStorage()
+        val totalMediaSize = candidates.sumOf { it.size }
+
+        val summary = ScanSummary(
+            lastScanLevel = ScanLayer.DEEP,
+            newItemsCount = 0, // Not tracked in this use case yet
+            totalMediaCount = candidates.size,
+            totalStorageBytes = totalMediaSize,
+            screenshotCount = 0,
+            screenshotBytes = 0L,
+            largeVideoCount = 0,
+            largeVideoBytes = 0L,
+            photosSizeBytes = 0L,
+            videosSizeBytes = 0L,
+            duplicatesSizeBytes = 0L,
+            similaritySizeBytes = 0L,
+            storageSummary = storageSummary.copy(mediaUsedBytes = totalMediaSize)
+        )
+
+        emit(ScanProcess.Success(insights = combinedInsights,summary = summary , totalReclaimableBytes = combinedReclaimable))
     }
 
     private suspend fun findDuplicateVideos(

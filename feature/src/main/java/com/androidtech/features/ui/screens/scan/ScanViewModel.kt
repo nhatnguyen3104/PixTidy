@@ -77,6 +77,7 @@ class ScanViewModel @Inject constructor(
                         saveLatestResults(mode, domainState)
                         DomainScanState.Success(
                             insights = domainState.insights,
+                            summary = domainState.summary,
                             totalReclaimableBytes = domainState.totalReclaimableBytes
                         )
                     }
