@@ -164,9 +164,9 @@ fun HomeContent(
             Spacer(modifier = Modifier.height(12.dp))
 
             StorageRingGauge(
-                usedGb = uiState.storageStats.deviceUsedGb,
-                totalGb = uiState.storageStats.deviceTotalGb,
-                availableGb = uiState.storageStats.deviceFreeGb
+                usedGb = uiState.scanSummary.deviceUsedGb,
+                totalGb = uiState.scanSummary.deviceTotalGb,
+                availableGb = uiState.scanSummary.deviceFreeGb
             )
 
             Spacer(modifier = Modifier.height(24.dp))
@@ -240,7 +240,8 @@ fun HomeContent(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(12.dp)
             ) {
-                val duplicatesSize = uiState.storageStats.duplicatesSizeBytes ?: 0L
+                val duplicatesSize = uiState.scanSummary.duplicatesSizeBytes ?: 0L
+                val similaritySize = uiState.scanSummary.similaritySizeBytes ?: 0L
                 CategoryCard(
                     title = "Duplicate photos",
                     sizeText = duplicatesSize.formatSize(),
@@ -251,7 +252,7 @@ fun HomeContent(
                 )
                 CategoryCard(
                     title = "Similar photos",
-                    sizeText = uiState.storageStats.photosSizeBytes.formatSize(),
+                    sizeText = similaritySize.formatSize(),
                     icon = Icons.Outlined.Collections,
                     badgeColor = AudioBadge,
                     modifier = Modifier.weight(1f),
@@ -267,7 +268,7 @@ fun HomeContent(
             ) {
                 CategoryCard(
                     title = "Large videos",
-                    sizeText = uiState.storageStats.videosSizeBytes.formatSize(),
+                    sizeText = uiState.scanSummary.videosSizeBytes.formatSize(),
                     icon = Icons.Outlined.VideoLibrary,
                     badgeColor = VideoBadge,
                     modifier = Modifier.weight(1f),
@@ -275,7 +276,7 @@ fun HomeContent(
                 )
                 CategoryCard(
                     title = "Screenshots",
-                    sizeText = uiState.storageStats.screenshotBytes.formatSize(),
+                    sizeText = uiState.scanSummary.screenshotBytes.formatSize(),
                     icon = Icons.Outlined.Smartphone,
                     badgeColor = DocumentBadge,
                     modifier = Modifier.weight(1f),

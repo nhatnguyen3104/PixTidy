@@ -37,7 +37,7 @@ class HomeViewModel @Inject constructor(
             .filterIsInstance<UiState.Success<ScanSummary?>>()
             .onEach { state ->
                 val summary = state.data ?: ScanSummary.EMPTY
-                setState { copy(storageStats = summary) }
+                setState { copy(scanSummary = summary) }
             }
             .launchIn(viewModelScope)
     }
@@ -68,7 +68,7 @@ class HomeViewModel @Inject constructor(
             )
         }
             .onEach { summary ->
-                setState { copy(storageStats = summary) }
+                setState { copy(scanSummary = summary) }
             }
             .launchIn(viewModelScope)
     }

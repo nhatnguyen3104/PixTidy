@@ -11,7 +11,7 @@ import com.androidtech.data.model.SmartInsightEntity
         ScanSummaryEntity::class,
         SmartInsightEntity::class
     ],
-    version = 3,
+    version = 1,
     exportSchema = false
 )
 @TypeConverters(ScanResultConverters::class)

@@ -4,10 +4,12 @@ import com.androidtech.base.viewmodel.UIEffect
 import com.androidtech.base.viewmodel.UIEvent
 import com.androidtech.base.viewmodel.UIState
 import com.androidtech.domain.model.media.ScanSummary
+import com.androidtech.domain.model.media.StorageSummary
 
 data class HomeState(
     val isLoading: Boolean = false,
-    val storageStats: ScanSummary = ScanSummary.EMPTY,
+    //val storageSummary: StorageSummary = StorageSummary.UNKNOWN,
+    val scanSummary: ScanSummary = ScanSummary.EMPTY
 ): UIState
 
 sealed class HomeEvent : UIEvent {
