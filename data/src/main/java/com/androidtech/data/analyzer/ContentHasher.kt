@@ -11,6 +11,7 @@ import java.io.IOException
 import java.security.MessageDigest
 import javax.inject.Inject
 import androidx.core.net.toUri
+import com.androidtech.data.logger.DataLogger
 
 /**
  * SHA-256 over raw file bytes for byte-identical duplicate detection. Streamed via a fixed-size
@@ -36,6 +37,7 @@ class ContentHasher @Inject constructor(
         } catch (ce: CancellationException) {
             throw ce
         } catch (e: IOException) {
+            DataLogger.e(e, "SHA256 failed for uri: ${item.uri}")
             null
         } catch (e: SecurityException) {
             null

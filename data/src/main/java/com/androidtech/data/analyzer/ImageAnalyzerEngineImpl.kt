@@ -1,5 +1,6 @@
 package com.androidtech.data.analyzer
 
+import com.androidtech.data.logger.DataLogger
 import com.androidtech.domain.engine.ImageAnalyzerEngine
 import com.androidtech.domain.model.media.DuplicateGroup
 import com.androidtech.domain.model.media.MediaItem
@@ -48,11 +49,18 @@ class ImageAnalyzerEngineImpl @Inject constructor(
     // ---- Exact duplicates -----------------------------------------------------------------------
 
     override suspend fun findExactDuplicates(candidates: List<MediaItem>): List<DuplicateGroup> = coroutineScope {
+        DataLogger.d("ExactDup: Candidates count = ${candidates.size}")
+        val zeroSizeCount = candidates.count { it.size == 0L }
+        if (zeroSizeCount > 0) {
+            DataLogger.e("ExactDup WARNING: Found $zeroSizeCount items with size = 0!")
+        }
+
         // Bucket by size first (near-zero cost): a unique size can never collide byte-for-byte, so
         // only hash within a bucket that already has >= 2 members. Content hash is not cached (the
         // cache schema only covers pHash/blurScore/isScreenshot) — full-file hashing is a one-pass
         // stream read, not a bitmap decode, so it's cheap enough to redo each scan.
         val sizeBucketed = candidates.groupBy { it.size }.filterValues { it.size >= 2 }.values.flatten()
+        DataLogger.d("ExactDup: Items with potential size collisions = ${sizeBucketed.size}")
 
         val semaphore = Semaphore(MAX_CONCURRENT_DECODES)
         val hashed = sizeBucketed.map { item ->
