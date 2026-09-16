@@ -1,7 +1,6 @@
 package com.androidtech.domain.usecase.media
 
 import com.androidtech.domain.engine.DeepAnalysisEngine
-import com.androidtech.domain.engine.ImageAnalyzerEngine
 import com.androidtech.domain.engine.RecommendationEngine
 import com.androidtech.domain.model.media.FrameSample
 import com.androidtech.domain.model.media.MediaItem
@@ -44,7 +43,7 @@ import kotlin.collections.sumOf
  * spec calls for, so it never touches Main and is fully cooperative-cancellation-friendly via
  * [ensureActive] checks between every item.
  */
-class RunDeepSmartScanUseCase @Inject constructor(
+class RunDeepScanUseCase @Inject constructor(
     private val mediaStoreRepository: MediaStoreRepository,
     private val deepAnalysisEngine: DeepAnalysisEngine,
     private val recommendationEngine: RecommendationEngine,

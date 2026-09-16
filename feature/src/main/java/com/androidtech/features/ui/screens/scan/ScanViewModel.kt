@@ -9,7 +9,7 @@ import com.androidtech.domain.model.media.ScanLayer
 import com.androidtech.domain.model.media.ScanProcess as DomainScanState
 import com.androidtech.domain.model.media.SmartInsightType
 import com.androidtech.domain.usecase.media.GetLatestScanResultsUseCase
-import com.androidtech.domain.usecase.media.RunDeepSmartScanUseCase
+import com.androidtech.domain.usecase.media.RunDeepScanUseCase
 import com.androidtech.domain.usecase.media.RunSmartScanUseCase
 import com.androidtech.domain.usecase.media.SaveScanResultsUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -24,7 +24,7 @@ import javax.inject.Inject
 class ScanViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val runSmartScanUseCase: RunSmartScanUseCase,
-    private val runDeepSmartScanUseCase: RunDeepSmartScanUseCase,
+    private val runDeepScanUseCase: RunDeepScanUseCase,
     private val getLatestScanResultsUseCase: GetLatestScanResultsUseCase,
     private val saveScanResultsUseCase: SaveScanResultsUseCase
 ): BaseViewModel<ScanEvent, ScanState, ScanEffect> (savedStateHandle) {
@@ -59,7 +59,7 @@ class ScanViewModel @Inject constructor(
         val mode = getScanMode()
         val scanFlow = when (mode) {
             ScanLayer.SMART -> runSmartScanUseCase()
-            ScanLayer.DEEP -> runDeepSmartScanUseCase()
+            ScanLayer.DEEP -> runDeepScanUseCase()
             else -> return
         }
 
