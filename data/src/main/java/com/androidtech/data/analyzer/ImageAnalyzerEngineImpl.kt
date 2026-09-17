@@ -103,7 +103,10 @@ class ImageAnalyzerEngineImpl @Inject constructor(
             analyses[item.id]?.phash?.let { phash -> Triple(item, phash, analyses.getValue(item.id).qualityScore) }
         }
 
+        DataLogger.d("ExactSim: Candidates=${candidates.size}, " + "ValidPHash=${hashed.size}")
+
         val aspectBuckets = hashed.groupBy { (item, _, _) -> aspectBucketKey(item) }
+        DataLogger.d("ExactSim: Aspect bucket distribution = ${aspectBuckets.mapValues { it.value.size }}")
         aspectBuckets.values.flatMap { bucket -> clusterByHammingDistance(bucket) }
     }
 
@@ -118,13 +121,22 @@ class ImageAnalyzerEngineImpl @Inject constructor(
             val seed = unclustered.removeAt(0)
             val cluster = mutableListOf(seed)
 
-            val iterator = unclustered.iterator()
-            while (iterator.hasNext()) {
-                val candidate = iterator.next()
-                val distance = PerceptualHashUtils.hammingDistance(seed.second, candidate.second)
-                if (distance <= SIMILARITY_HAMMING_THRESHOLD) {
-                    cluster += candidate
-                    iterator.remove()
+            val queue = mutableListOf(seed)
+
+            while (queue.isNotEmpty()) {
+                val current = queue.removeAt(0)
+                val iterator = unclustered.iterator()
+
+                while (iterator.hasNext()) {
+                    val candidate = iterator.next()
+                    val distance =
+                        PerceptualHashUtils.hammingDistance(current.second, candidate.second)
+
+                    if (distance <= SIMILARITY_HAMMING_THRESHOLD) {
+                        cluster.add(candidate)
+                        queue.add(candidate)
+                        iterator.remove()
+                    }
                 }
             }
 
@@ -197,7 +209,7 @@ class ImageAnalyzerEngineImpl @Inject constructor(
             mediaAnalysisCacheRepository.getValidCache(item.id, item.dateModified)
         }.getOrNull()
 
-        if (cached != null) {
+        if (cached != null && cached.phash != null) {
             return ResolvedAnalysis(
                 phash = cached.phash,
                 qualityScore = cached.blurScore,
@@ -205,9 +217,16 @@ class ImageAnalyzerEngineImpl @Inject constructor(
             )
         }
 
-        // Cache MISS (no row, or the file's dateModified changed since it was last analyzed):
+        if (cached != null) {
+            DataLogger.d("ExactSim: Cache exists but pHash is NULL for id=${item.id}, re-calculating...")
+        }
+
+        // Cache MISS or incomplete cache (no row, or stored phash is null, or file changed):
         // fall through to the real engine primitives and persist the fresh result.
         val phash = runCatching { calculatePhash(item) }.getOrNull()
+        if (phash == null) {
+            DataLogger.w("ExactSim: pHash calculated as NULL for id=${item.id}, name=${item.name}, uri=${item.uri}")
+        }
         val quality = runCatching { evaluateQuality(item) }.getOrNull() ?: QualityScore.UNKNOWN
 
         runCatching {
@@ -229,12 +248,17 @@ class ImageAnalyzerEngineImpl @Inject constructor(
     private fun aspectBucketKey(item: MediaItem): Int {
         if (item.height == 0) return 0
         val ratio = item.width.toFloat() / item.height.toFloat()
-        return (ratio * 10).toInt() // buckets of 0.1 aspect-ratio granularity
+        //return (ratio * 10).toInt() // buckets of 0.1 aspect-ratio granularity
+        return when {
+            ratio > 1.1f -> 1
+            ratio < 0.9f -> 2
+            else         -> 3
+        }
     }
 
     private companion object {
         const val MAX_CONCURRENT_DECODES = 4
-        const val SIMILARITY_HAMMING_THRESHOLD = 10 // out of 64 bits
+        const val SIMILARITY_HAMMING_THRESHOLD = 14 // out of 64 bits
         const val QUALITY_WEIGHT = 1L
         const val RESOLUTION_WEIGHT = 1L
         // A cached/computed blurScore is QualityScore.score (0..100), not the raw Laplacian

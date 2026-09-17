@@ -65,21 +65,38 @@ internal object BitmapHashUtils {
     fun decodeDownsampled(resolver: ContentResolver, uri: Uri, targetMaxDimension: Int): Bitmap? {
         return try {
             val bounds = BitmapFactory.Options().apply { inJustDecodeBounds = true }
-            resolver.openInputStream(uri)?.use { input ->
+            val firstStream = resolver.openInputStream(uri)
+            if (firstStream == null) {
+                com.androidtech.data.logger.DataLogger.w("ExactSim error: openInputStream returned null for bounds check, uri=$uri")
+                return null
+            }
+            firstStream.use { input ->
                 BitmapFactory.decodeStream(input, null, bounds)
-            } ?: return null
+            }
+
+            if (bounds.outWidth <= 0 || bounds.outHeight <= 0) {
+                com.androidtech.data.logger.DataLogger.w("ExactSim error: invalid bounds decoded (width=${bounds.outWidth}, height=${bounds.outHeight}) for uri=$uri")
+                return null
+            }
 
             val sampleSize = calculateInSampleSize(bounds.outWidth, bounds.outHeight, targetMaxDimension)
             val decodeOptions = BitmapFactory.Options().apply {
                 inSampleSize = sampleSize
                 inPreferredConfig = Bitmap.Config.RGB_565 // halves memory vs ARGB_8888; fine for hashing/quality
             }
-            resolver.openInputStream(uri)?.use { input ->
+            val secondStream = resolver.openInputStream(uri)
+            if (secondStream == null) {
+                com.androidtech.data.logger.DataLogger.w("ExactSim error: openInputStream returned null for real decode, uri=$uri")
+                return null
+            }
+            secondStream.use { input ->
                 BitmapFactory.decodeStream(input, null, decodeOptions)
             }
         } catch (e: OutOfMemoryError) {
+            com.androidtech.data.logger.DataLogger.e(e, "ExactSim error: OutOfMemoryError during decodeDownsampled, uri=$uri")
             null
         } catch (e: Exception) {
+            com.androidtech.data.logger.DataLogger.e(e, "ExactSim error: Exception during decodeDownsampled, uri=$uri")
             null
         }
     }

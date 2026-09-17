@@ -27,6 +27,7 @@ class FastPerceptualHashAnalyzer @Inject constructor(
         } catch (ce: CancellationException) {
             throw ce
         } catch (e: Exception) {
+            com.androidtech.data.logger.DataLogger.e(e, "ExactSim error: computePhash failed for id=${item.id}, uri=${item.uri}")
             null
         }
     }
