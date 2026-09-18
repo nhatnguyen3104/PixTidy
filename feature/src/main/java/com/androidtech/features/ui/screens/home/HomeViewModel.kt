@@ -53,6 +53,7 @@ class HomeViewModel @Inject constructor(
             fresh.copy(
                 lastScanLevel = cached?.lastScanLevel ?: fresh.lastScanLevel,
                 duplicatesSizeBytes = cached?.duplicatesSizeBytes ?: 0L,
+                similaritySizeBytes = cached?.similaritySizeBytes ?: 0L,
                 screenshotCount = if ((cached?.screenshotCount
                         ?: 0) > 0
                 ) cached!!.screenshotCount else fresh.screenshotCount,

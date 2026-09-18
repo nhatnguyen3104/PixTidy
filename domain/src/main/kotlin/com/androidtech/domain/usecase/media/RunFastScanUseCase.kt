@@ -18,6 +18,7 @@ import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.scan
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -57,10 +58,33 @@ class RunFastScanUseCase @Inject constructor(
                     launch {
                         mediaAnalysisCacheRepository.pruneOrphaned(allMediaIds)
                     }
-                    // Persist the final sync result to Room
+                    // Persist the final sync result to Room without wiping deeper scan insights
                     lastEmittedSummary?.let { final ->
                         launch {
-                            scanResultsRepository.saveResults(final, emptyList())
+                            val currentSummary = scanResultsRepository.getLatestResults().firstOrNull()
+                            val currentInsights = scanResultsRepository.getLatestInsights().firstOrNull() ?: emptyList()
+
+                            val mergedSummary = if (currentSummary != null && (currentSummary.lastScanLevel == ScanLayer.SMART || currentSummary.lastScanLevel == ScanLayer.DEEP)) {
+                                final.copy(
+                                    lastScanLevel = currentSummary.lastScanLevel,
+                                    duplicatesSizeBytes = currentSummary.duplicatesSizeBytes,
+                                    similaritySizeBytes = currentSummary.similaritySizeBytes,
+                                    screenshotCount = if (currentSummary.screenshotCount > 0) currentSummary.screenshotCount else final.screenshotCount,
+                                    screenshotBytes = if (currentSummary.screenshotBytes > 0) currentSummary.screenshotBytes else final.screenshotBytes,
+                                    largeVideoCount = if (currentSummary.largeVideoCount > 0) currentSummary.largeVideoCount else final.largeVideoCount,
+                                    largeVideoBytes = if (currentSummary.largeVideoBytes > 0) currentSummary.largeVideoBytes else final.largeVideoBytes
+                                )
+                            } else {
+                                final
+                            }
+
+                            val insightsToSave = if (currentSummary != null && (currentSummary.lastScanLevel == ScanLayer.SMART || currentSummary.lastScanLevel == ScanLayer.DEEP)) {
+                                currentInsights
+                            } else {
+                                emptyList()
+                            }
+
+                            scanResultsRepository.saveResults(mergedSummary, insightsToSave)
                         }
                     }
                 }

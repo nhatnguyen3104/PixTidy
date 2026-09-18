@@ -111,6 +111,7 @@ class ScanViewModel @Inject constructor(
                 ?: ScanSummary.EMPTY.copy(lastScanLevel = mode)
 
             var duplicatesBytes = 0L
+            var similarityBytes = 0L
             var screenshotCount = 0
             var screenshotBytes = 0L
             var largeVideoCount = 0
@@ -122,7 +123,7 @@ class ScanViewModel @Inject constructor(
                         duplicatesBytes += insight.reclaimableBytes
                     }
                     SmartInsightType.SIMILAR_PHOTOS -> {
-                        duplicatesBytes += insight.reclaimableBytes
+                        similarityBytes += insight.reclaimableBytes
                     }
                     SmartInsightType.SCREENSHOTS -> {
                         screenshotCount = insight.affectedItemsCount
@@ -139,6 +140,7 @@ class ScanViewModel @Inject constructor(
             val updatedSummary = currentSummary.copy(
                 lastScanLevel = mode,
                 duplicatesSizeBytes = duplicatesBytes,
+                similaritySizeBytes = similarityBytes,
                 screenshotCount = if (screenshotCount > 0) screenshotCount else currentSummary.screenshotCount,
                 screenshotBytes = if (screenshotBytes > 0) screenshotBytes else currentSummary.screenshotBytes,
                 largeVideoCount = if (largeVideoCount > 0) largeVideoCount else currentSummary.largeVideoCount,
