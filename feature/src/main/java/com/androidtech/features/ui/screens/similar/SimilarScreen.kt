@@ -162,9 +162,9 @@ fun SimilarContent(
             )
         },
         bottomBar = {
-            val selectedPhotos = similarGroups.flatMap { it.items }.filter { it.isSelected }
-            val selectedCount = selectedPhotos.size
-            val selectedSize = selectedPhotos.sumOf { it.size }
+            val selectedPhotos = similarGroups.flatMap { it.selectedSimilarItems }
+            val selectedCount = similarGroups.sumOf { it.selectedSimilarItemsCount }
+            val selectedSize = similarGroups.sumOf { it.totalSelectedSize }
             
             if (selectedCount > 0) {
                 DeleteBottomBar(
@@ -180,7 +180,7 @@ fun SimilarContent(
         containerColor = MaterialTheme.colorScheme.background
     ) { paddingValues ->
         LazyColumn(
-            modifier = Modifier
+            modifier = modifier
                 .fillMaxSize()
                 .padding(paddingValues)
                 .padding(horizontal = 20.dp),

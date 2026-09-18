@@ -190,10 +190,11 @@ fun DuplicateContent(
         bottomBar = {
             val selectedCount = duplicateGroups.sumOf { it.selectedDuplicateItemsCount }
             val totalSelectedPhotos = duplicateGroups.flatMap { it.selectedDuplicateItems }
+            val totalSelectedSize = duplicateGroups.sumOf { it.totalSelectedSize }
             if (selectedCount > 0) {
                 DeleteBottomBar(
                     selectedCount = selectedCount,
-                    sizeText = "28 MB",
+                    sizeText = totalSelectedSize.formatSize(),
                     onDeleteClick = {
                         onEvent(DuplicateEvent.DeleteClick(totalSelectedPhotos.map { it.id }))
                     }
@@ -204,7 +205,7 @@ fun DuplicateContent(
         containerColor = MaterialTheme.colorScheme.background
     ) { paddingValues ->
         LazyColumn(
-            modifier = Modifier
+            modifier = modifier
                 .fillMaxSize()
                 .padding(paddingValues)
                 .padding(horizontal = 20.dp),
