@@ -1,5 +1,6 @@
 package com.androidtech.features.ui.screens.similar
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -37,8 +38,14 @@ fun SimilarGroupSection(
     Surface(
         color = MaterialTheme.colorScheme.surface,
         shape = RoundedCornerShape(20.dp),
-        tonalElevation = 1.dp,
-        modifier = Modifier.fillMaxWidth()
+        tonalElevation = 2.dp,
+        shadowElevation = 6.dp,
+        border = BorderStroke(
+            width = 1.dp,
+            color = MaterialTheme.colorScheme.outlineVariant
+        ),
+        modifier = Modifier
+            .fillMaxWidth()
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
             // Header: Percentage Badge + Total Size
@@ -87,8 +94,6 @@ fun SimilarGroupSection(
             Spacer(modifier = Modifier.height(16.dp))
 
             // Grid Layout for Group Photos
-            // We use a Column with Rows to avoid nested LazyVerticalGrid if possible, 
-            // but for simplicity and if the number of items is small, we can use a custom grid layout.
             val chunkedItems = group.items.chunked(2)
             Column(
                 modifier = Modifier.fillMaxWidth(),

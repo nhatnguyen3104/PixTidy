@@ -34,6 +34,7 @@
     <string name="text_error_clean">Error cleaning up, please try again</string>
 
     <string name="text_duplicate_photos">Duplicate Photos</string>
+    <string name="text_duplicate_group">Group: %1$s</string>
     <string name="text_duplicate_photos_description">%1$d groups • %2$s</string>
     <string name="text_original">Original</string>
 

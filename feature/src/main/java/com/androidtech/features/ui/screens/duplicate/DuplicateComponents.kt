@@ -1,5 +1,6 @@
 package com.androidtech.features.ui.screens.duplicate
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -22,6 +23,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -29,6 +31,7 @@ import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.androidtech.base.theme.AppTheme
 import com.androidtech.base.ui.animation.bounceClick
+import com.androidtech.base.R
 import com.androidtech.base.utils.formatSize
 import com.androidtech.domain.model.media.DuplicateGroup
 import com.androidtech.domain.model.media.MediaItem
@@ -38,57 +41,72 @@ fun DuplicateGroupSection(
     group: DuplicateGroup,
     onPhotoToggle: (Long) -> Unit
 ) {
-    Column {
-        // Group Header
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text(
-                text = group.originalItem.name,
-                style = MaterialTheme.typography.titleMedium.copy(
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 16.sp
-                )
-            )
-            Text(
-                text = group.totalSizeDifferenceBytes.formatSize(),
-                style = MaterialTheme.typography.bodyMedium.copy(
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    fontSize = 13.sp
-                )
-            )
-        }
-
-        Spacer(modifier = Modifier.height(12.dp))
-
-        // Grid of items: Original (non-selectable) + Duplicates
-        val allItems = listOf(group.originalItem) + group.duplicateItems
-        val chunkedItems = allItems.chunked(2)
-        
+    Surface(
+        modifier = Modifier
+            .fillMaxWidth(),
+        shape = RoundedCornerShape(20.dp),
+        color = MaterialTheme.colorScheme.surface,
+        tonalElevation = 2.dp,
+        shadowElevation = 6.dp,
+        border = BorderStroke(
+            width = 1.dp,
+            color = MaterialTheme.colorScheme.outlineVariant
+        )
+    ) {
         Column(
-            modifier = Modifier.fillMaxWidth(),
-            verticalArrangement = Arrangement.spacedBy(12.dp)
+            modifier = Modifier.padding(16.dp)
         ) {
-            chunkedItems.forEach { rowItems ->
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(12.dp)
-                ) {
-                    rowItems.forEach { item ->
-                        val isOriginal = item.id == group.originalItem.id
-                        Box(modifier = Modifier.weight(1f)) {
-                            DuplicatePhotoCard(
-                                duplicateItem = item,
-                                isSelectable = !isOriginal,
-                                onToggle = { if (!isOriginal) onPhotoToggle(item.id) }
-                            )
+            // Group Header
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = stringResource(R.string.text_duplicate_group, group.originalItem.name),
+                    style = MaterialTheme.typography.titleMedium.copy(
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 16.sp
+                    )
+                )
+                Text(
+                    text = group.totalSizeDifferenceBytes.formatSize(),
+                    style = MaterialTheme.typography.bodyMedium.copy(
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        fontSize = 13.sp
+                    )
+                )
+            }
+
+            Spacer(modifier = Modifier.height(12.dp))
+
+            // Grid of items: Original (non-selectable) + Duplicates
+            val allItems = listOf(group.originalItem) + group.duplicateItems
+            val chunkedItems = allItems.chunked(2)
+
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+                verticalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                chunkedItems.forEach { rowItems ->
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(12.dp)
+                    ) {
+                        rowItems.forEach { item ->
+                            val isOriginal = item.id == group.originalItem.id
+                            Box(modifier = Modifier.weight(1f)) {
+                                DuplicatePhotoCard(
+                                    duplicateItem = item,
+                                    isSelectable = !isOriginal,
+                                    onToggle = { if (!isOriginal) onPhotoToggle(item.id) }
+                                )
+                            }
                         }
-                    }
-                    // Fill empty space if the last row has only one item
-                    if (rowItems.size < 2) {
-                        Spacer(modifier = Modifier.weight(1f))
+                        // Fill empty space if the last row has only one item
+                        if (rowItems.size < 2) {
+                            Spacer(modifier = Modifier.weight(1f))
+                        }
                     }
                 }
             }
