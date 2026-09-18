@@ -1,8 +1,11 @@
 package com.androidtech.features.ui.screens.duplicate
 
 import android.os.Build
+import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
+import com.androidtech.base.R
+import com.androidtech.base.utils.UiText
 import com.androidtech.base.utils.formatSize
 import com.androidtech.base.viewmodel.BaseViewModel
 import com.androidtech.data.repository.RequiresUserConfirmationException
@@ -105,7 +108,7 @@ class DuplicateViewModel @Inject constructor(
             performSafeCleanupUseCase(itemsToDelete, confirmed = true)
                 .onSuccess { result ->
                     setState { copy(isLoading = false) }
-                    val message = "Đã dọn dẹp ${result.itemsDeletedCount} tệp, giải phóng ${result.bytesReclaimed.formatSize()}"
+                    val message = UiText.StringResource(R.string.text_notification_clean, result.itemsDeletedCount, result.bytesReclaimed.formatSize())
                     setEffect { DuplicateEffect.ShowSnackbar(message) }
                 }
                 .onFailure { error ->
@@ -113,7 +116,7 @@ class DuplicateViewModel @Inject constructor(
                     if (error is RequiresUserConfirmationException) {
                         setEffect { DuplicateEffect.LaunchIntentSender(error.intentSender) }
                     } else {
-                        setEffect { DuplicateEffect.ShowSnackbar("Lỗi khi xóa: ${error.message}") }
+                        setEffect { DuplicateEffect.ShowSnackbar(UiText.StringResource(R.string.text_error_clean)) }
                     }
                 }
         }

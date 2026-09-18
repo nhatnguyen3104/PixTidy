@@ -48,6 +48,7 @@ import com.androidtech.base.permission.Permission
 import com.androidtech.base.permission.rememberSinglePermission
 import com.androidtech.base.theme.Body16Medium
 import com.androidtech.base.theme.Title20Bold
+import com.androidtech.base.utils.UiText
 import com.androidtech.base.utils.formatSize
 import com.androidtech.features.ui.components.DeleteBottomBar
 import com.androidtech.features.ui.screens.home.HomeEvent
@@ -97,7 +98,7 @@ fun DuplicateScreen (
         if (activityResult.resultCode == android.app.Activity.RESULT_OK) {
             val selectedPhotos = uiState.value.duplicateGroups.flatMap { it.selectedDuplicateItems }.map { it.id }
             viewModel.handleEvent(DuplicateEvent.ConfirmCacheCleanup(selectedPhotos))
-            showSnackbar("Xóa thành công các tệp đã chọn")
+            showSnackbar(UiText.StringResource(R.string.text_success_clean).asString(context))
         }
     }
 
@@ -108,7 +109,8 @@ fun DuplicateScreen (
                     navController.popBackStack()
                 }
                 is DuplicateEffect.ShowSnackbar -> {
-                    showSnackbar(effect.message)
+                    val message = effect.message.asString(context)
+                    showSnackbar(message)
                 }
                 is DuplicateEffect.RequestWritePermission -> {
                     if (writePermissionState.isGranted) {

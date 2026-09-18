@@ -1,6 +1,7 @@
 package com.androidtech.features.ui.screens.duplicate
 
 import android.content.IntentSender
+import com.androidtech.base.utils.UiText
 import com.androidtech.base.viewmodel.UIEffect
 import com.androidtech.base.viewmodel.UIEvent
 import com.androidtech.base.viewmodel.UIState
@@ -21,7 +22,7 @@ sealed class DuplicateEvent : UIEvent {
 
 sealed class DuplicateEffect : UIEffect {
     object NavigateBack : DuplicateEffect()
-    data class ShowSnackbar(val message: String) : DuplicateEffect()
+    data class ShowSnackbar(val message: UiText) : DuplicateEffect()
     data class RequestWritePermission(val selectedPhotoIds: List<Long>) : DuplicateEffect()
     data class LaunchIntentSender(val intentSender: IntentSender) : DuplicateEffect()
 }

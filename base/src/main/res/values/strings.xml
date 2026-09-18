@@ -25,6 +25,9 @@
     <string name="text_available_capacity">%1$.2f GB available</string>
     <string name="text_smart_scan_storage">Smart Scan Storage</string>
     <string name="text_deep_scan_storage">Deep Scan Storage</string>
+    <string name="text_notification_clean">Cleaned up %1$d items, reclaimed %2$s</string>
+    <string name="text_success_clean">Successfully cleaned up</string>
+    <string name="text_error_clean">Error cleaning up, please try again</string>
 
     <string name="text_duplicate_photos">Duplicate Photos</string>
     <string name="text_duplicate_photos_description">%1$d groups • %2$s</string>
