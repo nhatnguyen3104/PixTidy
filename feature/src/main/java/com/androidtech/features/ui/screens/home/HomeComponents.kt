@@ -25,12 +25,14 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.androidtech.base.theme.DocumentBadge
 import com.androidtech.base.theme.StorageBadge
 import com.androidtech.base.ui.animation.bounceClick
 import com.androidtech.base.R
+import com.androidtech.base.theme.AppTheme
 
 @Composable
 fun StorageRingGauge(
@@ -158,6 +160,14 @@ fun PotentialCleanupCard(potentialGb: String) {
                 )
             )
         }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun PotentialCleanupCardPreview(modifier: Modifier = Modifier) {
+    AppTheme(dynamicColor = false) {
+        PotentialCleanupCard(potentialGb = "1.2 GB")
     }
 }
 
