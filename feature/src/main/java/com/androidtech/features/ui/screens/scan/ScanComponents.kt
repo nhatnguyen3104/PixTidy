@@ -21,6 +21,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -28,6 +29,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.androidtech.base.theme.AppTheme
 import com.androidtech.base.ui.animation.bounceClick
+import com.androidtech.base.R
 import kotlin.math.cos
 import kotlin.math.sin
 
@@ -223,7 +225,7 @@ fun ScanProgressGauge(
 
             // Subtitle text
             Text(
-                text = if (animatedProgress >= 1f) "Complete ✓" else "Scanning...",
+                text = if (animatedProgress >= 1f) stringResource(R.string.text_complete) else stringResource(R.string.text_scanning),
                 style = MaterialTheme.typography.labelMedium.copy(
                     color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
                     fontSize = 12.sp,
@@ -294,7 +296,7 @@ fun ReportHeroCard(totalCleanableSize: String) {
 
                 // Subtitle Line 1
                 Text(
-                    text = "can potentially be cleaned",
+                    text = stringResource(R.string.text_scanning_subtitle_1),
                     style = MaterialTheme.typography.titleMedium.copy(
                         fontWeight = FontWeight.Medium,
                         color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.85f),
@@ -306,7 +308,7 @@ fun ReportHeroCard(totalCleanableSize: String) {
 
                 // Subtitle Line 2
                 Text(
-                    text = "We found files you may no longer need.",
+                    text = stringResource(R.string.text_scanning_subtitle_2),
                     style = MaterialTheme.typography.bodyMedium.copy(
                         color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.7f),
                         fontSize = 13.sp,

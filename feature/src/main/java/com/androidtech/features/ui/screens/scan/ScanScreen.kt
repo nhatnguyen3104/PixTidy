@@ -89,7 +89,7 @@ fun ScanContent(
     val titleRes = if (uiState.scanLayer == ScanLayer.SMART) {
         R.string.text_smart_scan_storage
     } else {
-        R.string.text_deep_scan_storage
+        R.string.text_intelligent_scan_storage
     }
 
     Scaffold(

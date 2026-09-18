@@ -24,7 +24,11 @@
     <string name="text_used_capacity">used of %1$d GB</string>
     <string name="text_available_capacity">%1$.2f GB available</string>
     <string name="text_smart_scan_storage">Smart Scan Storage</string>
-    <string name="text_deep_scan_storage">Deep Scan Storage</string>
+    <string name="text_intelligent_scan_storage">Intelligent Scan Storage</string>
+    <string name="text_scanning">Scanning…</string>
+    <string name="text_scanning_subtitle_1">Can potentially be cleaned</string>
+    <string name="text_scanning_subtitle_2">We found files you may no longer need.</string>
+    <string name="text_complete">Complete ✓</string>
     <string name="text_notification_clean">Cleaned up %1$d items, reclaimed %2$s</string>
     <string name="text_success_clean">Successfully cleaned up</string>
     <string name="text_error_clean">Error cleaning up, please try again</string>
@@ -38,5 +42,8 @@
     <string name="text_percent_similar">%1$d%% similar</string>
     <string name="text_best_shot">Best Shot</string>
 
+    <string name="text_large_videos">Large videos</string>
+
+    <string name="text_screenshots">Screenshots</string>
 
 </resources>

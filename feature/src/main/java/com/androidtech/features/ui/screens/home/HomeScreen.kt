@@ -1,6 +1,5 @@
 package com.androidtech.features.ui.screens.home
 
-import android.Manifest
 import android.os.Build
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -189,7 +188,7 @@ fun HomeContent(
                 )
                 Spacer(modifier = Modifier.width(8.dp))
                 Text(
-                    text = stringResource(R.string.text_deep_scan_storage),
+                    text = stringResource(R.string.text_intelligent_scan_storage),
                     style = MaterialTheme.typography.titleMedium.copy(
                         fontWeight = FontWeight.SemiBold
                     )
@@ -243,7 +242,7 @@ fun HomeContent(
                 val duplicatesSize = uiState.scanSummary.duplicatesSizeBytes ?: 0L
                 val similaritySize = uiState.scanSummary.similaritySizeBytes ?: 0L
                 CategoryCard(
-                    title = "Duplicate photos",
+                    title = stringResource(R.string.text_duplicate_photos),
                     sizeText = duplicatesSize.formatSize(),
                     icon = Icons.Outlined.ContentCopy,
                     badgeColor = ImageBadge,
@@ -251,7 +250,7 @@ fun HomeContent(
                     onClick = { onEvent(HomeEvent.CategoryClick(Category.DUPLICATE)) }
                 )
                 CategoryCard(
-                    title = "Similar photos",
+                    title = stringResource(R.string.text_similar_photos),
                     sizeText = similaritySize.formatSize(),
                     icon = Icons.Outlined.Collections,
                     badgeColor = AudioBadge,
@@ -267,7 +266,7 @@ fun HomeContent(
                 horizontalArrangement = Arrangement.spacedBy(12.dp)
             ) {
                 CategoryCard(
-                    title = "Large videos",
+                    title = stringResource(R.string.text_large_videos),
                     sizeText = uiState.scanSummary.videosSizeBytes.formatSize(),
                     icon = Icons.Outlined.VideoLibrary,
                     badgeColor = VideoBadge,
@@ -275,7 +274,7 @@ fun HomeContent(
                     onClick = { onEvent(HomeEvent.CategoryClick(Category.LARGE_VIDEOS)) }
                 )
                 CategoryCard(
-                    title = "Screenshots",
+                    title = stringResource(R.string.text_screenshots),
                     sizeText = uiState.scanSummary.screenshotBytes.formatSize(),
                     icon = Icons.Outlined.Smartphone,
                     badgeColor = DocumentBadge,
