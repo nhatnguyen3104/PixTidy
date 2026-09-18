@@ -1,6 +1,7 @@
 package com.androidtech.features.ui.screens.similar
 
 import android.content.IntentSender
+import com.androidtech.base.utils.UiText
 import com.androidtech.base.viewmodel.UIEffect
 import com.androidtech.base.viewmodel.UIEvent
 import com.androidtech.base.viewmodel.UIState
@@ -21,7 +22,7 @@ sealed class SimilarEvent : UIEvent {
 
 sealed class SimilarEffect : UIEffect {
     object NavigateBack : SimilarEffect()
-    data class ShowSnackbar(val message: String) : SimilarEffect()
+    data class ShowSnackbar(val message: UiText) : SimilarEffect()
     data class RequestWritePermission(val selectedPhotoIds: List<Long>) : SimilarEffect()
     data class LaunchIntentSender(val intentSender: IntentSender) : SimilarEffect()
 }

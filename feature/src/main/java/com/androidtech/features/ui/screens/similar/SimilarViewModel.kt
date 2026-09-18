@@ -3,6 +3,8 @@ package com.androidtech.features.ui.screens.similar
 import android.os.Build
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
+import com.androidtech.base.R
+import com.androidtech.base.utils.UiText
 import com.androidtech.base.utils.formatSize
 import com.androidtech.base.viewmodel.BaseViewModel
 import com.androidtech.data.repository.RequiresUserConfirmationException
@@ -100,15 +102,15 @@ class SimilarViewModel @Inject constructor(
             performSafeCleanupUseCase(itemsToDelete, confirmed = true)
                 .onSuccess { result ->
                     setState { copy(isLoading = false) }
-                    val message = "Đã dọn dẹp ${result.itemsDeletedCount} tệp, giải phóng ${result.bytesReclaimed.formatSize()}"
+                    val message = UiText.StringResource(R.string.text_notification_clean, result.itemsDeletedCount, result.bytesReclaimed.formatSize())
                     setEffect { SimilarEffect.ShowSnackbar(message) }
                 }
                 .onFailure { error ->
                     setState { copy(isLoading = false) }
-                    if (error is com.androidtech.data.repository.RequiresUserConfirmationException) {
+                    if (error is RequiresUserConfirmationException) {
                         setEffect { SimilarEffect.LaunchIntentSender(error.intentSender) }
                     } else {
-                        setEffect { SimilarEffect.ShowSnackbar("Lỗi khi xóa: ${error.message}") }
+                        setEffect { SimilarEffect.ShowSnackbar(UiText.StringResource(R.string.text_error_clean)) }
                     }
                 }
         }

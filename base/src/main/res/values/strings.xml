@@ -31,7 +31,12 @@
 
     <string name="text_duplicate_photos">Duplicate Photos</string>
     <string name="text_duplicate_photos_description">%1$d groups • %2$s</string>
+    <string name="text_original">Original</string>
+
     <string name="text_similar_photos">Similar Photos</string>
     <string name="text_similar_photos_description">%1$d groups • %2$s</string>
+    <string name="text_percent_similar">%1$d%% similar</string>
+    <string name="text_best_shot">Best Shot</string>
+
 
 </resources>

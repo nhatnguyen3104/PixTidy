@@ -29,6 +29,7 @@ import com.androidtech.base.permission.Permission
 import com.androidtech.base.permission.rememberSinglePermission
 import com.androidtech.base.theme.Body16Medium
 import com.androidtech.base.theme.Title20Bold
+import com.androidtech.base.utils.UiText
 import com.androidtech.base.utils.formatSize
 import com.androidtech.features.ui.components.DeleteBottomBar
 import kotlinx.coroutines.Job
@@ -75,7 +76,7 @@ fun SimilarScreen(
         if (activityResult.resultCode == android.app.Activity.RESULT_OK) {
             val selectedPhotos = uiState.value.similarGroups.flatMap { it.items }.filter { it.isSelected }.map { it.id }
             viewModel.handleEvent(SimilarEvent.ConfirmCacheCleanup(selectedPhotos))
-            showSnackbar("Xóa thành công các tệp đã chọn")
+            showSnackbar(UiText.StringResource(R.string.text_success_clean).asString(context))
         }
     }
 
@@ -86,7 +87,8 @@ fun SimilarScreen(
                     navController.popBackStack()
                 }
                 is SimilarEffect.ShowSnackbar -> {
-                    showSnackbar(effect.message)
+                    val message = effect.message.asString(context)
+                    showSnackbar(message)
                 }
                 is SimilarEffect.RequestWritePermission -> {
                     if (writePermissionState.isGranted) {

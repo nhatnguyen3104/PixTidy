@@ -19,6 +19,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -26,6 +27,7 @@ import coil.compose.AsyncImage
 import com.androidtech.base.utils.formatSize
 import com.androidtech.domain.model.media.MediaItem
 import com.androidtech.domain.model.media.SimilarGroup
+import com.androidtech.base.R
 
 @Composable
 fun SimilarGroupSection(
@@ -62,7 +64,7 @@ fun SimilarGroupSection(
                         )
                         Spacer(modifier = Modifier.width(4.dp))
                         Text(
-                            text = "${group.similarityPercentage}% similar",
+                            text = stringResource(R.string.text_percent_similar, group.similarityPercentage),
                             style = MaterialTheme.typography.labelMedium.copy(
                                 fontWeight = FontWeight.Bold,
                                 color = MaterialTheme.colorScheme.error,
@@ -150,7 +152,7 @@ fun SimilarPhotoCard(
                     .align(Alignment.TopStart)
             ) {
                 Text(
-                    text = "Best shot",
+                    text = stringResource(R.string.text_best_shot),
                     style = MaterialTheme.typography.labelSmall.copy(
                         color = MaterialTheme.colorScheme.onPrimary,
                         fontWeight = FontWeight.Bold,
