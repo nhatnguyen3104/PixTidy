@@ -8,6 +8,7 @@ import com.androidtech.domain.model.media.StorageSummary
 
 data class HomeState(
     val isLoading: Boolean = false,
+    val isPermissionGranted: Boolean = false,
     //val storageSummary: StorageSummary = StorageSummary.UNKNOWN,
     val scanSummary: ScanSummary = ScanSummary.EMPTY
 ): UIState
@@ -18,6 +19,8 @@ sealed class HomeEvent : UIEvent {
     object SmartScanClicked : HomeEvent()
     object SettingsClicked : HomeEvent()
     object FastScan : HomeEvent()
+    object RequestPermissionClicked : HomeEvent()
+    data class PermissionStatusChanged(val isGranted: Boolean) : HomeEvent()
 }
 
 sealed class HomeEffect : UIEffect {

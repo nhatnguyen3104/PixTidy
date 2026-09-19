@@ -63,6 +63,10 @@ fun HomeScreen(
         onAllGranted = { viewModel.handleEvent(HomeEvent.FastScan) }
     )
 
+    LaunchedEffect(permissionState.allGranted) {
+        viewModel.handleEvent(HomeEvent.PermissionStatusChanged(permissionState.allGranted))
+    }
+
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
     var snackbarJob by remember { mutableStateOf<Job?>(null) }
@@ -81,18 +85,23 @@ fun HomeScreen(
                         permissionState.requestAll()
                     }
                 }
+
                 is HomeEffect.NavigateToSmartScan -> {
                     navController.navigate(AppDestination.ScanScreen.createRoute(ScanLayer.SMART.name))
                 }
+
                 is HomeEffect.NavigateToDeepScan -> {
                     navController.navigate(AppDestination.ScanScreen.createRoute(ScanLayer.DEEP.name))
                 }
+
                 is HomeEffect.NavigateToSettings -> {
 
                 }
+
                 is HomeEffect.NavigateToDuplicate -> {
                     navController.navigate(AppDestination.DuplicateScreen.route)
                 }
+
                 is HomeEffect.NavigateToSimilar -> {
                     navController.navigate(AppDestination.SimilarScreen.route)
                 }
@@ -136,7 +145,10 @@ fun HomeContent(
                     }
                 },
                 actions = {
-                    IconButton(onClick = { onEvent(HomeEvent.SettingsClicked) }, modifier = Modifier.size(40.dp)) {
+                    IconButton(
+                        onClick = { onEvent(HomeEvent.SettingsClicked) },
+                        modifier = Modifier.size(40.dp)
+                    ) {
                         Icon(
                             painter = painterResource(R.drawable.ic_gears),
                             contentDescription = "settings",
@@ -147,7 +159,7 @@ fun HomeContent(
                     Spacer(modifier = Modifier.width(8.dp))
                 },
                 colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.background),
-                windowInsets = WindowInsets(left = 0, top = 0, right = 0, bottom = 0 )
+                windowInsets = WindowInsets(left = 0, top = 0, right = 0, bottom = 0)
             )
         },
         containerColor = MaterialTheme.colorScheme.background
@@ -170,68 +182,93 @@ fun HomeContent(
 
             Spacer(modifier = Modifier.height(24.dp))
 
-            Button(
-                onClick = { onEvent(HomeEvent.DeepScanClicked) },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(56.dp)
-                    .bounceClick(onClick = { onEvent(HomeEvent.DeepScanClicked) }),
-                shape = RoundedCornerShape(28.dp),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = MaterialTheme.colorScheme.secondary
-                )
-            ) {
-                Icon(
-                    imageVector = Icons.Outlined.AutoAwesome,
-                    contentDescription = null,
-                    modifier = Modifier.size(22.dp)
-                )
-                Spacer(modifier = Modifier.width(8.dp))
-                Text(
-                    text = stringResource(R.string.text_intelligent_scan_storage),
-                    style = MaterialTheme.typography.titleMedium.copy(
-                        fontWeight = FontWeight.SemiBold
+            if (uiState.isPermissionGranted) {
+                Button(
+                    onClick = { onEvent(HomeEvent.DeepScanClicked) },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(56.dp)
+                        .bounceClick(onClick = { onEvent(HomeEvent.DeepScanClicked) }),
+                    shape = RoundedCornerShape(28.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.secondary
                     )
+                ) {
+                    Icon(
+                        imageVector = Icons.Outlined.AutoAwesome,
+                        contentDescription = null,
+                        modifier = Modifier.size(22.dp)
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(
+                        text = stringResource(R.string.text_intelligent_scan_storage),
+                        style = MaterialTheme.typography.titleMedium.copy(
+                            fontWeight = FontWeight.SemiBold
+                        )
+                    )
+                }
+
+                Spacer(modifier = Modifier.height(12.dp))
+
+                Button(
+                    onClick = { onEvent(HomeEvent.SmartScanClicked) },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(56.dp)
+                        .bounceClick(onClick = { onEvent(HomeEvent.SmartScanClicked) }),
+                    shape = RoundedCornerShape(28.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.primary
+                    )
+                ) {
+                    Icon(
+                        imageVector = Icons.Outlined.Search,
+                        contentDescription = null,
+                        modifier = Modifier.size(22.dp)
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(
+                        text = stringResource(R.string.text_smart_scan_storage),
+                        style = MaterialTheme.typography.titleMedium.copy(
+                            fontWeight = FontWeight.SemiBold
+                        )
+                    )
+                }
+            } else {
+                PermissionRequestCard(
+                    onRequestPermissionClick = { onEvent(HomeEvent.RequestPermissionClicked) },
+                    onPrivacyPolicyClick = {}
                 )
             }
 
-            Spacer(modifier = Modifier.height(12.dp))
 
-            Button(
-                onClick = { onEvent(HomeEvent.SmartScanClicked) },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(56.dp)
-                    .bounceClick(onClick = { onEvent(HomeEvent.SmartScanClicked) }),
-                shape = RoundedCornerShape(28.dp),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = MaterialTheme.colorScheme.primary
-                )
-            ) {
-                Icon(
-                    imageVector = Icons.Outlined.Search,
-                    contentDescription = null,
-                    modifier = Modifier.size(22.dp)
-                )
-                Spacer(modifier = Modifier.width(8.dp))
-                Text(
-                    text = stringResource(R.string.text_smart_scan_storage),
-                    style = MaterialTheme.typography.titleMedium.copy(
-                        fontWeight = FontWeight.SemiBold
-                    )
-                )
-            }
 
             Spacer(modifier = Modifier.height(28.dp))
 
-            Text(
-                text = "Smart cleanup",
-                style = MaterialTheme.typography.titleMedium.copy(
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 18.sp
-                ),
-                modifier = Modifier.fillMaxWidth()
-            )
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = if (uiState.isPermissionGranted) stringResource(R.string.text_smart_insights) else stringResource(
+                        R.string.text_available_after_access
+                    ),
+                    style = MaterialTheme.typography.titleMedium.copy(
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 18.sp
+                    ),
+                    modifier = Modifier.fillMaxWidth()
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+                Icon(
+                    painter = if (uiState.isPermissionGranted) painterResource(R.drawable.ic_info) else painterResource(R.drawable.ic_lock),
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.onBackground.withAlpha7(),
+                    modifier = Modifier.size(22.dp)
+                )
+            }
+
 
             Spacer(modifier = Modifier.height(16.dp))
 
@@ -244,6 +281,7 @@ fun HomeContent(
                 CategoryCard(
                     title = stringResource(R.string.text_duplicate_photos),
                     sizeText = duplicatesSize.formatSize(),
+                    isPermissionGranted = uiState.isPermissionGranted,
                     icon = Icons.Outlined.ContentCopy,
                     badgeColor = ImageBadge,
                     modifier = Modifier.weight(1f),
@@ -252,6 +290,7 @@ fun HomeContent(
                 CategoryCard(
                     title = stringResource(R.string.text_similar_photos),
                     sizeText = similaritySize.formatSize(),
+                    isPermissionGranted = uiState.isPermissionGranted,
                     icon = Icons.Outlined.Collections,
                     badgeColor = AudioBadge,
                     modifier = Modifier.weight(1f),
@@ -268,6 +307,7 @@ fun HomeContent(
                 CategoryCard(
                     title = stringResource(R.string.text_large_videos),
                     sizeText = uiState.scanSummary.videosSizeBytes.formatSize(),
+                    isPermissionGranted = uiState.isPermissionGranted,
                     icon = Icons.Outlined.VideoLibrary,
                     badgeColor = VideoBadge,
                     modifier = Modifier.weight(1f),
@@ -276,6 +316,7 @@ fun HomeContent(
                 CategoryCard(
                     title = stringResource(R.string.text_screenshots),
                     sizeText = uiState.scanSummary.screenshotBytes.formatSize(),
+                    isPermissionGranted = uiState.isPermissionGranted,
                     icon = Icons.Outlined.Smartphone,
                     badgeColor = DocumentBadge,
                     modifier = Modifier.weight(1f),

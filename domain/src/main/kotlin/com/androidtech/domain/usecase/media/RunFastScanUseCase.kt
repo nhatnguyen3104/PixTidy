@@ -38,9 +38,14 @@ class RunFastScanUseCase @Inject constructor(
     private val scanResultsRepository: ScanResultsRepository
 ) {
 
-    operator fun invoke(): Flow<ScanSummary> = flow {
+    operator fun invoke(hasPermission: Boolean = true): Flow<ScanSummary> = flow {
+        if (!hasPermission) {
+            val storageSummary = buildStorageSummary(hasPermission = false)
+            emit(ScanSummary.EMPTY.copy(lastScanLevel = ScanLayer.NONE, storageSummary = storageSummary))
+            return@flow
+        }
         coroutineScope {
-            val storageSummaryDeferred = async { buildStorageSummary() }
+            val storageSummaryDeferred = async { buildStorageSummary(hasPermission = true) }
             val allMediaIds = mutableListOf<Long>()
             var lastEmittedSummary: ScanSummary? = null
 
@@ -94,10 +99,14 @@ class RunFastScanUseCase @Inject constructor(
         }
     }.flowOn(Dispatchers.Default)
 
-    private suspend fun buildStorageSummary(): StorageSummary = coroutineScope {
+    private suspend fun buildStorageSummary(hasPermission: Boolean = true): StorageSummary = coroutineScope {
         val deviceStorageDeferred = async { systemStorageRepository.fetchDeviceStorage() }
-        val mediaSizeDeferred = async { mediaStoreRepository.fetchTotalMediaSizeBytes() }
-        deviceStorageDeferred.await().copy(mediaUsedBytes = mediaSizeDeferred.await())
+        val mediaSizeDeferred = if (hasPermission) {
+            async { mediaStoreRepository.fetchTotalMediaSizeBytes() }.await()
+        } else {
+            0L
+        }
+        deviceStorageDeferred.await().copy(mediaUsedBytes = mediaSizeDeferred)
     }
 
     private fun ScanSummary.plusBatch(batch: List<MediaItem>): ScanSummary {

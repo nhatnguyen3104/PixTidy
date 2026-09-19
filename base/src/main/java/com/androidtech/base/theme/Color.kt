@@ -81,7 +81,31 @@ val GradientCameraStart = Color(0xFF00C853)
 val GradientCameraEnd = Color(0xFF3B82F6)          // Neon green -> Blue
 
 // ===================== HELPER =====================
-fun Color.withAlpha(alpha: Float = 0.7f): Color {
+fun Color.withAlpha1(alpha: Float = 0.1f): Color {
+    return this.copy(alpha = alpha)
+}
+fun Color.withAlpha2(alpha: Float = 0.2f): Color {
+    return this.copy(alpha = alpha)
+}
+fun Color.withAlpha3(alpha: Float = 0.3f): Color {
+    return this.copy(alpha = alpha)
+}
+fun Color.withAlpha4(alpha: Float = 0.4f): Color {
+    return this.copy(alpha = alpha)
+}
+fun Color.withAlpha5(alpha: Float = 0.5f): Color {
+    return this.copy(alpha = alpha)
+}
+fun Color.withAlpha6(alpha: Float = 0.6f): Color {
+    return this.copy(alpha = alpha)
+}
+fun Color.withAlpha7(alpha: Float = 0.7f): Color {
+    return this.copy(alpha = alpha)
+}
+fun Color.withAlpha8(alpha: Float = 0.8f): Color {
+    return this.copy(alpha = alpha)
+}
+fun Color.withAlpha9(alpha: Float = 0.9f): Color {
     return this.copy(alpha = alpha)
 }
 

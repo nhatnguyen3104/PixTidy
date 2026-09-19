@@ -29,8 +29,6 @@ class HomeViewModel @Inject constructor(
 
     init {
         observeScanResults()
-        setEffect { HomeEffect.RequestStoragePermissions }
-        fastScan()
     }
 
     private fun observeScanResults() {
@@ -43,21 +41,25 @@ class HomeViewModel @Inject constructor(
             .launchIn(viewModelScope)
     }
 
-    private fun fastScan() {
+    private fun fastScan(hasPermission: Boolean = true) {
         scanJob?.cancel()
         scanJob = viewModelScope.launch {
-            runFastScanUseCase()
+            runFastScanUseCase(hasPermission)
                 .onEach { fresh ->
                     val cached = uiState.value.scanSummary
-                    val merged = fresh.copy(
-                        lastScanLevel = if (cached.lastScanLevel != ScanLayer.FAST) cached.lastScanLevel else fresh.lastScanLevel,
-                        duplicatesSizeBytes = cached.duplicatesSizeBytes,
-                        similaritySizeBytes = cached.similaritySizeBytes,
-                        screenshotCount = if (cached.screenshotCount > 0) cached.screenshotCount else fresh.screenshotCount,
-                        screenshotBytes = if (cached.screenshotBytes > 0) cached.screenshotBytes else fresh.screenshotBytes,
-                        largeVideoCount = if (cached.largeVideoCount > 0) cached.largeVideoCount else fresh.largeVideoCount,
-                        largeVideoBytes = if (cached.largeVideoBytes > 0) cached.largeVideoBytes else fresh.largeVideoBytes
-                    )
+                    val merged = if (hasPermission) {
+                        fresh.copy(
+                            lastScanLevel = if (cached.lastScanLevel != ScanLayer.FAST) cached.lastScanLevel else fresh.lastScanLevel,
+                            duplicatesSizeBytes = cached.duplicatesSizeBytes,
+                            similaritySizeBytes = cached.similaritySizeBytes,
+                            screenshotCount = if (cached.screenshotCount > 0) cached.screenshotCount else fresh.screenshotCount,
+                            screenshotBytes = if (cached.screenshotBytes > 0) cached.screenshotBytes else fresh.screenshotBytes,
+                            largeVideoCount = if (cached.largeVideoCount > 0) cached.largeVideoCount else fresh.largeVideoCount,
+                            largeVideoBytes = if (cached.largeVideoBytes > 0) cached.largeVideoBytes else fresh.largeVideoBytes
+                        )
+                    } else {
+                        cached.copy(storageSummary = fresh.storageSummary)
+                    }
                     setState { copy(scanSummary = merged) }
                 }
                 .collect()
@@ -83,7 +85,16 @@ class HomeViewModel @Inject constructor(
             }
 
             is HomeEvent.FastScan -> {
-                fastScan()
+                fastScan(uiState.value.isPermissionGranted)
+            }
+
+            is HomeEvent.RequestPermissionClicked -> {
+                setEffect { HomeEffect.RequestStoragePermissions }
+            }
+
+            is HomeEvent.PermissionStatusChanged -> {
+                setState { copy(isPermissionGranted = event.isGranted) }
+                fastScan(event.isGranted)
             }
         }
     }
