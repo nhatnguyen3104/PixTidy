@@ -4,6 +4,7 @@ import com.androidtech.base.viewmodel.UIEffect
 import com.androidtech.base.viewmodel.UIEvent
 import com.androidtech.base.viewmodel.UIState
 import com.androidtech.domain.model.media.ScanSummary
+import com.androidtech.domain.model.media.SmartInsightType
 import com.androidtech.domain.model.media.StorageSummary
 
 data class HomeState(
@@ -14,7 +15,7 @@ data class HomeState(
 ): UIState
 
 sealed class HomeEvent : UIEvent {
-    data class CategoryClick (val category: Category) : HomeEvent()
+    data class SmartInsightTypeClick (val smartInsightType: SmartInsightType) : HomeEvent()
     object DeepScanClicked : HomeEvent()
     object SmartScanClicked : HomeEvent()
     object SettingsClicked : HomeEvent()
@@ -27,16 +28,7 @@ sealed class HomeEffect : UIEffect {
     object NavigateToDeepScan : HomeEffect()
     object NavigateToSmartScan : HomeEffect()
     object NavigateToSettings : HomeEffect()
-
     object NavigateToDuplicate : HomeEffect()
     object NavigateToSimilar : HomeEffect()
-
     object RequestStoragePermissions : HomeEffect()
-}
-
-enum class Category {
-    DUPLICATE,
-    SIMILAR,
-    LARGE_VIDEOS,
-    SCREENSHOTS
 }

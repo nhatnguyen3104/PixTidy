@@ -4,9 +4,8 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.androidtech.base.viewmodel.BaseViewModel
 import com.androidtech.domain.extensions.UiState
-import com.androidtech.domain.model.media.ScanSummary
 import com.androidtech.domain.model.media.ScanLayer
-import com.androidtech.domain.model.media.ScanProcess as DomainScanState
+import com.androidtech.domain.model.media.ScanSummary
 import com.androidtech.domain.model.media.SmartInsightType
 import com.androidtech.domain.usecase.media.GetLatestScanResultsUseCase
 import com.androidtech.domain.usecase.media.RunDeepScanUseCase
@@ -19,6 +18,7 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import com.androidtech.domain.model.media.ScanProcess as DomainScanState
 
 @HiltViewModel
 class ScanViewModel @Inject constructor(
@@ -45,10 +45,9 @@ class ScanViewModel @Inject constructor(
 
     override fun handleEvent(event: ScanEvent) {
         when (event) {
-            is ScanEvent.StartScanClick -> {
-                startScan()
-            }
+            is ScanEvent.StartScanClick -> { startScan() }
             is ScanEvent.CancelScanClick -> cancelScan()
+            is ScanEvent.SmartInsightTypeClick -> { handleSmartInsightTypeClick(event.smartInsightType) }
             is ScanEvent.NavigateBackClick -> setEffect { ScanEffect.NavigateBack }
         }
     }
@@ -149,6 +148,36 @@ class ScanViewModel @Inject constructor(
             
             saveScanResultsUseCase(SaveScanResultsUseCase.Params(updatedSummary, success.insights))
                 .launchIn(this)
+        }
+    }
+
+    private fun handleSmartInsightTypeClick(smartInsightType: SmartInsightType) {
+        when (smartInsightType) {
+            SmartInsightType.EXACT_DUPLICATES -> {
+                setEffect { ScanEffect.NavigateToDuplicate }
+            }
+
+            SmartInsightType.SIMILAR_PHOTOS -> {
+                setEffect { ScanEffect.NavigateToSimilar }
+            }
+
+            SmartInsightType.SCREENSHOTS -> {
+
+            }
+
+            SmartInsightType.LARGE_VIDEOS -> {
+
+            }
+
+            SmartInsightType.BLURRY_PHOTOS -> {
+
+            }
+            SmartInsightType.DEEP_OCR_DOCUMENTS -> {
+
+            }
+            SmartInsightType.DUPLICATE_VIDEOS -> {
+
+            }
         }
     }
 }

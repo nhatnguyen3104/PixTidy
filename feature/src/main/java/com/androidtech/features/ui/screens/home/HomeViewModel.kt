@@ -6,6 +6,7 @@ import com.androidtech.base.viewmodel.BaseViewModel
 import com.androidtech.domain.extensions.UiState
 import com.androidtech.domain.model.media.ScanLayer
 import com.androidtech.domain.model.media.ScanSummary
+import com.androidtech.domain.model.media.SmartInsightType
 import com.androidtech.domain.usecase.media.GetLatestScanResultsUseCase
 import com.androidtech.domain.usecase.media.RunFastScanUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -68,8 +69,8 @@ class HomeViewModel @Inject constructor(
 
     override fun handleEvent(event: HomeEvent) {
         when (event) {
-            is HomeEvent.CategoryClick -> {
-                handleCategoryClick(event.category)
+            is HomeEvent.SmartInsightTypeClick -> {
+                handleSmartInsightTypeClick(event.smartInsightType)
             }
 
             is HomeEvent.SmartScanClicked -> {
@@ -99,21 +100,31 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    private fun handleCategoryClick(category: Category) {
-        when (category) {
-            Category.DUPLICATE -> {
+    private fun handleSmartInsightTypeClick(smartInsightType: SmartInsightType) {
+        when (smartInsightType) {
+            SmartInsightType.EXACT_DUPLICATES -> {
                 setEffect { HomeEffect.NavigateToDuplicate }
             }
 
-            Category.SIMILAR -> {
+            SmartInsightType.SIMILAR_PHOTOS -> {
                 setEffect { HomeEffect.NavigateToSimilar }
             }
 
-            Category.LARGE_VIDEOS -> {
+            SmartInsightType.SCREENSHOTS -> {
 
             }
 
-            Category.SCREENSHOTS -> {
+            SmartInsightType.LARGE_VIDEOS -> {
+
+            }
+
+            SmartInsightType.BLURRY_PHOTOS -> {
+
+            }
+            SmartInsightType.DEEP_OCR_DOCUMENTS -> {
+
+            }
+            SmartInsightType.DUPLICATE_VIDEOS -> {
 
             }
         }

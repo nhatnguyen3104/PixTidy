@@ -32,6 +32,7 @@ import com.androidtech.base.theme.*
 import com.androidtech.base.ui.animation.bounceClick
 import com.androidtech.base.utils.formatSize
 import com.androidtech.domain.model.media.ScanLayer
+import com.androidtech.domain.model.media.SmartInsightType
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
@@ -285,7 +286,7 @@ fun HomeContent(
                     icon = Icons.Outlined.ContentCopy,
                     badgeColor = ImageBadge,
                     modifier = Modifier.weight(1f),
-                    onClick = { onEvent(HomeEvent.CategoryClick(Category.DUPLICATE)) }
+                    onClick = { onEvent(HomeEvent.SmartInsightTypeClick(SmartInsightType.EXACT_DUPLICATES)) }
                 )
                 CategoryCard(
                     title = stringResource(R.string.text_similar_photos),
@@ -294,7 +295,7 @@ fun HomeContent(
                     icon = Icons.Outlined.Collections,
                     badgeColor = AudioBadge,
                     modifier = Modifier.weight(1f),
-                    onClick = { onEvent(HomeEvent.CategoryClick(Category.SIMILAR)) }
+                    onClick = { onEvent(HomeEvent.SmartInsightTypeClick(SmartInsightType.SIMILAR_PHOTOS)) }
                 )
             }
 
@@ -305,22 +306,22 @@ fun HomeContent(
                 horizontalArrangement = Arrangement.spacedBy(12.dp)
             ) {
                 CategoryCard(
-                    title = stringResource(R.string.text_large_videos),
-                    sizeText = uiState.scanSummary.videosSizeBytes.formatSize(),
-                    isPermissionGranted = uiState.isPermissionGranted,
-                    icon = Icons.Outlined.VideoLibrary,
-                    badgeColor = VideoBadge,
-                    modifier = Modifier.weight(1f),
-                    onClick = { onEvent(HomeEvent.CategoryClick(Category.LARGE_VIDEOS)) }
-                )
-                CategoryCard(
                     title = stringResource(R.string.text_screenshots),
                     sizeText = uiState.scanSummary.screenshotBytes.formatSize(),
                     isPermissionGranted = uiState.isPermissionGranted,
                     icon = Icons.Outlined.Smartphone,
                     badgeColor = DocumentBadge,
                     modifier = Modifier.weight(1f),
-                    onClick = { onEvent(HomeEvent.CategoryClick(Category.SCREENSHOTS)) }
+                    onClick = { onEvent(HomeEvent.SmartInsightTypeClick(SmartInsightType.SCREENSHOTS)) }
+                )
+                CategoryCard(
+                    title = stringResource(R.string.text_large_videos),
+                    sizeText = uiState.scanSummary.videosSizeBytes.formatSize(),
+                    isPermissionGranted = uiState.isPermissionGranted,
+                    icon = Icons.Outlined.VideoLibrary,
+                    badgeColor = VideoBadge,
+                    modifier = Modifier.weight(1f),
+                    onClick = { onEvent(HomeEvent.SmartInsightTypeClick(SmartInsightType.LARGE_VIDEOS)) }
                 )
             }
 

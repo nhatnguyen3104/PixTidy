@@ -67,6 +67,12 @@ fun ScanScreen(
         viewModel.uiEffect.flowWithLifecycle(lifecycleOwner.lifecycle).collect { effect ->
             when (effect) {
                 is ScanEffect.NavigateBack -> navController.popBackStack()
+                is ScanEffect.NavigateToDuplicate -> {
+                    navController.navigate(AppDestination.DuplicateScreen.route)
+                }
+                is ScanEffect.NavigateToSimilar -> {
+                    navController.navigate(AppDestination.SimilarScreen.route)
+                }
             }
         }
     }
@@ -199,7 +205,9 @@ fun ScanContent(
                             process.insights.forEach { insight ->
                                 ResultCategoryRow(
                                     category = mapInsightToCategory(insight),
-                                    onClick = { /* Navigate to detail if needed */ }
+                                    onClick = {
+                                        onEvent(ScanEvent.SmartInsightTypeClick(insight.type))
+                                    }
                                 )
                                 Spacer(modifier = Modifier.height(12.dp))
                             }

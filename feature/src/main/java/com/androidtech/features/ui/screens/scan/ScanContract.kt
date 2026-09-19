@@ -5,19 +5,25 @@ import com.androidtech.base.viewmodel.UIEvent
 import com.androidtech.base.viewmodel.UIState
 import com.androidtech.domain.model.media.ScanLayer
 import com.androidtech.domain.model.media.ScanProcess
+import com.androidtech.domain.model.media.SmartInsightType
+import com.androidtech.features.ui.screens.home.HomeEffect
 
 data class ScanState(
-    val scanLayer: ScanLayer = ScanLayer.FAST,
+    val scanLayer: ScanLayer = ScanLayer.NONE,
     val scanProcess: ScanProcess = ScanProcess.Idle
 ) : UIState
 
 sealed class ScanEvent : UIEvent {
     data object StartScanClick : ScanEvent()
     data object CancelScanClick : ScanEvent()
+    data class SmartInsightTypeClick (val smartInsightType: SmartInsightType) : ScanEvent()
     data object NavigateBackClick : ScanEvent()
 }
 
 sealed class ScanEffect : UIEffect {
     data object NavigateBack : ScanEffect()
     // You could add NavigateToResults(groups) here if you want to move to another screen
+    object NavigateToDuplicate : ScanEffect()
+    object NavigateToSimilar : ScanEffect()
+
 }
