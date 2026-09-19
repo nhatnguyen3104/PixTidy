@@ -21,10 +21,12 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.androidtech.base.R
 import com.androidtech.base.theme.AppTheme
 import com.androidtech.base.ui.animation.bounceClick
 
@@ -47,7 +49,7 @@ fun DeleteBottomBar(
         ) {
             Column {
                 Text(
-                    text = "$selectedCount selected",
+                    text = stringResource(R.string.text_items_selected, selectedCount),
                     style = MaterialTheme.typography.titleMedium.copy(
                         fontWeight = FontWeight.Bold,
                         fontSize = 16.sp
@@ -80,7 +82,7 @@ fun DeleteBottomBar(
                 )
                 Spacer(modifier = Modifier.width(8.dp))
                 Text(
-                    text = "Delete $selectedCount photos",
+                    text = stringResource(R.string.text_delete_items_selected, selectedCount),
                     style = MaterialTheme.typography.titleMedium.copy(
                         fontWeight = FontWeight.Bold,
                         fontSize = 14.sp

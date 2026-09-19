@@ -32,6 +32,8 @@
     <string name="text_notification_clean">Cleaned up %1$d items, reclaimed %2$s</string>
     <string name="text_success_clean">Successfully cleaned up</string>
     <string name="text_error_clean">Error cleaning up, please try again</string>
+    <string name="text_items_selected">%1$d selected</string>
+    <string name="text_delete_items_selected">Delete %1$d photos</string>
 
     <string name="text_duplicate_photos">Duplicate Photos</string>
     <string name="text_duplicate_group">Group: %1$s</string>
