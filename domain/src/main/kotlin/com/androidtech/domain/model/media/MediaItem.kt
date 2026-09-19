@@ -27,4 +27,15 @@ data class MediaItem(
 
     /** Aspect ratio guard: MediaStore occasionally reports 0x0 for corrupt/pending entries. */
     val hasValidDimensions: Boolean get() = width > 0 && height > 0
+
+    companion object {
+        const val LARGE_VIDEO_THRESHOLD_BYTES = 100L * 1024 * 1024 // 100MB
+    }
 }
+
+val MediaItem.isScreenshot: Boolean get() {
+    val needle = "screenshot"
+    return path.lowercase().contains(needle) || name.lowercase().contains(needle)
+}
+
+val MediaItem.isLargeVideo: Boolean get() = isVideo && size >= MediaItem.LARGE_VIDEO_THRESHOLD_BYTES

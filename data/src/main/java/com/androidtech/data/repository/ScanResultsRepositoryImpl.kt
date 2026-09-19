@@ -5,7 +5,10 @@ import com.androidtech.data.model.ScanSummaryEntity
 import com.androidtech.data.model.SmartInsightEntity
 import com.androidtech.domain.model.media.ScanSummary
 import com.androidtech.domain.model.media.MediaItem
+import com.androidtech.domain.model.media.isScreenshot
+import com.androidtech.domain.model.media.isLargeVideo
 import com.androidtech.domain.model.media.SmartInsight
+import com.androidtech.domain.model.media.SmartInsightType
 import com.androidtech.domain.model.media.StorageSummary
 import com.androidtech.domain.repository.ScanResultsRepository
 import com.squareup.moshi.Moshi
@@ -59,11 +62,46 @@ class ScanResultsRepositoryImpl @Inject constructor(
         val totalDeletedBytes = deletedItems.sumOf { it.size }
         val totalDeletedCount = deletedItems.size
 
+        // Calculate fine-grained reductions
+        val screenshotCountRemoved = deletedItems.count { it.isScreenshot }
+        val screenshotBytesRemoved = deletedItems.filter { it.isScreenshot }.sumOf { it.size }
+        val largeVideoCountRemoved = deletedItems.count { it.isLargeVideo }
+        val largeVideoBytesRemoved = deletedItems.filter { it.isLargeVideo }.sumOf { it.size }
+        val photoBytesRemoved = deletedItems.filter { it.isImage }.sumOf { it.size }
+        val videoBytesRemoved = deletedItems.filter { it.isVideo }.sumOf { it.size }
+
+        var duplicatesRemovedBytes = 0L
+        var similarityRemovedBytes = 0L
+
+        currentInsights.forEach { insight ->
+            val removedInThisInsight = insight.items.filter { it.id in deletedIds }.sumOf { it.size }
+            when (insight.type) {
+                SmartInsightType.EXACT_DUPLICATES, SmartInsightType.DUPLICATE_VIDEOS -> {
+                    duplicatesRemovedBytes += removedInThisInsight
+                }
+                SmartInsightType.SIMILAR_PHOTOS -> {
+                    similarityRemovedBytes += removedInThisInsight
+                }
+                else -> {}
+            }
+        }
+
         val updatedSummary = currentSummary.copy(
             totalMediaCount = (currentSummary.totalMediaCount - totalDeletedCount).coerceAtLeast(0),
             totalStorageBytes = (currentSummary.totalStorageBytes - totalDeletedBytes).coerceAtLeast(0L),
-            duplicatesSizeBytes = (currentSummary.duplicatesSizeBytes?.minus(totalDeletedBytes))?.coerceAtLeast(0L),
-            photosSizeBytes = (currentSummary.photosSizeBytes - totalDeletedBytes).coerceAtLeast(0L)
+            screenshotCount = (currentSummary.screenshotCount - screenshotCountRemoved).coerceAtLeast(0),
+            screenshotBytes = (currentSummary.screenshotBytes - screenshotBytesRemoved).coerceAtLeast(0L),
+            largeVideoCount = (currentSummary.largeVideoCount - largeVideoCountRemoved).coerceAtLeast(0),
+            largeVideoBytes = (currentSummary.largeVideoBytes - largeVideoBytesRemoved).coerceAtLeast(0L),
+            photosSizeBytes = (currentSummary.photosSizeBytes - photoBytesRemoved).coerceAtLeast(0L),
+            videosSizeBytes = (currentSummary.videosSizeBytes - videoBytesRemoved).coerceAtLeast(0L),
+            duplicatesSizeBytes = (currentSummary.duplicatesSizeBytes?.minus(duplicatesRemovedBytes))?.coerceAtLeast(0L),
+            similaritySizeBytes = (currentSummary.similaritySizeBytes?.minus(similarityRemovedBytes))?.coerceAtLeast(0L),
+            storageSummary = currentSummary.storageSummary.copy(
+                usedBytes = (currentSummary.storageSummary.usedBytes - totalDeletedBytes).coerceAtLeast(0L),
+                freeBytes = currentSummary.storageSummary.freeBytes + totalDeletedBytes,
+                mediaUsedBytes = (currentSummary.storageSummary.mediaUsedBytes - totalDeletedBytes).coerceAtLeast(0L)
+            )
         )
 
         val updatedInsights = currentInsights.map { insight ->

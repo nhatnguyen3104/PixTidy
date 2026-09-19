@@ -2,6 +2,8 @@ package com.androidtech.domain.usecase.media
 
 import com.androidtech.domain.model.media.ScanSummary
 import com.androidtech.domain.model.media.MediaItem
+import com.androidtech.domain.model.media.isScreenshot
+import com.androidtech.domain.model.media.isLargeVideo
 import com.androidtech.domain.model.media.ScanLayer
 import com.androidtech.domain.model.media.StorageSummary
 import com.androidtech.domain.repository.MediaAnalysisCacheRepository
@@ -109,13 +111,13 @@ class RunFastScanUseCase @Inject constructor(
 
         for (item in batch) {
             addedBytes += item.size
-            if (isLikelyScreenshot(item)) {
+            if (item.isScreenshot) {
                 addedScreenshots++
                 addedScreenshotBytes += item.size
             }
             if (item.isVideo) {
                 addedVideoBytes += item.size
-                if (item.size >= LARGE_VIDEO_THRESHOLD_BYTES) {
+                if (item.isLargeVideo) {
                     addedLargeVideos++
                     addedLargeVideoBytes += item.size
                 }
@@ -136,13 +138,7 @@ class RunFastScanUseCase @Inject constructor(
         )
     }
 
-    private fun isLikelyScreenshot(item: MediaItem): Boolean {
-        val needle = SCREENSHOT_HINT
-        return item.path.lowercase().contains(needle) || item.name.lowercase().contains(needle)
-    }
-
     private companion object {
-        const val LARGE_VIDEO_THRESHOLD_BYTES = 100L * 1024 * 1024 // 100MB
-        const val SCREENSHOT_HINT = "screenshot"
+        // Shared constants moved to MediaItem
     }
 }

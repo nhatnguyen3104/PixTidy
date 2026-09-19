@@ -125,14 +125,18 @@ class DuplicateViewModel @Inject constructor(
     private fun togglePhotoSelection(photoId: Long) {
         val currentGroups = uiState.value.duplicateGroups
         val updatedGroups = currentGroups.map { group ->
-            if (group.duplicateItems.any { it.id == photoId }) {
-                group.copy(
-                    duplicateItems = group.duplicateItems.map { item ->
-                        if (item.id == photoId) item.copy(isSelected = !item.isSelected) else item
-                    }
-                )
-            } else {
-                group
+            when {
+                group.originalItem.id == photoId -> {
+                    group.copy(originalItem = group.originalItem.copy(isSelected = !group.originalItem.isSelected))
+                }
+                group.duplicateItems.any { it.id == photoId } -> {
+                    group.copy(
+                        duplicateItems = group.duplicateItems.map { item ->
+                            if (item.id == photoId) item.copy(isSelected = !item.isSelected) else item
+                        }
+                    )
+                }
+                else -> group
             }
         }
         setState { copy(duplicateGroups = updatedGroups) }

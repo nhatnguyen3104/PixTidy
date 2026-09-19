@@ -4,16 +4,17 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.androidtech.base.viewmodel.BaseViewModel
 import com.androidtech.domain.extensions.UiState
+import com.androidtech.domain.model.media.ScanLayer
 import com.androidtech.domain.model.media.ScanSummary
 import com.androidtech.domain.usecase.media.GetLatestScanResultsUseCase
 import com.androidtech.domain.usecase.media.RunFastScanUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.filterIsInstance
 import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
@@ -44,34 +45,23 @@ class HomeViewModel @Inject constructor(
 
     private fun fastScan() {
         scanJob?.cancel()
-        scanJob = combine(
-            runFastScanUseCase(),
-            getLatestScanResultsUseCase(Unit)
-                .filterIsInstance<UiState.Success<ScanSummary?>>()
-                .map { it.data }
-        ) { fresh, cached ->
-            fresh.copy(
-                lastScanLevel = cached?.lastScanLevel ?: fresh.lastScanLevel,
-                duplicatesSizeBytes = cached?.duplicatesSizeBytes ?: 0L,
-                similaritySizeBytes = cached?.similaritySizeBytes ?: 0L,
-                screenshotCount = if ((cached?.screenshotCount
-                        ?: 0) > 0
-                ) cached!!.screenshotCount else fresh.screenshotCount,
-                screenshotBytes = if ((cached?.screenshotBytes
-                        ?: 0L) > 0L
-                ) cached!!.screenshotBytes else fresh.screenshotBytes,
-                largeVideoCount = if ((cached?.largeVideoCount
-                        ?: 0) > 0
-                ) cached!!.largeVideoCount else fresh.largeVideoCount,
-                largeVideoBytes = if ((cached?.largeVideoBytes
-                        ?: 0L) > 0L
-                ) cached!!.largeVideoBytes else fresh.largeVideoBytes
-            )
+        scanJob = viewModelScope.launch {
+            runFastScanUseCase()
+                .onEach { fresh ->
+                    val cached = uiState.value.scanSummary
+                    val merged = fresh.copy(
+                        lastScanLevel = if (cached.lastScanLevel != ScanLayer.FAST) cached.lastScanLevel else fresh.lastScanLevel,
+                        duplicatesSizeBytes = cached.duplicatesSizeBytes,
+                        similaritySizeBytes = cached.similaritySizeBytes,
+                        screenshotCount = if (cached.screenshotCount > 0) cached.screenshotCount else fresh.screenshotCount,
+                        screenshotBytes = if (cached.screenshotBytes > 0) cached.screenshotBytes else fresh.screenshotBytes,
+                        largeVideoCount = if (cached.largeVideoCount > 0) cached.largeVideoCount else fresh.largeVideoCount,
+                        largeVideoBytes = if (cached.largeVideoBytes > 0) cached.largeVideoBytes else fresh.largeVideoBytes
+                    )
+                    setState { copy(scanSummary = merged) }
+                }
+                .collect()
         }
-            .onEach { summary ->
-                setState { copy(scanSummary = summary) }
-            }
-            .launchIn(viewModelScope)
     }
 
     override fun handleEvent(event: HomeEvent) {
