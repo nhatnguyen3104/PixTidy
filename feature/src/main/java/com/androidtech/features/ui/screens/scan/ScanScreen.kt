@@ -59,8 +59,10 @@ fun ScanScreen(
     val navController = LocalNavController.current
     val snackbarHostState = remember { SnackbarHostState() }
 
-    LaunchedEffect(Unit) {
-        viewModel.handleEvent(ScanEvent.StartScanClick)
+    LaunchedEffect(uiState.scanProcess) {
+        if (uiState.scanProcess is ScanProcess.Idle) {
+            viewModel.handleEvent(ScanEvent.StartScan)
+        }
     }
 
     LaunchedEffect(viewModel.uiEffect, lifecycleOwner) {

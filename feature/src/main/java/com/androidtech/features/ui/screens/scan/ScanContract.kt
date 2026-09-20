@@ -14,7 +14,7 @@ data class ScanState(
 ) : UIState
 
 sealed class ScanEvent : UIEvent {
-    data object StartScanClick : ScanEvent()
+    data object StartScan : ScanEvent()
     data object CancelScanClick : ScanEvent()
     data class SmartInsightTypeClick (val smartInsightType: SmartInsightType) : ScanEvent()
     data object NavigateBackClick : ScanEvent()
