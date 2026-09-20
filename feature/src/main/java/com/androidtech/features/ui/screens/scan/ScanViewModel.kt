@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.androidtech.base.viewmodel.BaseViewModel
 import com.androidtech.domain.extensions.UiState
 import com.androidtech.domain.model.media.ScanLayer
+import com.androidtech.domain.model.media.ScanProgress
 import com.androidtech.domain.model.media.ScanSummary
 import com.androidtech.domain.model.media.SmartInsightType
 import com.androidtech.domain.usecase.media.GetLatestScanResultsUseCase
@@ -13,11 +14,13 @@ import com.androidtech.domain.usecase.media.RunSmartScanUseCase
 import com.androidtech.domain.usecase.media.SaveScanResultsUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import kotlin.time.Duration.Companion.milliseconds
 import com.androidtech.domain.model.media.ScanProcess as DomainScanState
 
 @HiltViewModel
@@ -64,29 +67,44 @@ class ScanViewModel @Inject constructor(
 
         scanJob = scanFlow
             .onEach {  domainState ->
-                val uiProgress = when (domainState) {
-                    is DomainScanState.Idle -> DomainScanState.Idle
+                when (domainState) {
+                    is DomainScanState.Idle -> {
+                        setState { copy(scanProcess = DomainScanState.Idle) }
+                    }
                     is DomainScanState.Scanning -> {
-                        DomainScanState.Scanning(
+                        val uiProgress = DomainScanState.Scanning(
                             progress = domainState.progress
                                 .copy(currentStepMessage = domainState.progress.currentStepMessage)
                         )
+                        setState { copy(scanProcess = uiProgress) }
                     }
                     is DomainScanState.Success -> {
                         saveLatestResults(mode, domainState)
-                        DomainScanState.Success(
+                        // Emit a final 100% scanning state to allow the UI to finish the gauge animation completely
+                        val finalProgress = ScanProgress.fixed(
+                            layer = if (mode == ScanLayer.SMART) ScanLayer.SMART else ScanLayer.DEEP,
+                            processed = 100,
+                            total = 100,
+                            message = "Scan complete!",
+                            percentage = 100f
+                        )
+                        setState { copy(scanProcess = DomainScanState.Scanning(finalProgress)) }
+                        delay(800.milliseconds)
+                        
+                        val uiSuccess = DomainScanState.Success(
                             insights = domainState.insights,
                             summary = domainState.summary,
                             totalReclaimableBytes = domainState.totalReclaimableBytes
                         )
+                        setState { copy(scanProcess = uiSuccess) }
                     }
                     is DomainScanState.Error -> {
-                        DomainScanState.Error(
+                        val uiError = DomainScanState.Error(
                             throwable = domainState.throwable
                         )
+                        setState { copy(scanProcess = uiError) }
                     }
                 }
-                setState { copy(scanProcess = uiProgress) }
             }
             .launchIn(viewModelScope)
     }

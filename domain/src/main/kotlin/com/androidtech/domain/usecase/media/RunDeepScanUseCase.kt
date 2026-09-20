@@ -75,7 +75,13 @@ class RunDeepScanUseCase @Inject constructor(
 
         runSmartScanUseCase().collect { state ->
             when (state) {
-                is ScanProcess.Scanning -> emit(state) // pass through; same progress shape
+                is ScanProcess.Scanning -> {
+                    val scaledProgress = state.progress.copy(
+                        currentLayer = ScanLayer.DEEP,
+                        progressPercentage = state.progress.progressPercentage * 0.5f
+                    )
+                    emit(ScanProcess.Scanning(scaledProgress))
+                }
                 is ScanProcess.Success -> {
                     smartScanInsights = state.insights
                     smartScanReclaimable = state.totalReclaimableBytes
@@ -260,8 +266,11 @@ class RunDeepScanUseCase @Inject constructor(
         )
     }
 
-    private fun deepScanning(processed: Int, total: Int, message: String) =
-        ScanProcess.Scanning(ScanProgress.of(ScanLayer.DEEP, processed, total, message))
+    private fun deepScanning(processed: Int, total: Int, message: String): ScanProcess {
+        val safeTotal = total.coerceAtLeast(1)
+        val phasePercentage = (processed.toFloat() / safeTotal.toFloat()) * 50f
+        return ScanProcess.Scanning(ScanProgress.fixed(ScanLayer.DEEP, processed, total, message, 50f + phasePercentage))
+    }
 
     private companion object {
         const val MAX_CONCURRENT_VIDEO_DECODES = 2 // MediaMetadataRetriever is heavier than BitmapFactory

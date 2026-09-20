@@ -16,6 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
@@ -38,200 +39,113 @@ fun ScanProgressGauge(
     progress: Float,
     modifier: Modifier = Modifier
 ) {
+    // Smoothly animate the progress value
     val animatedProgress by animateFloatAsState(
         targetValue = progress.coerceIn(0f, 1f),
-        animationSpec = tween(durationMillis = 600, easing = LinearOutSlowInEasing),
+        animationSpec = tween(durationMillis = 800, easing = FastOutSlowInEasing),
         label = "progressAnimation"
     )
 
-    // Pulse animation for the percentage text
+    // Subtle breathing animation for the percentage text
     val infiniteTransition = rememberInfiniteTransition(label = "pulseTransition")
-    val pulseScale by infiniteTransition.animateFloat(
-        initialValue = 1f,
-        targetValue = 1.06f,
+    val pulseAlpha by infiniteTransition.animateFloat(
+        initialValue = 0.85f,
+        targetValue = 1f,
         animationSpec = infiniteRepeatable(
-            animation = tween(1000, easing = FastOutSlowInEasing),
+            animation = tween(1400, easing = FastOutSlowInEasing),
             repeatMode = RepeatMode.Reverse
         ),
-        label = "pulseScale"
-    )
-
-    // Glow effect animation
-    val glowAlpha by infiniteTransition.animateFloat(
-        initialValue = 0.3f,
-        targetValue = 0.7f,
-        animationSpec = infiniteRepeatable(
-            animation = tween(1500, easing = FastOutSlowInEasing),
-            repeatMode = RepeatMode.Reverse
-        ),
-        label = "glowAlpha"
+        label = "pulseAlpha"
     )
 
     Box(
         contentAlignment = Alignment.Center,
-        modifier = modifier.size(280.dp)
+        modifier = modifier.size(240.dp)
     ) {
         val primaryColor = MaterialTheme.colorScheme.primary
-        val primaryLight = MaterialTheme.colorScheme.primary.copy(alpha = 0.15f)
-        val trackColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.4f)
-        val surfaceColor = MaterialTheme.colorScheme.surface
+        val trackColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f)
+        val onSurfaceVariant = MaterialTheme.colorScheme.onSurfaceVariant
 
         Canvas(modifier = Modifier.fillMaxSize()) {
-            val canvasSize = size.minDimension
+            val strokeWidth = 10.dp.toPx()
             val centerPoint = Offset(size.width / 2, size.height / 2)
-            val outerRadius = (canvasSize / 2) - 16.dp.toPx()
-            val middleRadius = outerRadius - 30.dp.toPx()
-            val innerRadius = middleRadius - 28.dp.toPx()
+            val radius = (size.minDimension / 2) - strokeWidth
 
-            // 1. Outer shadow/glow ring
-            drawCircle(
-                color = primaryColor.copy(alpha = glowAlpha * 0.3f),
-                radius = outerRadius + 12.dp.toPx(),
-                center = centerPoint,
-                style = Stroke(width = 20.dp.toPx(), cap = StrokeCap.Round)
-            )
-
-            // 2. Outer track ring (background)
+            // 1. Background track
             drawCircle(
                 color = trackColor,
-                radius = outerRadius,
+                radius = radius,
                 center = centerPoint,
-                style = Stroke(width = 12.dp.toPx(), cap = StrokeCap.Round)
+                style = Stroke(width = strokeWidth, cap = StrokeCap.Round)
             )
 
-            // 3. Gradient progress arc with shimmer effect
+            // 2. Progress arc (starts at 12 o'clock)
             val startAngle = -90f
             val sweepAngle = animatedProgress * 360f
 
-            // Progress arc with gradient-like appearance using layered strokes
-            if (animatedProgress > 0f) {
-                val arcRect = androidx.compose.ui.geometry.Rect(
-                    center = centerPoint,
-                    radius = outerRadius
-                )
-
-                // Main progress arc
+            if (sweepAngle > 0f) {
                 drawArc(
                     color = primaryColor,
                     startAngle = startAngle,
                     sweepAngle = sweepAngle,
                     useCenter = false,
-                    topLeft = arcRect.topLeft,
-                    size = arcRect.size,
-                    style = Stroke(width = 12.dp.toPx(), cap = StrokeCap.Round)
-                )
-
-                // Secondary thinner arc for depth effect
-                drawArc(
-                    color = primaryColor.copy(alpha = 0.3f),
-                    startAngle = startAngle,
-                    sweepAngle = sweepAngle,
-                    useCenter = false,
-                    topLeft = arcRect.topLeft,
-                    size = arcRect.size,
-                    style = Stroke(width = 24.dp.toPx(), cap = StrokeCap.Round)
+                    topLeft = Offset(centerPoint.x - radius, centerPoint.y - radius),
+                    size = Size(radius * 2, radius * 2),
+                    style = Stroke(width = strokeWidth, cap = StrokeCap.Round)
                 )
             }
 
-            // 4. Inner decorative rings
-            drawCircle(
-                color = primaryLight,
-                radius = middleRadius,
-                center = centerPoint,
-                style = Stroke(width = 1.5.dp.toPx())
-            )
-
-            drawCircle(
-                color = primaryLight.copy(alpha = 0.5f),
-                radius = innerRadius,
-                center = centerPoint,
-                style = Stroke(width = 1.dp.toPx())
-            )
-
-            // 5. Center dot accent
-            drawCircle(
-                color = primaryColor.copy(alpha = 0.1f),
-                radius = innerRadius - 12.dp.toPx(),
-                center = centerPoint
-            )
-
-            // 6. Progress handle dot with glow
-            if (animatedProgress > 0.01f) {
+            // 3. Minimal progress handle (soft halo + solid dot)
+            if (animatedProgress > 0.005f) {
                 val endAngleRad = Math.toRadians((startAngle + sweepAngle).toDouble())
-                val handleX = centerPoint.x + outerRadius * cos(endAngleRad).toFloat()
-                val handleY = centerPoint.y + outerRadius * sin(endAngleRad).toFloat()
+                val handleX = centerPoint.x + radius * cos(endAngleRad).toFloat()
+                val handleY = centerPoint.y + radius * sin(endAngleRad).toFloat()
+                val handleCenter = Offset(handleX, handleY)
 
-                // Glow behind handle
+                // Soft halo
                 drawCircle(
-                    color = primaryColor.copy(alpha = 0.2f),
-                    radius = 18.dp.toPx(),
-                    center = Offset(handleX, handleY)
+                    color = primaryColor.copy(alpha = 0.15f),
+                    radius = strokeWidth * 1.6f,
+                    center = handleCenter
                 )
 
-                // Main handle dot
+                // Solid handle
                 drawCircle(
                     color = primaryColor,
-                    radius = 10.dp.toPx(),
-                    center = Offset(handleX, handleY)
-                )
-
-                // Inner highlight on handle
-                drawCircle(
-                    color = Color.White.copy(alpha = 0.4f),
-                    radius = 4.dp.toPx(),
-                    center = Offset(handleX - 2.dp.toPx(), handleY - 2.dp.toPx())
-                )
-            }
-
-            // 7. Tick marks around the gauge (optional decorative)
-            val tickCount = 12
-            for (i in 0 until tickCount) {
-                val angle = -90f + (i * 360f / tickCount)
-                val angleRad = Math.toRadians(angle.toDouble())
-                val innerTickRadius = outerRadius - 18.dp.toPx()
-                val outerTickRadius = outerRadius - 8.dp.toPx()
-                val isActive = (i / 12f) <= animatedProgress
-
-                val x1 = centerPoint.x + innerTickRadius * cos(angleRad).toFloat()
-                val y1 = centerPoint.y + innerTickRadius * sin(angleRad).toFloat()
-                val x2 = centerPoint.x + outerTickRadius * cos(angleRad).toFloat()
-                val y2 = centerPoint.y + outerTickRadius * sin(angleRad).toFloat()
-
-                drawLine(
-                    color = if (isActive) primaryColor.copy(alpha = 0.6f) else trackColor,
-                    start = Offset(x1, y1),
-                    end = Offset(x2, y2),
-                    strokeWidth = 2.dp.toPx(),
-                    cap = StrokeCap.Round
+                    radius = strokeWidth * 0.85f,
+                    center = handleCenter
                 )
             }
         }
 
-        // Percentage text with enhanced styling
+        // Center content: percentage + status label
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
             Text(
                 text = "${(animatedProgress * 100).toInt()}%",
-                style = MaterialTheme.typography.displayLarge.copy(
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 36.sp,
-                    color = MaterialTheme.colorScheme.primary,
-                    letterSpacing = 0.sp
-                ),
-                modifier = Modifier.scale(pulseScale)
+                style = MaterialTheme.typography.displaySmall.copy(
+                    fontWeight = FontWeight.SemiBold,
+                    fontSize = 40.sp,
+                    color = primaryColor.copy(alpha = pulseAlpha),
+                    letterSpacing = (-1).sp
+                )
             )
 
-            // Subtitle text
+            Spacer(modifier = Modifier.height(6.dp))
+
             Text(
-                text = if (animatedProgress >= 1f) stringResource(R.string.text_complete) else stringResource(R.string.text_scanning),
+                text = if (animatedProgress >= 1f) {
+                    stringResource(R.string.text_complete)
+                } else {
+                    stringResource(R.string.text_scanning)
+                },
                 style = MaterialTheme.typography.labelMedium.copy(
-                    color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
+                    color = onSurfaceVariant.copy(alpha = 0.7f),
                     fontSize = 12.sp,
-                    letterSpacing = 0.5.sp
-                ),
-                modifier = Modifier.padding(top = 4.dp)
+                    letterSpacing = 1.sp
+                )
             )
         }
     }

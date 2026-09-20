@@ -53,7 +53,7 @@ class RunSmartScanUseCase @Inject constructor(
 ) {
 
     operator fun invoke(): Flow<ScanProcess> = callbackFlow {
-        trySend(scanning(0, 1, "Preparing scan\u2026"))
+        trySend(smartScanning("Preparing scan\u2026", 5f))
 
         val job = launch {
             try {
@@ -72,10 +72,9 @@ class RunSmartScanUseCase @Inject constructor(
 
     private suspend fun runPipeline(emit: (ScanProcess) -> Unit) = coroutineScope {
         // Stage a: candidate fetch + fast metadata filter
-        emit(scanning(0, 1, "Reading media library\u2026"))
+        emit(smartScanning("Reading media library\u2026", 15f))
         val allCandidates = mediaStoreRepository.fetchCandidatesForSmartScan()
         val candidates = allCandidates.filter { it.hasValidDimensions }
-        val total = candidates.size.coerceAtLeast(1)
         ensureActive()
 
         // Best-effort housekeeping: drop cache rows for media no longer on device. Not awaited —
@@ -98,24 +97,23 @@ class RunSmartScanUseCase @Inject constructor(
         val largeVideos = videos.filter { it.size >= LARGE_VIDEO_THRESHOLD_BYTES }
 
         // Stage b: exact duplicates
-        emit(scanning(0, total, "Looking for exact duplicates\u2026"))
+        emit(smartScanning("Looking for exact duplicates\u2026", 35f))
         val duplicateGroups = imageAnalyzerEngine.findExactDuplicates(nonScreenshotImages)
         val exactDuplicateIds = duplicateGroups.flatMap(DuplicateGroup::allItems).mapTo(HashSet()) { it.id }
         val nonDuplicateImages = nonScreenshotImages.filterNot { it.id in exactDuplicateIds }
 
         // Stage c: similar (not identical) photos
-        emit(scanning(0, total, "Finding similar photos\u2026"))
+        emit(smartScanning("Finding similar photos\u2026", 65f))
         val similarGroups = imageAnalyzerEngine.findSimilarGroups(nonDuplicateImages)
         val similarGroupedIds = similarGroups.flatMap { it.items }.mapTo(HashSet()) { it.id }
 
-        // Stage d: quality analysis on whatever is left ungrouped (a duplicate/similar item's
-        // quality doesn't change the recommendation — the dup/similarity signal already dominates)
-        emit(scanning(total, total, "Checking photo quality\u2026"))
+        // Stage d: quality analysis on whatever is left ungrouped
+        emit(smartScanning("Checking photo quality\u2026", 85f))
         val qualityCandidates = nonDuplicateImages.filterNot { it.id in similarGroupedIds }
         val blurryItems = imageAnalyzerEngine.findBlurryItems(qualityCandidates)
 
         // Stage f: recommendation scoring
-        emit(scanning(total, total, "Generating recommendations\u2026"))
+        emit(smartScanning("Generating recommendations\u2026", 95f))
         val insights = recommendationEngine.generateInsights(
             duplicates = duplicateGroups,
             similarGroups = similarGroups,
@@ -154,8 +152,8 @@ class RunSmartScanUseCase @Inject constructor(
         return nameOrPathHit
     }
 
-    private fun scanning(processed: Int, total: Int, message: String) =
-        ScanProcess.Scanning(ScanProgress.of(ScanLayer.SMART, processed, total, message))
+    private fun smartScanning(message: String, percentage: Float) =
+        ScanProcess.Scanning(ScanProgress.fixed(ScanLayer.SMART, 0, 100, message, percentage))
 
     private companion object {
         const val LARGE_VIDEO_THRESHOLD_BYTES = 100L * 1024 * 1024
