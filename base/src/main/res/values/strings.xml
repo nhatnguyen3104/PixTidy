@@ -19,7 +19,8 @@
     <string name="text_overlay_description">Pet the cat and relax a little</string>
     <string name="text_notification_title">Cat Gatekeeper is running</string>
     <string name="text_notification_content">Tap to open the app</string>
-    
+
+    <!-- Common -->
     <string name="text_capacity"> GB</string>
     <string name="text_used_capacity">used of %1$d GB</string>
     <string name="text_available_capacity">%1$.2f GB available</string>
@@ -42,12 +43,24 @@
     <string name="text_allow_storage_access">Allow storage access</string>
     <string name="text_learn_privacy">Learn about our on-device privacy guarantee</string>
     <string name="text_permission_required">Permission needed</string>
+    <string name="text_unknow_error">Unknown error</string>
 
+    <!-- Scan -->
+    <string name="text_scan_failed">Scan failed</string>
+    <string name="text_canning_storage">Scanning Storage…</string>
+    <string name="text_item_found">Items found: %1$d</string>
+    <string name="text_scan_insights">Scan Insights</string>
+    <string name="text_groups">%1$d Groups</string>
+    <string name="text_cancel_scan">Cancel Scan</string>
+    <string name="text_go_back">Go Back</string>
+
+    <!-- Duplicate -->
     <string name="text_duplicate_photos">Duplicate Photos</string>
     <string name="text_duplicate_group">Group: %1$s</string>
     <string name="text_duplicate_photos_description">%1$d groups • %2$s</string>
     <string name="text_original">Original</string>
 
+    <!-- Similar -->
     <string name="text_similar_photos">Similar Photos</string>
     <string name="text_similar_photos_description">%1$d groups • %2$s</string>
     <string name="text_percent_similar">%1$d%% similar</string>

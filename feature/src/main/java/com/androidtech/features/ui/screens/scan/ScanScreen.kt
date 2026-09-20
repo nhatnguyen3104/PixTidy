@@ -152,7 +152,7 @@ fun ScanContent(
                             ScanProgressGauge(progress = process.progress.progressPercentage / 100f)
                             Spacer(modifier = Modifier.height(32.dp))
                             Text(
-                                text = "Scanning Storage...",
+                                text = stringResource(R.string.text_canning_storage),
                                 style = MaterialTheme.typography.headlineSmall,
                                 fontWeight = FontWeight.Bold
                             )
@@ -166,7 +166,7 @@ fun ScanContent(
                             )
                             Spacer(modifier = Modifier.height(16.dp))
                             Text(
-                                text = "Items found: ${process.progress.processedItems}",
+                                text = stringResource(R.string.text_item_found, process.progress.processedItems),
                                 style = MaterialTheme.typography.bodyLarge,
                                 fontWeight = FontWeight.Medium,
                                 color = MaterialTheme.colorScheme.primary
@@ -191,12 +191,12 @@ fun ScanContent(
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
                                 Text(
-                                    text = "Scan Insights",
+                                    text = stringResource(R.string.text_scan_insights),
                                     style = MaterialTheme.typography.titleLarge,
                                     fontWeight = FontWeight.Bold
                                 )
                                 Text(
-                                    text = "${process.insights.size} Groups",
+                                    text = stringResource(R.string.text_groups, process.insights.size),
                                     style = MaterialTheme.typography.bodyMedium,
                                     color = MaterialTheme.colorScheme.primary
                                 )
@@ -218,8 +218,8 @@ fun ScanContent(
 
                     is ScanProcess.Error -> {
                         ScanInfoPlaceholder(
-                            title = "Scan Failed",
-                            description = process.throwable.message ?: "Unknown error",
+                            title = stringResource(R.string.text_scan_failed),
+                            description = process.throwable.message ?: stringResource(R.string.text_unknow_error),
                             icon = Icons.Default.ErrorOutline,
                             color = MaterialTheme.colorScheme.error
                         )
@@ -241,7 +241,7 @@ fun ScanContent(
                         contentColor = MaterialTheme.colorScheme.onErrorContainer
                     )
                 ) {
-                    Text(text = "Cancel Scan", fontWeight = FontWeight.Bold)
+                    Text(text = stringResource(R.string.text_cancel_scan), fontWeight = FontWeight.Bold)
                 }
             } else if (uiState.scanProcess is ScanProcess.Success || uiState.scanProcess is ScanProcess.Error) {
                 Button(
@@ -251,7 +251,7 @@ fun ScanContent(
                         .height(56.dp),
                     shape = RoundedCornerShape(28.dp)
                 ) {
-                    Text(text = "Go Back", fontWeight = FontWeight.Bold)
+                    Text(text = stringResource(R.string.text_go_back), fontWeight = FontWeight.Bold)
                 }
             }
         }
