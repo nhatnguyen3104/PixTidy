@@ -274,7 +274,7 @@ fun CategoryCard(
     Surface(
         color = MaterialTheme.colorScheme.surfaceVariant,
         shape = RoundedCornerShape(24.dp),
-        modifier = modifier.bounceClick(onClick = onClick)
+        modifier = modifier.bounceClick(onClick = if (isPermissionGranted) { { onClick() } } else null)
     ) {
         Box(modifier = Modifier.padding(16.dp)) {
             if (!isPermissionGranted) {

@@ -20,8 +20,9 @@ import kotlinx.coroutines.launch
  */
 fun Modifier.bounceClick(
     scaleDown: Float = 0.96f,
-    onClick: () -> Unit
+    onClick: (() -> Unit)? = null
 ): Modifier = composed {
+
     val interactionSource = remember { MutableInteractionSource() }
     val isPressed by interactionSource.collectIsPressedAsState()
 
@@ -42,7 +43,34 @@ fun Modifier.bounceClick(
             scaleX = s
             scaleY = s
         }
-        .clickable(
+        .then(
+            if (onClick != null) {
+                Modifier.clickable(
+                    interactionSource = interactionSource,
+                    indication = null
+                ) {
+                    onClick()
+                    scope.launch {
+                        clickScale.snapTo(0.9f)
+                        clickScale.animateTo(
+                            targetValue = 1f,
+                            animationSpec = spring(
+                                dampingRatio = Spring.DampingRatioMediumBouncy,
+                                stiffness = Spring.StiffnessLow
+                            )
+                        )
+                    }
+                }
+            } else {
+                Modifier.clickable(
+                    interactionSource = interactionSource,
+                    indication = null
+                ) {
+                    /* No-op */
+                }
+            }
+        )
+        /*.clickable(
             interactionSource = interactionSource,
             indication = null
         ) {
@@ -57,5 +85,5 @@ fun Modifier.bounceClick(
                     )
                 )
             }
-        }
+        }*/
 }
