@@ -184,6 +184,8 @@ fun HomeContent(
             Spacer(modifier = Modifier.height(24.dp))
 
             if (uiState.isPermissionGranted) {
+
+                /*Hide Feature Intelligent Scan
                 Button(
                     onClick = { onEvent(HomeEvent.DeepScanClicked) },
                     modifier = Modifier
@@ -209,7 +211,7 @@ fun HomeContent(
                     )
                 }
 
-                Spacer(modifier = Modifier.height(12.dp))
+                Spacer(modifier = Modifier.height(12.dp))*/
 
                 Button(
                     onClick = { onEvent(HomeEvent.SmartScanClicked) },
