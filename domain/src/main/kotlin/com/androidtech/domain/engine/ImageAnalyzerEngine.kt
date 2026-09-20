@@ -29,7 +29,10 @@ interface ImageAnalyzerEngine {
      * least one duplicate besides its [DuplicateGroup.originalItem]; candidates with no match are
      * simply absent from the result, not returned as singleton groups.
      */
-    suspend fun findExactDuplicates(candidates: List<MediaItem>): List<DuplicateGroup>
+    suspend fun findExactDuplicates(
+        candidates: List<MediaItem>,
+        onProgress: ((processed: Int, total: Int) -> Unit)? = null
+    ): List<DuplicateGroup>
 
     /**
      * Groups [candidates] into visually-similar (not byte-identical) clusters via perceptual
@@ -37,7 +40,10 @@ interface ImageAnalyzerEngine {
      * expected to use an incremental cache (mediaId + dateModified) so re-scanning unchanged files
      * is cheap.
      */
-    suspend fun findSimilarGroups(candidates: List<MediaItem>): List<SimilarGroup>
+    suspend fun findSimilarGroups(
+        candidates: List<MediaItem>,
+        onProgress: ((processed: Int, total: Int) -> Unit)? = null
+    ): List<SimilarGroup>
 
     /**
      * Returns the subset of [candidates] whose [QualityScore.isBlurry] is true. Intended to be
@@ -45,5 +51,8 @@ interface ImageAnalyzerEngine {
      * removed their own matches, so quality doesn't get evaluated for images already headed for a
      * duplicate/similarity-based recommendation.
      */
-    suspend fun findBlurryItems(candidates: List<MediaItem>): List<MediaItem>
+    suspend fun findBlurryItems(
+        candidates: List<MediaItem>,
+        onProgress: ((processed: Int, total: Int) -> Unit)? = null
+    ): List<MediaItem>
 }

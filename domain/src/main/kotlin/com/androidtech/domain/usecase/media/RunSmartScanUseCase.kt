@@ -96,24 +96,38 @@ class RunSmartScanUseCase @Inject constructor(
         // Stage e (video variant): large videos, independent of the image pipeline below
         val largeVideos = videos.filter { it.size >= LARGE_VIDEO_THRESHOLD_BYTES }
 
+        val globalTotal = allCandidates.size
+
         // Stage b: exact duplicates
-        emit(smartScanning("Looking for exact duplicates\u2026", 35f))
-        val duplicateGroups = imageAnalyzerEngine.findExactDuplicates(nonScreenshotImages)
+        val baseProcessedB = globalTotal - nonScreenshotImages.size
+        val duplicateGroups = imageAnalyzerEngine.findExactDuplicates(nonScreenshotImages) { processed, total ->
+            val globalProcessed = baseProcessedB + processed
+            val pct = 35f + (processed.toFloat() / total.coerceAtLeast(1).toFloat() * 30f)
+            emit(smartScanningWithProgress("Looking for exact duplicates\u2026", globalProcessed, globalTotal, pct))
+        }
         val exactDuplicateIds = duplicateGroups.flatMap(DuplicateGroup::allItems).mapTo(HashSet()) { it.id }
         val nonDuplicateImages = nonScreenshotImages.filterNot { it.id in exactDuplicateIds }
 
         // Stage c: similar (not identical) photos
-        emit(smartScanning("Finding similar photos\u2026", 65f))
-        val similarGroups = imageAnalyzerEngine.findSimilarGroups(nonDuplicateImages)
+        val baseProcessedC = globalTotal - nonDuplicateImages.size
+        val similarGroups = imageAnalyzerEngine.findSimilarGroups(nonDuplicateImages) { processed, total ->
+            val globalProcessed = baseProcessedC + processed
+            val pct = 65f + (processed.toFloat() / total.coerceAtLeast(1).toFloat() * 20f)
+            emit(smartScanningWithProgress("Finding similar photos\u2026", globalProcessed, globalTotal, pct))
+        }
         val similarGroupedIds = similarGroups.flatMap { it.items }.mapTo(HashSet()) { it.id }
 
         // Stage d: quality analysis on whatever is left ungrouped
-        emit(smartScanning("Checking photo quality\u2026", 85f))
         val qualityCandidates = nonDuplicateImages.filterNot { it.id in similarGroupedIds }
-        val blurryItems = imageAnalyzerEngine.findBlurryItems(qualityCandidates)
+        val baseProcessedD = globalTotal - qualityCandidates.size
+        val blurryItems = imageAnalyzerEngine.findBlurryItems(qualityCandidates) { processed, total ->
+            val globalProcessed = baseProcessedD + processed
+            val pct = 85f + (processed.toFloat() / total.coerceAtLeast(1).toFloat() * 10f)
+            emit(smartScanningWithProgress("Checking photo quality\u2026", globalProcessed, globalTotal, pct))
+        }
 
         // Stage f: recommendation scoring
-        emit(smartScanning("Generating recommendations\u2026", 95f))
+        emit(smartScanningWithProgress("Generating recommendations\u2026", globalTotal, globalTotal, 95f))
         val insights = recommendationEngine.generateInsights(
             duplicates = duplicateGroups,
             similarGroups = similarGroups,
@@ -154,6 +168,9 @@ class RunSmartScanUseCase @Inject constructor(
 
     private fun smartScanning(message: String, percentage: Float) =
         ScanProcess.Scanning(ScanProgress.fixed(ScanLayer.SMART, 0, 100, message, percentage))
+
+    private fun smartScanningWithProgress(message: String, processed: Int, total: Int, percentage: Float) =
+        ScanProcess.Scanning(ScanProgress.fixed(ScanLayer.SMART, processed, total, message, percentage))
 
     private companion object {
         const val LARGE_VIDEO_THRESHOLD_BYTES = 100L * 1024 * 1024

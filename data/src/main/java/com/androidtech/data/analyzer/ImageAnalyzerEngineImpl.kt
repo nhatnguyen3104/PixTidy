@@ -48,7 +48,10 @@ class ImageAnalyzerEngineImpl @Inject constructor(
 
     // ---- Exact duplicates -----------------------------------------------------------------------
 
-    override suspend fun findExactDuplicates(candidates: List<MediaItem>): List<DuplicateGroup> = coroutineScope {
+    override suspend fun findExactDuplicates(
+        candidates: List<MediaItem>,
+        onProgress: ((processed: Int, total: Int) -> Unit)?
+    ): List<DuplicateGroup> = coroutineScope {
         DataLogger.d("ExactDup: Candidates count = ${candidates.size}")
         val zeroSizeCount = candidates.count { it.size == 0L }
         if (zeroSizeCount > 0) {
@@ -62,12 +65,17 @@ class ImageAnalyzerEngineImpl @Inject constructor(
         val sizeBucketed = candidates.groupBy { it.size }.filterValues { it.size >= 2 }.values.flatten()
         DataLogger.d("ExactDup: Items with potential size collisions = ${sizeBucketed.size}")
 
+        val processedCount = AtomicInteger(candidates.size - sizeBucketed.size)
+        onProgress?.invoke(processedCount.get(), candidates.size)
+
         val semaphore = Semaphore(MAX_CONCURRENT_DECODES)
         val hashed = sizeBucketed.map { item ->
             async {
                 semaphore.withPermit {
                     currentCoroutineContext().ensureActive()
                     val hash = runCatching { calculateContentHash(item) }.getOrNull()
+                    val processed = processedCount.incrementAndGet()
+                    onProgress?.invoke(processed, candidates.size)
                     hash?.let { item to it }
                 }
             }
@@ -96,8 +104,11 @@ class ImageAnalyzerEngineImpl @Inject constructor(
 
     // ---- Similar (not identical) photos -----------------------------------------------------------
 
-    override suspend fun findSimilarGroups(candidates: List<MediaItem>): List<SimilarGroup> = coroutineScope {
-        val analyses = resolveAnalyses(candidates)
+    override suspend fun findSimilarGroups(
+        candidates: List<MediaItem>,
+        onProgress: ((processed: Int, total: Int) -> Unit)?
+    ): List<SimilarGroup> = coroutineScope {
+        val analyses = resolveAnalyses(candidates, onProgress)
 
         val hashed = candidates.mapNotNull { item ->
             analyses[item.id]?.phash?.let { phash -> Triple(item, phash, analyses.getValue(item.id).qualityScore) }
@@ -175,12 +186,15 @@ class ImageAnalyzerEngineImpl @Inject constructor(
 
     // ---- Blurry items (for whatever wasn't already grouped above) -------------------------------
 
-    override suspend fun findBlurryItems(candidates: List<MediaItem>): List<MediaItem> = coroutineScope {
+    override suspend fun findBlurryItems(
+        candidates: List<MediaItem>,
+        onProgress: ((processed: Int, total: Int) -> Unit)?
+    ): List<MediaItem> = coroutineScope {
         // Calling resolveAnalyses again here is intentionally cheap, not wasteful: any item that
         // was also part of the findSimilarGroups() candidate set for this same scan will already
         // be sitting in the in-memory cache tier (see MediaAnalysisCacheRepositoryImpl), so this is
         // typically all cache hits with zero further decode work.
-        val analyses = resolveAnalyses(candidates)
+        val analyses = resolveAnalyses(candidates, onProgress)
         candidates.filter { item -> analyses[item.id]?.isBlurry == true }
     }
 
@@ -188,16 +202,24 @@ class ImageAnalyzerEngineImpl @Inject constructor(
 
     private data class ResolvedAnalysis(val phash: String?, val qualityScore: Int, val isBlurry: Boolean)
 
-    private suspend fun resolveAnalyses(candidates: List<MediaItem>): Map<Long, ResolvedAnalysis> = coroutineScope {
+    private suspend fun resolveAnalyses(
+        candidates: List<MediaItem>,
+        onProgress: ((processed: Int, total: Int) -> Unit)? = null
+    ): Map<Long, ResolvedAnalysis> = coroutineScope {
         val semaphore = Semaphore(MAX_CONCURRENT_DECODES)
         val processedCount = AtomicInteger(0)
+
+        if (candidates.isEmpty()) {
+            onProgress?.invoke(0, 0)
+        }
 
         candidates.map { item ->
             async {
                 semaphore.withPermit {
                     currentCoroutineContext().ensureActive()
                     val analysis = resolveSingleAnalysis(item)
-                    processedCount.incrementAndGet()
+                    val processed = processedCount.incrementAndGet()
+                    onProgress?.invoke(processed, candidates.size)
                     item.id to analysis
                 }
             }

@@ -110,11 +110,11 @@ fun ScanContent(
                         color = MaterialTheme.colorScheme.onBackground
                     )
                 },
-                navigationIcon = {
+                /*navigationIcon = {
                     IconButton(onClick = { onEvent(ScanEvent.NavigateBackClick) }) {
                         Icon(imageVector = Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
                     }
-                },
+                },*/
                 colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.background),
                 windowInsets = WindowInsets(left = 0, top = 0, right = 0, bottom = 0)
             )
@@ -159,14 +159,14 @@ fun ScanContent(
                             Spacer(modifier = Modifier.height(8.dp))
                             Text(
                                 text = process.progress.currentStepMessage,
-                                style = MaterialTheme.typography.bodyMedium,
+                                style = MaterialTheme.typography.bodySmall,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                                 textAlign = TextAlign.Center,
                                 maxLines = 1
                             )
                             Spacer(modifier = Modifier.height(16.dp))
                             Text(
-                                text = "Items found: ${process.progress.totalItems}",
+                                text = "Items found: ${process.progress.processedItems}",
                                 style = MaterialTheme.typography.bodyLarge,
                                 fontWeight = FontWeight.Medium,
                                 color = MaterialTheme.colorScheme.primary

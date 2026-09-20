@@ -81,10 +81,11 @@ class ScanViewModel @Inject constructor(
                     is DomainScanState.Success -> {
                         saveLatestResults(mode, domainState)
                         // Emit a final 100% scanning state to allow the UI to finish the gauge animation completely
+                        val finalCount = domainState.summary.totalMediaCount
                         val finalProgress = ScanProgress.fixed(
                             layer = if (mode == ScanLayer.SMART) ScanLayer.SMART else ScanLayer.DEEP,
-                            processed = 100,
-                            total = 100,
+                            processed = finalCount,
+                            total = finalCount,
                             message = "Scan complete!",
                             percentage = 100f
                         )
