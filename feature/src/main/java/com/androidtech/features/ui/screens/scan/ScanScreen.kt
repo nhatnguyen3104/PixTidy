@@ -102,7 +102,7 @@ fun ScanContent(
 
     Scaffold(
         topBar = {
-            TopAppBar(
+            CenterAlignedTopAppBar(
                 title = {
                     Text(
                         text = stringResource(titleRes),
@@ -110,11 +110,11 @@ fun ScanContent(
                         color = MaterialTheme.colorScheme.onBackground
                     )
                 },
-                /*navigationIcon = {
+                navigationIcon = {
                     IconButton(onClick = { onEvent(ScanEvent.NavigateBackClick) }) {
                         Icon(imageVector = Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
                     }
-                },*/
+                },
                 colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.background),
                 windowInsets = WindowInsets(left = 0, top = 0, right = 0, bottom = 0)
             )

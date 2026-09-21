@@ -151,7 +151,7 @@ fun DuplicateContent(
 
     Scaffold(
         topBar = {
-            TopAppBar(
+            CenterAlignedTopAppBar(
                 title = {
                     Column {
                         Text(

@@ -126,7 +126,7 @@ fun SimilarContent(
 
     Scaffold(
         topBar = {
-            TopAppBar(
+            CenterAlignedTopAppBar(
                 title = {
                     Column {
                         Text(

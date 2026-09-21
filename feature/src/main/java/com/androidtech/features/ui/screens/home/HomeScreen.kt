@@ -126,22 +126,21 @@ fun HomeContent(
 ) {
     Scaffold(
         topBar = {
-            TopAppBar(
+            CenterAlignedTopAppBar(
                 title = {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(8.dp)
-                    ) {
+                    Text(
+                        text = stringResource(R.string.app_name),
+                        style = Title20Bold,
+                        color = MaterialTheme.colorScheme.onBackground
+                    )
+                },
+                navigationIcon = {
+                    IconButton(onClick = { /* do something */ }) {
                         Icon(
                             painter = painterResource(R.drawable.ic_viet_nam),
                             contentDescription = "logo",
                             tint = null,
                             modifier = Modifier.size(24.dp)
-                        )
-                        Text(
-                            text = stringResource(R.string.app_name),
-                            style = Title20Bold,
-                            color = MaterialTheme.colorScheme.onBackground
                         )
                     }
                 },
