@@ -51,8 +51,11 @@ class DuplicateViewModel @Inject constructor(
 
     override fun handleEvent(event: DuplicateEvent) {
         when (event) {
-            is DuplicateEvent.MoreClicked -> {
-                //setEffect(DuplicateEffect.NavigateBack)
+            is DuplicateEvent.SelectAllClicked -> {
+                setAllSelection(true)
+            }
+            is DuplicateEvent.ClearSelectionClicked -> {
+                setAllSelection(false)
             }
             is DuplicateEvent.NavigateBackClick -> {
                 setEffect { DuplicateEffect.NavigateBack }
@@ -138,6 +141,17 @@ class DuplicateViewModel @Inject constructor(
                 }
                 else -> group
             }
+        }
+        setState { copy(duplicateGroups = updatedGroups) }
+    }
+
+    private fun setAllSelection(isSelected: Boolean) {
+        val currentGroups = uiState.value.duplicateGroups
+        val updatedGroups = currentGroups.map { group ->
+            group.copy(
+                //originalItem = group.originalItem.copy(isSelected = isSelected),
+                duplicateItems = group.duplicateItems.map { item -> item.copy(isSelected = isSelected) }
+            )
         }
         setState { copy(duplicateGroups = updatedGroups) }
     }

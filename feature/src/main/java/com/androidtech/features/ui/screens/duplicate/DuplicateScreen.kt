@@ -145,9 +145,7 @@ fun DuplicateContent(
     modifier: Modifier = Modifier,
 ) {
     val duplicateGroups = uiState.duplicateGroups
-
     val totalSize: Long = duplicateGroups.sumOf { it.totalSizeDifferenceBytes }
-
 
     Scaffold(
         topBar = {
@@ -173,13 +171,43 @@ fun DuplicateContent(
                     }
                 },
                 actions = {
-                    IconButton(onClick = { onEvent(DuplicateEvent.MoreClicked) }, modifier = Modifier.size(40.dp)) {
-                        Icon(
-                            painter = painterResource(R.drawable.ic_more_vert),
-                            contentDescription = "more",
-                            tint = MaterialTheme.colorScheme.onBackground,
-                            modifier = Modifier.size(24.dp)
-                        )
+                    var showMoreVert by remember { mutableStateOf(false) }
+                    Box(contentAlignment = Alignment.Center) {
+                        IconButton(
+                            onClick = { showMoreVert = true },
+                            modifier = Modifier.size(40.dp)
+                        ) {
+                            Icon(
+                                painter = painterResource(R.drawable.ic_more_vert),
+                                contentDescription = "more",
+                                tint = MaterialTheme.colorScheme.onBackground,
+                                modifier = Modifier.size(24.dp)
+                            )
+                        }
+
+                        // 3. DropdownMenu
+                        DropdownMenu(
+                            expanded = showMoreVert,
+                            onDismissRequest = { showMoreVert = false }
+                        ) {
+                            DropdownMenuItem(
+                                text = { Text(stringResource(R.string.text_select_all)) },
+                                onClick = {
+                                    showMoreVert = false
+                                    // Action
+                                    onEvent(DuplicateEvent.SelectAllClicked)
+                                }
+                            )
+                            if (uiState.isSelectionActive) {
+                                DropdownMenuItem(
+                                    text = { Text(stringResource(R.string.text_clear_selection)) },
+                                    onClick = {
+                                        showMoreVert = false
+                                        onEvent(DuplicateEvent.ClearSelectionClicked)
+                                    }
+                                )
+                            }
+                        }
                     }
                     Spacer(modifier = Modifier.width(8.dp))
                 },

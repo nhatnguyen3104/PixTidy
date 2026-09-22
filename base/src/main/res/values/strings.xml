@@ -59,6 +59,9 @@
     <string name="text_duplicate_group">Group: %1$s</string>
     <string name="text_duplicate_photos_description">%1$d groups • %2$s</string>
     <string name="text_original">Original</string>
+    <string name="text_select_all">Select all</string>
+    <string name="text_clear_selection">Clear selection</string>
+
 
     <!-- Similar -->
     <string name="text_similar_photos">Similar Photos</string>

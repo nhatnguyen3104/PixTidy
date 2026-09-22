@@ -10,10 +10,16 @@ import com.androidtech.domain.model.media.DuplicateGroup
 data class DuplicateState(
     val isLoading: Boolean = false,
     val duplicateGroups: List<DuplicateGroup> = emptyList()
-): UIState
+): UIState {
+    val isSelectionActive: Boolean
+        get() = duplicateGroups.any { group ->
+            /*group.originalItem.isSelected || */group.duplicateItems.any { it.isSelected }
+        }
+}
 
 sealed class DuplicateEvent : UIEvent {
-    object MoreClicked : DuplicateEvent()
+    object SelectAllClicked : DuplicateEvent()
+    object ClearSelectionClicked : DuplicateEvent()
     object NavigateBackClick : DuplicateEvent()
     data class DeleteClick(val selectedPhotoIds: List<Long>) : DuplicateEvent()
     data class TogglePhotoSelection(val photoId: Long) : DuplicateEvent()
