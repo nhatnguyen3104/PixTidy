@@ -50,8 +50,11 @@ class SimilarViewModel @Inject constructor(
 
     override fun handleEvent(event: SimilarEvent) {
         when (event) {
-            is SimilarEvent.MoreClicked -> {
-                // handle more clicked
+            is SimilarEvent.SelectAllClicked -> {
+                setAllSelection(true)
+            }
+            is SimilarEvent.ClearSelectionClicked -> {
+                setAllSelection(false)
             }
             is SimilarEvent.NavigateBackClick -> {
                 setEffect { SimilarEffect.NavigateBack }
@@ -63,8 +66,11 @@ class SimilarViewModel @Inject constructor(
                     deletePhotos(event.selectedPhotoIds)
                 }
             }
-            is SimilarEvent.TogglePhotoSelection -> {
+            is SimilarEvent.PhotoToggleSelection -> {
                 togglePhotoSelection(event.photoId)
+            }
+            is SimilarEvent.GroupToggleClicked -> {
+                toggleGroupSelection(event.groupId, event.isSelected)
             }
             is SimilarEvent.ConfirmCacheCleanup -> {
                 confirmCacheCleanup(event.photoIds)
@@ -128,6 +134,29 @@ class SimilarViewModel @Inject constructor(
             } else {
                 group
             }
+        }
+        setState { copy(similarGroups = updatedGroups) }
+    }
+
+    private fun toggleGroupSelection(groupId: String, isSelected: Boolean) {
+        val updatedGroups = uiState.value.similarGroups.map { group ->
+            if (group.groupId == groupId) {
+                group.copy(
+                    items = group.items.map { it.copy(isSelected = isSelected) }
+                )
+            } else {
+                group
+            }
+        }
+        setState { copy(similarGroups = updatedGroups) }
+    }
+
+    private fun setAllSelection(isSelected: Boolean) {
+        val currentGroups = uiState.value.similarGroups
+        val updatedGroups = currentGroups.map { group ->
+            group.copy(
+                items = group.items.map { item -> item.copy(isSelected = isSelected) }
+            )
         }
         setState { copy(similarGroups = updatedGroups) }
     }

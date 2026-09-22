@@ -6,17 +6,25 @@ import com.androidtech.base.viewmodel.UIEffect
 import com.androidtech.base.viewmodel.UIEvent
 import com.androidtech.base.viewmodel.UIState
 import com.androidtech.domain.model.media.SimilarGroup
+import com.androidtech.features.ui.screens.duplicate.DuplicateEvent
 
 data class SimilarState(
     val isLoading: Boolean = false,
     val similarGroups: List<SimilarGroup> = emptyList()
-): UIState
+): UIState {
+    val isSelectionActive: Boolean
+        get() = similarGroups.any { group ->
+            /*group.originalItem.isSelected || */group.items.any { it.isSelected }
+        }
+}
 
 sealed class SimilarEvent : UIEvent {
-    object MoreClicked : SimilarEvent()
+    object SelectAllClicked : SimilarEvent()
+    object ClearSelectionClicked : SimilarEvent()
     object NavigateBackClick : SimilarEvent()
     data class DeleteClick(val selectedPhotoIds: List<Long>) : SimilarEvent()
-    data class TogglePhotoSelection(val photoId: Long) : SimilarEvent()
+    data class PhotoToggleSelection(val photoId: Long) : SimilarEvent()
+    data class GroupToggleClicked(val groupId: String, val isSelected: Boolean) : SimilarEvent()
     data class ConfirmCacheCleanup(val photoIds: List<Long>) : SimilarEvent()
 }
 

@@ -30,4 +30,6 @@ data class SimilarGroup(
     /** Size of item similar selected */
     val totalSelectedSize: Long get() = selectedSimilarItems.sumOf { it.size }
 
+    val isGroupSelected: Boolean
+        get() = items.isNotEmpty() && items.all { it.isSelected }
 }

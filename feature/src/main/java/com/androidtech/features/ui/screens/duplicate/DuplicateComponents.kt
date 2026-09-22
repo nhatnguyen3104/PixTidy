@@ -60,34 +60,43 @@ fun DuplicateGroupSection(
         ) {
             // Group Header
             Row(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 12.dp, vertical = 8.dp),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
                     text = stringResource(R.string.text_duplicate_group, group.originalItem.name),
                     maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier.weight(1f),
                     style = MaterialTheme.typography.titleMedium.copy(
                         fontWeight = FontWeight.Bold,
                         fontSize = 16.sp
-                    ),
-                    overflow = TextOverflow.Ellipsis
+                    )
                 )
+
+                Spacer(modifier = Modifier.width(8.dp))
+
+                // Size difference
                 Text(
                     text = group.totalSizeDifferenceBytes.formatSize(),
+                    maxLines = 1,
                     style = MaterialTheme.typography.bodyMedium.copy(
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         fontSize = 13.sp
                     )
                 )
+
+                Spacer(modifier = Modifier.width(8.dp))
+
                 Checkbox(
                     checked = group.isGroupSelected,
                     onCheckedChange = { onGroupToggle(it) },
-                    modifier = Modifier
-                        .padding(4.dp),
                     colors = CheckboxDefaults.colors(
                         checkedColor = MaterialTheme.colorScheme.primary,
-                        uncheckedColor = Color.White.copy(alpha = 0.8f)
+                        uncheckedColor = MaterialTheme.colorScheme.outline
                     )
                 )
             }

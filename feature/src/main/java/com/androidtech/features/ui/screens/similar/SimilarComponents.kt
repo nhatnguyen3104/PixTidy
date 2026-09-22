@@ -33,7 +33,8 @@ import com.androidtech.base.R
 @Composable
 fun SimilarGroupSection(
     group: SimilarGroup,
-    onPhotoToggle: (Long) -> Unit
+    onPhotoToggle: (Long) -> Unit,
+    onGroupToggle: (Boolean) -> Unit
 ) {
     Surface(
         color = MaterialTheme.colorScheme.surface,
@@ -50,7 +51,9 @@ fun SimilarGroupSection(
         Column(modifier = Modifier.padding(16.dp)) {
             // Header: Percentage Badge + Total Size
             Row(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 12.dp, vertical = 8.dp),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
@@ -71,7 +74,10 @@ fun SimilarGroupSection(
                         )
                         Spacer(modifier = Modifier.width(4.dp))
                         Text(
-                            text = stringResource(R.string.text_percent_similar, group.similarityPercentage),
+                            text = stringResource(
+                                R.string.text_percent_similar,
+                                group.similarityPercentage
+                            ),
                             style = MaterialTheme.typography.labelMedium.copy(
                                 fontWeight = FontWeight.Bold,
                                 color = MaterialTheme.colorScheme.error,
@@ -81,12 +87,25 @@ fun SimilarGroupSection(
                     }
                 }
 
+                Spacer(modifier = Modifier.weight(1f))
+
                 // Size Text
                 Text(
                     text = group.potentialSavingsBytes.formatSize(),
                     style = MaterialTheme.typography.bodySmall.copy(
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         fontSize = 12.sp
+                    )
+                )
+
+                Spacer(modifier = Modifier.width(8.dp))
+
+                Checkbox(
+                    checked = group.isGroupSelected,
+                    onCheckedChange = { onGroupToggle(it) },
+                    colors = CheckboxDefaults.colors(
+                        checkedColor = MaterialTheme.colorScheme.primary,
+                        uncheckedColor = MaterialTheme.colorScheme.outline
                     )
                 )
             }

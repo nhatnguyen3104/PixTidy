@@ -32,6 +32,7 @@ import com.androidtech.base.theme.Title20Bold
 import com.androidtech.base.utils.UiText
 import com.androidtech.base.utils.formatSize
 import com.androidtech.features.ui.components.DeleteBottomBar
+import com.androidtech.features.ui.screens.duplicate.DuplicateEvent
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
@@ -147,13 +148,43 @@ fun SimilarContent(
                     }
                 },
                 actions = {
-                    IconButton(onClick = { onEvent(SimilarEvent.MoreClicked) }, modifier = Modifier.size(40.dp)) {
-                        Icon(
-                            painter = painterResource(R.drawable.ic_more_vert),
-                            contentDescription = "more",
-                            tint = MaterialTheme.colorScheme.onBackground,
-                            modifier = Modifier.size(24.dp)
-                        )
+                    var showMoreVert by remember { mutableStateOf(false) }
+                    Box(contentAlignment = Alignment.Center) {
+                        IconButton(
+                            onClick = { showMoreVert = true },
+                            modifier = Modifier.size(40.dp)
+                        ) {
+                            Icon(
+                                painter = painterResource(R.drawable.ic_more_vert),
+                                contentDescription = "more",
+                                tint = MaterialTheme.colorScheme.onBackground,
+                                modifier = Modifier.size(24.dp)
+                            )
+                        }
+
+                        // 3. DropdownMenu
+                        DropdownMenu(
+                            expanded = showMoreVert,
+                            onDismissRequest = { showMoreVert = false }
+                        ) {
+                            DropdownMenuItem(
+                                text = { Text(stringResource(R.string.text_select_all)) },
+                                onClick = {
+                                    showMoreVert = false
+                                    // Action
+                                    onEvent(SimilarEvent.SelectAllClicked)
+                                }
+                            )
+                            if (uiState.isSelectionActive) {
+                                DropdownMenuItem(
+                                    text = { Text(stringResource(R.string.text_clear_selection)) },
+                                    onClick = {
+                                        showMoreVert = false
+                                        onEvent(SimilarEvent.ClearSelectionClicked)
+                                    }
+                                )
+                            }
+                        }
                     }
                     Spacer(modifier = Modifier.width(8.dp))
                 },
@@ -190,7 +221,8 @@ fun SimilarContent(
             items(similarGroups, key = { it.groupId }) { group ->
                 SimilarGroupSection(
                     group = group,
-                    onPhotoToggle = { photoId -> onEvent(SimilarEvent.TogglePhotoSelection(photoId)) }
+                    onPhotoToggle = { photoId -> onEvent(SimilarEvent.PhotoToggleSelection(photoId)) },
+                    onGroupToggle = { isSelected -> onEvent(SimilarEvent.GroupToggleClicked(group.groupId, isSelected)) }
                 )
             }
         }
