@@ -22,7 +22,8 @@ sealed class DuplicateEvent : UIEvent {
     object ClearSelectionClicked : DuplicateEvent()
     object NavigateBackClick : DuplicateEvent()
     data class DeleteClick(val selectedPhotoIds: List<Long>) : DuplicateEvent()
-    data class TogglePhotoSelection(val photoId: Long) : DuplicateEvent()
+    data class PhotoToggleSelection(val photoId: Long) : DuplicateEvent()
+    data class GroupToggleClicked(val groupId: String, val isSelected: Boolean) : DuplicateEvent()
     data class ConfirmCacheCleanup(val photoIds: List<Long>) : DuplicateEvent()
 }
 

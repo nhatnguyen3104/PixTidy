@@ -42,4 +42,7 @@ data class DuplicateGroup(
 
     /** Size of item duplicate selected */
     val totalSelectedSize: Long get() = selectedDuplicateItems.sumOf { it.size }
+
+    val isGroupSelected: Boolean
+        get() = duplicateItems.isNotEmpty() && duplicateItems.all { it.isSelected }
 }

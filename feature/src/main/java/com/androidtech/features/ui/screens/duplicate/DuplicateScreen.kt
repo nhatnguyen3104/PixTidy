@@ -243,7 +243,8 @@ fun DuplicateContent(
             items(duplicateGroups, key = { it.groupId }) { group ->
                 DuplicateGroupSection(
                     group = group,
-                    onPhotoToggle = { photoId -> onEvent(DuplicateEvent.TogglePhotoSelection( photoId )) }
+                    onPhotoToggle = { photoId -> onEvent(DuplicateEvent.PhotoToggleSelection( photoId )) },
+                    onGroupToggle = { isSelected -> onEvent(DuplicateEvent.GroupToggleClicked(group.groupId, isSelected)) }
                 )
             }
         }

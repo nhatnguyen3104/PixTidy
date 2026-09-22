@@ -25,6 +25,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -39,7 +40,8 @@ import com.androidtech.domain.model.media.MediaItem
 @Composable
 fun DuplicateGroupSection(
     group: DuplicateGroup,
-    onPhotoToggle: (Long) -> Unit
+    onPhotoToggle: (Long) -> Unit,
+    onGroupToggle: (Boolean) -> Unit
 ) {
     Surface(
         modifier = Modifier
@@ -64,16 +66,28 @@ fun DuplicateGroupSection(
             ) {
                 Text(
                     text = stringResource(R.string.text_duplicate_group, group.originalItem.name),
+                    maxLines = 1,
                     style = MaterialTheme.typography.titleMedium.copy(
                         fontWeight = FontWeight.Bold,
                         fontSize = 16.sp
-                    )
+                    ),
+                    overflow = TextOverflow.Ellipsis
                 )
                 Text(
                     text = group.totalSizeDifferenceBytes.formatSize(),
                     style = MaterialTheme.typography.bodyMedium.copy(
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         fontSize = 13.sp
+                    )
+                )
+                Checkbox(
+                    checked = group.isGroupSelected,
+                    onCheckedChange = { onGroupToggle(it) },
+                    modifier = Modifier
+                        .padding(4.dp),
+                    colors = CheckboxDefaults.colors(
+                        checkedColor = MaterialTheme.colorScheme.primary,
+                        uncheckedColor = Color.White.copy(alpha = 0.8f)
                     )
                 )
             }

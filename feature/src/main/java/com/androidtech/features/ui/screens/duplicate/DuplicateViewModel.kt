@@ -67,8 +67,11 @@ class DuplicateViewModel @Inject constructor(
                     deletePhotos(event.selectedPhotoIds)
                 }
             }
-            is DuplicateEvent.TogglePhotoSelection -> {
+            is DuplicateEvent.PhotoToggleSelection -> {
                 togglePhotoSelection(event.photoId)
+            }
+            is DuplicateEvent.GroupToggleClicked -> {
+                toggleGroupSelection(event.groupId, event.isSelected)
             }
             is DuplicateEvent.ConfirmCacheCleanup -> {
                 confirmCacheCleanup(event.photoIds)
@@ -140,6 +143,19 @@ class DuplicateViewModel @Inject constructor(
                     )
                 }
                 else -> group
+            }
+        }
+        setState { copy(duplicateGroups = updatedGroups) }
+    }
+
+    private fun toggleGroupSelection(groupId: String, isSelected: Boolean) {
+        val updatedGroups = uiState.value.duplicateGroups.map { group ->
+            if (group.groupId == groupId) {
+                group.copy(
+                    duplicateItems = group.duplicateItems.map { it.copy(isSelected = isSelected) }
+                )
+            } else {
+                group
             }
         }
         setState { copy(duplicateGroups = updatedGroups) }
