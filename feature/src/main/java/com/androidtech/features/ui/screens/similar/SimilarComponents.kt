@@ -36,6 +36,7 @@ fun SimilarGroupSection(
     onPhotoToggle: (Long) -> Unit,
     onGroupToggle: (Boolean) -> Unit
 ) {
+    val isBestShot = group.bestCandidateId
     Surface(
         color = MaterialTheme.colorScheme.surface,
         shape = RoundedCornerShape(20.dp),
@@ -127,7 +128,7 @@ fun SimilarGroupSection(
                             Box(modifier = Modifier.weight(1f)) {
                                 SimilarPhotoCard(
                                     photo = item,
-                                    isBestShot = item.id == group.bestCandidateId,
+                                    isBestShot = item.id == isBestShot,
                                     onToggle = { onPhotoToggle(item.id) }
                                 )
                             }

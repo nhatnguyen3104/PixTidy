@@ -31,5 +31,6 @@ data class SimilarGroup(
     val totalSelectedSize: Long get() = selectedSimilarItems.sumOf { it.size }
 
     val isGroupSelected: Boolean
-        get() = items.isNotEmpty() && items.all { it.isSelected }
+        get() = items.filter { it.id != bestCandidateId }
+            .all { it.isSelected }
 }

@@ -142,7 +142,9 @@ class SimilarViewModel @Inject constructor(
         val updatedGroups = uiState.value.similarGroups.map { group ->
             if (group.groupId == groupId) {
                 group.copy(
-                    items = group.items.map { it.copy(isSelected = isSelected) }
+                    items = group.items.map { item ->
+                        if (item.id == group.bestCandidateId) item.copy(isSelected = false)
+                        else item.copy(isSelected = isSelected) }
                 )
             } else {
                 group
@@ -155,7 +157,9 @@ class SimilarViewModel @Inject constructor(
         val currentGroups = uiState.value.similarGroups
         val updatedGroups = currentGroups.map { group ->
             group.copy(
-                items = group.items.map { item -> item.copy(isSelected = isSelected) }
+                items = group.items.map { item ->
+                    if (item.id == group.bestCandidateId) item.copy(isSelected = false)
+                    else item.copy(isSelected = isSelected) }
             )
         }
         setState { copy(similarGroups = updatedGroups) }
