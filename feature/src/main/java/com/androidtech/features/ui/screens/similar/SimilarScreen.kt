@@ -143,7 +143,10 @@ fun SimilarContent(
                     }
                 },
                 navigationIcon = {
-                    IconButton(onClick = { onEvent(SimilarEvent.NavigateBackClick) }) {
+                    IconButton(
+                        onClick = { onEvent(SimilarEvent.NavigateBackClick) },
+                        enabled = !uiState.isLoading
+                    ) {
                         Icon(imageVector = Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
                     }
                 },
@@ -210,20 +213,52 @@ fun SimilarContent(
         snackbarHost = { SnackbarHost(snackbarHostState) },
         containerColor = MaterialTheme.colorScheme.background
     ) { paddingValues ->
-        LazyColumn(
-            modifier = modifier
-                .fillMaxSize()
-                .padding(paddingValues)
-                .padding(horizontal = 20.dp),
-            verticalArrangement = Arrangement.spacedBy(24.dp),
-            contentPadding = PaddingValues(bottom = 24.dp)
-        ) {
-            items(similarGroups, key = { it.groupId }) { group ->
-                SimilarGroupSection(
-                    group = group,
-                    onPhotoToggle = { photoId -> onEvent(SimilarEvent.PhotoToggleSelection(photoId)) },
-                    onGroupToggle = { isSelected -> onEvent(SimilarEvent.GroupToggleClicked(group.groupId, isSelected)) }
+        Box(modifier = Modifier.fillMaxSize()) {
+            if (uiState.showBackConfirmationDialog) {
+                AlertDialog(
+                    onDismissRequest = { onEvent(SimilarEvent.DismissBackConfirmation) },
+                    title = { Text(text = stringResource(R.string.text_dialog_back_title)) },
+                    text = { Text(text = stringResource(R.string.text_dialog_back_desc)) },
+                    confirmButton = {
+                        Button(onClick = { onEvent(SimilarEvent.ConfirmBackClicked) }) {
+                            Text(stringResource(R.string.text_dialog_exit))
+                        }
+                    },
+                    dismissButton = {
+                        TextButton(onClick = { onEvent(SimilarEvent.DismissBackConfirmation) }) {
+                            Text(stringResource(R.string.text_dialog_cancel))
+                        }
+                    }
                 )
+            }
+            LazyColumn(
+                modifier = modifier
+                    .fillMaxSize()
+                    .padding(paddingValues)
+                    .padding(horizontal = 20.dp),
+                verticalArrangement = Arrangement.spacedBy(24.dp),
+                contentPadding = PaddingValues(bottom = 24.dp)
+            ) {
+                items(similarGroups, key = { it.groupId }) { group ->
+                    SimilarGroupSection(
+                        group = group,
+                        onPhotoToggle = { photoId ->
+                            onEvent(
+                                SimilarEvent.PhotoToggleSelection(
+                                    photoId
+                                )
+                            )
+                        },
+                        onGroupToggle = { isSelected ->
+                            onEvent(
+                                SimilarEvent.GroupToggleClicked(
+                                    group.groupId,
+                                    isSelected
+                                )
+                            )
+                        }
+                    )
+                }
             }
         }
     }

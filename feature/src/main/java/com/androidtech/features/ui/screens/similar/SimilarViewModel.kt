@@ -57,7 +57,7 @@ class SimilarViewModel @Inject constructor(
                 setAllSelection(false)
             }
             is SimilarEvent.NavigateBackClick -> {
-                setEffect { SimilarEffect.NavigateBack }
+                handleBack()
             }
             is SimilarEvent.DeleteClick -> {
                 if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
@@ -74,6 +74,13 @@ class SimilarViewModel @Inject constructor(
             }
             is SimilarEvent.ConfirmCacheCleanup -> {
                 confirmCacheCleanup(event.photoIds)
+            }
+            is SimilarEvent.DismissBackConfirmation -> {
+                setState { copy(showBackConfirmationDialog = false) }
+            }
+            is SimilarEvent.ConfirmBackClicked -> {
+                setState { copy(showBackConfirmationDialog = false) }
+                setEffect { SimilarEffect.NavigateBack }
             }
         }
     }
@@ -163,5 +170,16 @@ class SimilarViewModel @Inject constructor(
             )
         }
         setState { copy(similarGroups = updatedGroups) }
+    }
+
+    private fun handleBack() {
+        val hasSelectedItems = currentState.similarGroups.any { group ->
+            group.items.any { it.isSelected }
+        }
+        if (hasSelectedItems) {
+            setState { copy(showBackConfirmationDialog = true) }
+        } else {
+            setEffect { SimilarEffect.NavigateBack }
+        }
     }
 }

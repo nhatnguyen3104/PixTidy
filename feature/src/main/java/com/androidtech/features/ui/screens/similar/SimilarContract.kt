@@ -10,6 +10,7 @@ import com.androidtech.features.ui.screens.duplicate.DuplicateEvent
 
 data class SimilarState(
     val isLoading: Boolean = false,
+    val showBackConfirmationDialog: Boolean = false,
     val similarGroups: List<SimilarGroup> = emptyList()
 ): UIState {
     val isSelectionActive: Boolean
@@ -26,6 +27,8 @@ sealed class SimilarEvent : UIEvent {
     data class PhotoToggleSelection(val photoId: Long) : SimilarEvent()
     data class GroupToggleClicked(val groupId: String, val isSelected: Boolean) : SimilarEvent()
     data class ConfirmCacheCleanup(val photoIds: List<Long>) : SimilarEvent()
+    object DismissBackConfirmation : SimilarEvent()
+    object ConfirmBackClicked : SimilarEvent()
 }
 
 sealed class SimilarEffect : UIEffect {

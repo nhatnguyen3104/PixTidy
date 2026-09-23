@@ -1,7 +1,6 @@
 package com.androidtech.features.ui.screens.duplicate
 
 import android.os.Build
-import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.androidtech.base.R
@@ -58,7 +57,7 @@ class DuplicateViewModel @Inject constructor(
                 setAllSelection(false)
             }
             is DuplicateEvent.NavigateBackClick -> {
-                setEffect { DuplicateEffect.NavigateBack }
+                handleBack()
             }
             is DuplicateEvent.DeleteClick -> {
                 if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
@@ -75,6 +74,13 @@ class DuplicateViewModel @Inject constructor(
             }
             is DuplicateEvent.ConfirmCacheCleanup -> {
                 confirmCacheCleanup(event.photoIds)
+            }
+            is DuplicateEvent.DismissBackConfirmation -> {
+                setState { copy(showBackConfirmationDialog = false) }
+            }
+            is DuplicateEvent.ConfirmBackClicked -> {
+                setState { copy(showBackConfirmationDialog = false) }
+                setEffect { DuplicateEffect.NavigateBack }
             }
         }
     }
@@ -170,5 +176,16 @@ class DuplicateViewModel @Inject constructor(
             )
         }
         setState { copy(duplicateGroups = updatedGroups) }
+    }
+
+    private fun handleBack() {
+        val hasSelectedItems = currentState.duplicateGroups.any { group ->
+            group.duplicateItems.any { it.isSelected }
+        }
+        if (hasSelectedItems) {
+            setState { copy(showBackConfirmationDialog = true) }
+        } else {
+            setEffect { DuplicateEffect.NavigateBack }
+        }
     }
 }

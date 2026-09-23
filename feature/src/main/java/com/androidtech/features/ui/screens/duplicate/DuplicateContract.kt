@@ -9,6 +9,7 @@ import com.androidtech.domain.model.media.DuplicateGroup
 
 data class DuplicateState(
     val isLoading: Boolean = false,
+    val showBackConfirmationDialog: Boolean = false,
     val duplicateGroups: List<DuplicateGroup> = emptyList()
 ): UIState {
     val isSelectionActive: Boolean
@@ -25,6 +26,8 @@ sealed class DuplicateEvent : UIEvent {
     data class PhotoToggleSelection(val photoId: Long) : DuplicateEvent()
     data class GroupToggleClicked(val groupId: String, val isSelected: Boolean) : DuplicateEvent()
     data class ConfirmCacheCleanup(val photoIds: List<Long>) : DuplicateEvent()
+    object DismissBackConfirmation : DuplicateEvent()
+    object ConfirmBackClicked : DuplicateEvent()
 }
 
 sealed class DuplicateEffect : UIEffect {

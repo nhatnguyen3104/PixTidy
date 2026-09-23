@@ -3,44 +3,54 @@ package com.androidtech.features.ui.screens.duplicate
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.IntentSenderRequest
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.outlined.Delete
-import androidx.compose.material.icons.outlined.Star
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
+import androidx.compose.material3.CenterAlignedTopAppBar
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.flowWithLifecycle
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
-import coil.compose.AsyncImage
 import com.androidtech.base.R
 import com.androidtech.base.extension.AppDestination
 import com.androidtech.base.extension.LocalNavController
@@ -51,9 +61,6 @@ import com.androidtech.base.theme.Title20Bold
 import com.androidtech.base.utils.UiText
 import com.androidtech.base.utils.formatSize
 import com.androidtech.features.ui.components.DeleteBottomBar
-import com.androidtech.features.ui.screens.home.HomeEvent
-import com.androidtech.features.ui.screens.home.HomeScreen
-import com.androidtech.features.ui.screens.scan.ScanEvent
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
@@ -66,7 +73,7 @@ fun NavGraphBuilder.duplicateScreen() {
 }
 
 @Composable
-fun DuplicateScreen (
+fun DuplicateScreen(
     viewModel: DuplicateViewModel = hiltViewModel()
 ) {
     val uiState = viewModel.uiState.collectAsStateWithLifecycle()
@@ -77,7 +84,8 @@ fun DuplicateScreen (
     val writePermissionState = rememberSinglePermission(
         permission = Permission.WriteExternalStorage,
         onGranted = {
-            val selectedPhotos = uiState.value.duplicateGroups.flatMap { it.selectedDuplicateItems } .map { it.id }
+            val selectedPhotos =
+                uiState.value.duplicateGroups.flatMap { it.selectedDuplicateItems }.map { it.id }
             viewModel.handleEvent(DuplicateEvent.DeleteClick(selectedPhotos))
         }
     )
@@ -96,7 +104,8 @@ fun DuplicateScreen (
         contract = ActivityResultContracts.StartIntentSenderForResult()
     ) { activityResult ->
         if (activityResult.resultCode == android.app.Activity.RESULT_OK) {
-            val selectedPhotos = uiState.value.duplicateGroups.flatMap { it.selectedDuplicateItems }.map { it.id }
+            val selectedPhotos =
+                uiState.value.duplicateGroups.flatMap { it.selectedDuplicateItems }.map { it.id }
             viewModel.handleEvent(DuplicateEvent.ConfirmCacheCleanup(selectedPhotos))
             showSnackbar(UiText.StringResource(R.string.text_success_clean).asString(context))
         }
@@ -108,10 +117,12 @@ fun DuplicateScreen (
                 is DuplicateEffect.NavigateBack -> {
                     navController.popBackStack()
                 }
+
                 is DuplicateEffect.ShowSnackbar -> {
                     val message = effect.message.asString(context)
                     showSnackbar(message)
                 }
+
                 is DuplicateEffect.RequestWritePermission -> {
                     if (writePermissionState.isGranted) {
                         viewModel.handleEvent(DuplicateEvent.DeleteClick(effect.selectedPhotoIds))
@@ -119,6 +130,7 @@ fun DuplicateScreen (
                         writePermissionState.request()
                     }
                 }
+
                 is DuplicateEffect.LaunchIntentSender -> {
                     intentSenderLauncher.launch(
                         IntentSenderRequest.Builder(effect.intentSender).build()
@@ -159,15 +171,25 @@ fun DuplicateContent(
                         )
 
                         Text(
-                            text = stringResource(R.string.text_duplicate_photos_description, uiState.duplicateGroups.size, totalSize.formatSize() ?: ""),
+                            text = stringResource(
+                                R.string.text_duplicate_photos_description,
+                                uiState.duplicateGroups.size,
+                                totalSize.formatSize() ?: ""
+                            ),
                             style = Body16Medium
                         )
                     }
 
                 },
                 navigationIcon = {
-                    IconButton(onClick = { onEvent(DuplicateEvent.NavigateBackClick) }) {
-                        Icon(imageVector = Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                    IconButton(
+                        onClick = { onEvent(DuplicateEvent.NavigateBackClick) },
+                        enabled = !uiState.isLoading
+                    ) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = "Back"
+                        )
                     }
                 },
                 actions = {
@@ -212,7 +234,7 @@ fun DuplicateContent(
                     Spacer(modifier = Modifier.width(8.dp))
                 },
                 colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.background),
-                windowInsets = WindowInsets(left = 0, top = 0, right = 0, bottom = 0 )
+                windowInsets = WindowInsets(left = 0, top = 0, right = 0, bottom = 0)
             )
         },
         bottomBar = {
@@ -232,20 +254,52 @@ fun DuplicateContent(
         snackbarHost = { SnackbarHost(snackbarHostState) },
         containerColor = MaterialTheme.colorScheme.background
     ) { paddingValues ->
-        LazyColumn(
-            modifier = modifier
-                .fillMaxSize()
-                .padding(paddingValues)
-                .padding(horizontal = 20.dp),
-            verticalArrangement = Arrangement.spacedBy(24.dp),
-            contentPadding = PaddingValues(bottom = 24.dp)
-        ) {
-            items(duplicateGroups, key = { it.groupId }) { group ->
-                DuplicateGroupSection(
-                    group = group,
-                    onPhotoToggle = { photoId -> onEvent(DuplicateEvent.PhotoToggleSelection( photoId )) },
-                    onGroupToggle = { isSelected -> onEvent(DuplicateEvent.GroupToggleClicked(group.groupId, isSelected)) }
+        Box(modifier = Modifier.fillMaxSize()) {
+            if (uiState.showBackConfirmationDialog) {
+                AlertDialog(
+                    onDismissRequest = { onEvent(DuplicateEvent.DismissBackConfirmation) },
+                    title = { Text(text = stringResource(R.string.text_dialog_back_title)) },
+                    text = { Text(text = stringResource(R.string.text_dialog_back_desc)) },
+                    confirmButton = {
+                        Button(onClick = { onEvent(DuplicateEvent.ConfirmBackClicked) }) {
+                            Text(stringResource(R.string.text_dialog_exit))
+                        }
+                    },
+                    dismissButton = {
+                        TextButton(onClick = { onEvent(DuplicateEvent.DismissBackConfirmation) }) {
+                            Text(stringResource(R.string.text_dialog_cancel))
+                        }
+                    }
                 )
+            }
+            LazyColumn(
+                modifier = modifier
+                    .fillMaxSize()
+                    .padding(paddingValues)
+                    .padding(horizontal = 20.dp),
+                verticalArrangement = Arrangement.spacedBy(24.dp),
+                contentPadding = PaddingValues(bottom = 24.dp)
+            ) {
+                items(duplicateGroups, key = { it.groupId }) { group ->
+                    DuplicateGroupSection(
+                        group = group,
+                        onPhotoToggle = { photoId ->
+                            onEvent(
+                                DuplicateEvent.PhotoToggleSelection(
+                                    photoId
+                                )
+                            )
+                        },
+                        onGroupToggle = { isSelected ->
+                            onEvent(
+                                DuplicateEvent.GroupToggleClicked(
+                                    group.groupId,
+                                    isSelected
+                                )
+                            )
+                        }
+                    )
+                }
             }
         }
     }
