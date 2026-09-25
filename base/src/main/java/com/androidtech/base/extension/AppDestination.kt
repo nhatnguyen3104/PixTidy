@@ -16,4 +16,6 @@ sealed class AppDestination(val route: String) {
     data object DuplicateScreen: AppDestination("duplicate_screen")
     @Serializable
     data object SimilarScreen: AppDestination("similar_screen")
+    @Serializable
+    data object SettingsScreen: AppDestination("settings_screen")
 }

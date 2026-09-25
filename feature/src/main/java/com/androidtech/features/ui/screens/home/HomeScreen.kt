@@ -96,7 +96,7 @@ fun HomeScreen(
                 }
 
                 is HomeEffect.NavigateToSettings -> {
-
+                    navController.navigate(AppDestination.SettingsScreen.route)
                 }
 
                 is HomeEffect.NavigateToDuplicate -> {
@@ -172,7 +172,7 @@ fun HomeContent(
                 .padding(horizontal = 20.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Spacer(modifier = Modifier.height(12.dp))
+            Spacer(modifier = Modifier.height(6.dp))
 
             StorageRingGauge(
                 usedGb = uiState.scanSummary.deviceUsedGb,

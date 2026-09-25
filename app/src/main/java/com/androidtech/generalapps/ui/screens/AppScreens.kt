@@ -12,6 +12,7 @@ import com.androidtech.base.extension.LocalNavController
 import com.androidtech.features.ui.screens.duplicate.duplicateScreen
 import com.androidtech.features.ui.screens.home.homeScreen
 import com.androidtech.features.ui.screens.scan.scanScreen
+import com.androidtech.features.ui.screens.settings.settingsScreen
 import com.androidtech.features.ui.screens.similar.similarScreen
 
 @Composable
@@ -33,6 +34,7 @@ fun AppScreens(
                 scanScreen()
                 duplicateScreen()
                 similarScreen()
+                settingsScreen()
             }
         }
     }
