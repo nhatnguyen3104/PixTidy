@@ -32,43 +32,51 @@ import com.androidtech.base.ui.animation.bounceClick
 import com.androidtech.domain.model.settings.AppLanguage
 
 @Composable
-fun SettingsSectionHeader(title: String) {
+fun SettingsSectionHeader(
+    title: String,
+    modifier: Modifier = Modifier
+) {
     Text(
-        text = title,
-        style = MaterialTheme.typography.labelMedium.copy(
-            fontWeight = FontWeight.Bold,
+        text = title.uppercase(),
+        style = MaterialTheme.typography.labelSmall.copy(
+            fontWeight = FontWeight.SemiBold,
             color = MaterialTheme.colorScheme.primary,
-            letterSpacing = 1.sp
+            letterSpacing = 1.2.sp
         ),
-        modifier = Modifier.padding(start = 4.dp, bottom = 2.dp)
+        modifier = modifier.padding(start = 4.dp, top = 8.dp, bottom = 6.dp)
     )
 }
 
 @Composable
-fun PrivacyGuaranteeHeroCard(onPrivacyPolicyClick: () -> Unit) {
+fun PrivacyGuaranteeHeroCard(
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
     Surface(
-        color = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.4f),
+        color = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.35f),
         shape = RoundedCornerShape(20.dp),
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
-            .bounceClick(onClick = onPrivacyPolicyClick)
+            .clip(RoundedCornerShape(20.dp))
+            .bounceClick(onClick = onClick)
     ) {
         Row(
-            modifier = Modifier.padding(16.dp),
+            modifier = Modifier.padding(horizontal = 16.dp, vertical = 14.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
+            // Icon badge
             Box(
                 modifier = Modifier
-                    .size(44.dp)
+                    .size(42.dp)
                     .clip(CircleShape)
-                    .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.15f)),
+                    .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.12f)),
                 contentAlignment = Alignment.Center
             ) {
                 Icon(
                     imageVector = Icons.Outlined.Shield,
                     contentDescription = null,
                     tint = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier.size(22.dp)
+                    modifier = Modifier.size(20.dp)
                 )
             }
 
@@ -76,23 +84,30 @@ fun PrivacyGuaranteeHeroCard(onPrivacyPolicyClick: () -> Unit) {
 
             Column(modifier = Modifier.weight(1f)) {
                 Text(
-                    text = "Privacy Guarantee",
-                    style = MaterialTheme.typography.titleMedium.copy(
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 15.sp,
+                    text = stringResource(R.string.privacy_guarantee_title),
+                    style = MaterialTheme.typography.titleSmall.copy(
+                        fontWeight = FontWeight.SemiBold,
                         color = MaterialTheme.colorScheme.onSurface
                     )
                 )
                 Spacer(modifier = Modifier.height(2.dp))
                 Text(
-                    text = "Your photos and videos are scanned locally and never leave your phone.",
+                    text = stringResource(R.string.privacy_guarantee_desc),
                     style = MaterialTheme.typography.bodySmall.copy(
-                        color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.8f),
-                        fontSize = 12.sp,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
                         lineHeight = 16.sp
                     )
                 )
             }
+
+            Spacer(modifier = Modifier.width(8.dp))
+
+            Icon(
+                imageVector = Icons.Default.ChevronRight,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f),
+                modifier = Modifier.size(18.dp)
+            )
         }
     }
 }
@@ -102,12 +117,13 @@ fun SettingsClickableRow(
     icon: ImageVector,
     title: String,
     subtitle: String,
-    onClick: () -> Unit
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
 ) {
     Row(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
-            .clickable(onClick = onClick)
+            .bounceClick(onClick = onClick)
             .padding(horizontal = 16.dp, vertical = 14.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -115,7 +131,7 @@ fun SettingsClickableRow(
             imageVector = icon,
             contentDescription = null,
             tint = MaterialTheme.colorScheme.onSurfaceVariant,
-            modifier = Modifier.size(22.dp)
+            modifier = Modifier.size(20.dp)
         )
 
         Spacer(modifier = Modifier.width(16.dp))
@@ -124,25 +140,26 @@ fun SettingsClickableRow(
             Text(
                 text = title,
                 style = MaterialTheme.typography.bodyLarge.copy(
-                    fontWeight = FontWeight.SemiBold,
-                    fontSize = 15.sp,
+                    fontWeight = FontWeight.Medium,
                     color = MaterialTheme.colorScheme.onSurface
                 )
             )
+            Spacer(modifier = Modifier.height(1.dp))
             Text(
                 text = subtitle,
                 style = MaterialTheme.typography.bodySmall.copy(
-                    color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
-                    fontSize = 12.sp
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             )
         }
 
+        Spacer(modifier = Modifier.width(8.dp))
+
         Icon(
             imageVector = Icons.Default.ChevronRight,
             contentDescription = null,
-            tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.4f),
-            modifier = Modifier.size(20.dp)
+            tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f),
+            modifier = Modifier.size(18.dp)
         )
     }
 }
@@ -153,11 +170,13 @@ fun SettingsSwitchRow(
     title: String,
     subtitle: String,
     checked: Boolean,
-    onCheckedChange: (Boolean) -> Unit
+    onCheckedChange: (Boolean) -> Unit,
+    modifier: Modifier = Modifier
 ) {
     Row(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
+            .clickable { onCheckedChange(!checked) } // Cho phép bấm cả row
             .padding(horizontal = 16.dp, vertical = 12.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -165,7 +184,7 @@ fun SettingsSwitchRow(
             imageVector = icon,
             contentDescription = null,
             tint = MaterialTheme.colorScheme.onSurfaceVariant,
-            modifier = Modifier.size(22.dp)
+            modifier = Modifier.size(20.dp)
         )
 
         Spacer(modifier = Modifier.width(16.dp))
@@ -174,26 +193,30 @@ fun SettingsSwitchRow(
             Text(
                 text = title,
                 style = MaterialTheme.typography.bodyLarge.copy(
-                    fontWeight = FontWeight.SemiBold,
-                    fontSize = 15.sp,
+                    fontWeight = FontWeight.Medium,
                     color = MaterialTheme.colorScheme.onSurface
                 )
             )
+            Spacer(modifier = Modifier.height(1.dp))
             Text(
                 text = subtitle,
                 style = MaterialTheme.typography.bodySmall.copy(
-                    color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
-                    fontSize = 12.sp
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             )
         }
+
+        Spacer(modifier = Modifier.width(12.dp))
 
         Switch(
             checked = checked,
             onCheckedChange = onCheckedChange,
             colors = SwitchDefaults.colors(
-                checkedThumbColor = Color.White,
-                checkedTrackColor = MaterialTheme.colorScheme.primary
+                checkedThumbColor = MaterialTheme.colorScheme.onPrimary,
+                checkedTrackColor = MaterialTheme.colorScheme.primary,
+                uncheckedThumbColor = MaterialTheme.colorScheme.outline,
+                uncheckedTrackColor = MaterialTheme.colorScheme.surfaceVariant,
+                uncheckedBorderColor = Color.Transparent
             )
         )
     }

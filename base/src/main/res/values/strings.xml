@@ -79,11 +79,23 @@
 
     <!-- Settings -->
     <string name="text_settings_title">Settings</string>
+    <string name="privacy_guarantee_title">Privacy Guarantee</string>
+    <string name="privacy_guarantee_desc">Your photos and videos are scanned locally and never leave your phone.</string>
     <string name="text_scan_and_cleanup">SCAN &amp; CLEANUP</string>
+    <string name="title_manage_permissions">Include Downloads folder</string>
+    <string name="desc_manage_permissions">Scan files in the system Downloads directory</string>
     <string name="text_include_downloads_folder">Include Downloads folder</string>
     <string name="text_appearance">APPEARANCE</string>
-    <string name="text_about_and_support">ABOUT &amp; SUPPORT</string>
+    <string name="title_dark_theme">Dark Theme</string>
+    <string name="desc_dark_theme">Reduce eye strain and battery usage</string>
+    <string name="title_language">Language</string>
     <string name="text_select_language">Select Language</string>
     <string name="text_no_suitable_language_found">No suitable language found.</string>
+    <string name="text_about_and_support">ABOUT &amp; SUPPORT</string>
+    <string name="title_feedback">Send Feedback &amp; Support</string>
+    <string name="desc_feedback">Report a bug or suggest improvements</string>
+    <string name="title_privacy_policy">Privacy Policy</string>
+    <string name="desc_privacy_policy">Read our local processing commitment</string>
+    <string name="app_tagline">Clean your gallery. Free your storage.</string>
 
 </resources>

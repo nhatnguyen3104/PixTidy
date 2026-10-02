@@ -30,6 +30,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -113,7 +114,9 @@ fun SettingsContent(
                 title = {
                     Text(
                         text = stringResource(R.string.text_settings_title),
-                        style = Title20Bold,
+                        style = MaterialTheme.typography.titleLarge.copy(
+                            fontWeight = FontWeight.SemiBold
+                        ),
                         color = MaterialTheme.colorScheme.onBackground
                     )
                 },
@@ -122,17 +125,20 @@ fun SettingsContent(
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                             contentDescription = "back",
+                            tint = MaterialTheme.colorScheme.onBackground
                         )
                     }
                 },
-                colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.background),
-                windowInsets = WindowInsets(left = 0, top = 0, right = 0, bottom = 0)
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.background
+                ),
+                windowInsets = WindowInsets(0.dp)
             )
         },
         containerColor = MaterialTheme.colorScheme.background
     ) { paddingValues ->
         Box(
-            modifier = Modifier
+            modifier = modifier
                 .fillMaxSize()
                 .padding(paddingValues)
         ) {
@@ -143,126 +149,76 @@ fun SettingsContent(
                     .padding(horizontal = 20.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Spacer(modifier = Modifier.height(6.dp))
+                Spacer(modifier = Modifier.height(8.dp))
 
-                // 1. Privacy Banner Section
+                // 1. Privacy hero banner
                 PrivacyGuaranteeHeroCard(
-                    onPrivacyPolicyClick = { onEvent(SettingsEvent.PrivacyPolicyClicked) }
+                    onClick = { onEvent(SettingsEvent.PrivacyPolicyClicked) }
                 )
 
-                Spacer(modifier = Modifier.height(6.dp))
+                Spacer(modifier = Modifier.height(20.dp))
 
-                // 2. Section: Scanning Preferences
+                // 2. Scanning preferences
                 SettingsSectionHeader(title = stringResource(R.string.text_scan_and_cleanup))
-                Surface(
-                    color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f),
-                    shape = RoundedCornerShape(20.dp),
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Column {
-                        /*SettingsSwitchRow(
-                        icon = Icons.Outlined.FolderDelete,
-                        title = "Include Downloads folder",
-                        subtitle = "Scan files in the system Downloads directory",
-                        checked = includeDownloadsState,
-                        onCheckedChange = { includeDownloadsState = it }
-                    )*/
-                        HorizontalDivider(
-                            modifier = Modifier.padding(horizontal = 16.dp),
-                            color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.1f)
-                        )
-                        SettingsClickableRow(
-                            icon = Icons.Outlined.Security,
-                            title = "Manage App Permissions",
-                            subtitle = "Check or revoke storage access in Android settings",
-                            onClick = { onEvent(SettingsEvent.ManagePermissionsClick) }
-                        )
-                    }
+                SettingsGroup {
+                    SettingsClickableRow(
+                        icon = Icons.Outlined.Security,
+                        title = stringResource(R.string.title_manage_permissions),
+                        subtitle = stringResource(R.string.desc_manage_permissions),
+                        onClick = { onEvent(SettingsEvent.ManagePermissionsClick) }
+                    )
                 }
 
-                Spacer(modifier = Modifier.height(6.dp))
+                Spacer(modifier = Modifier.height(20.dp))
 
-                // 3. Section: Appearance & Theme
+                // 3. Appearance & theme
                 SettingsSectionHeader(title = stringResource(R.string.text_appearance))
-                Surface(
-                    color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f),
-                    shape = RoundedCornerShape(20.dp),
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Column(modifier = Modifier.padding(16.dp)) {
-                        SettingsSwitchRow(
-                            icon = Icons.Outlined.DarkMode,
-                            title = "Dark Theme",
-                            subtitle = "Reduce eye strain and battery usage",
-                            checked = uiState.theme == AppTheme.DARK,
-                            onCheckedChange = { onEvent(SettingsEvent.ToggleDarkMode(it)) }
-                        )
-                        Spacer(modifier = Modifier.height(8.dp))
-                        HorizontalDivider(
-                            color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.1f)
-                        )
-                        Spacer(modifier = Modifier.height(12.dp))
-                        SettingsClickableRow(
-                            icon = Icons.Outlined.Language,
-                            title = "Language",
-                            subtitle = "${uiState.language.flagEmoji}  ${uiState.language.nativeName}",
-                            onClick = { showLanguageBottomSheet = true }
-                        )
-                    }
+                SettingsGroup {
+                    SettingsSwitchRow(
+                        icon = Icons.Outlined.DarkMode,
+                        title = stringResource(R.string.title_dark_theme),
+                        subtitle = stringResource(R.string.desc_dark_theme),
+                        checked = uiState.theme == AppTheme.DARK,
+                        onCheckedChange = { onEvent(SettingsEvent.ToggleDarkMode(it)) }
+                    )
+                    SettingsDivider()
+                    SettingsClickableRow(
+                        icon = Icons.Outlined.Language,
+                        title = stringResource(R.string.title_language),
+                        subtitle = "${uiState.language.flagEmoji}  ${uiState.language.nativeName}",
+                        onClick = { showLanguageBottomSheet = true }
+                    )
                 }
 
-                Spacer(modifier = Modifier.height(6.dp))
+                Spacer(modifier = Modifier.height(20.dp))
 
-                // 4. Section: Support & Legal
+                // 4. Support & legal
                 SettingsSectionHeader(title = stringResource(R.string.text_about_and_support))
-                Surface(
-                    color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f),
-                    shape = RoundedCornerShape(20.dp),
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Column {
-                        SettingsClickableRow(
-                            icon = Icons.AutoMirrored.Outlined.HelpOutline,
-                            title = "Send Feedback & Support",
-                            subtitle = "Report a bug or suggest improvements",
-                            onClick = { onEvent(SettingsEvent.FeedbackClicked) }
-                        )
-                        HorizontalDivider(
-                            modifier = Modifier.padding(horizontal = 16.dp),
-                            color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.1f)
-                        )
-                        SettingsClickableRow(
-                            icon = Icons.Outlined.PrivacyTip,
-                            title = "Privacy Policy",
-                            subtitle = "Read our 100% local processing commitment",
-                            onClick = { onEvent(SettingsEvent.PrivacyPolicyClicked) }
-                        )
-                    }
+                SettingsGroup {
+                    SettingsClickableRow(
+                        icon = Icons.AutoMirrored.Outlined.HelpOutline,
+                        title = stringResource(R.string.title_feedback),
+                        subtitle = stringResource(R.string.desc_feedback),
+                        onClick = { onEvent(SettingsEvent.FeedbackClicked) }
+                    )
+                    SettingsDivider()
+                    SettingsClickableRow(
+                        icon = Icons.Outlined.PrivacyTip,
+                        title = stringResource(R.string.title_privacy_policy),
+                        subtitle = stringResource(R.string.desc_privacy_policy),
+                        onClick = { onEvent(SettingsEvent.PrivacyPolicyClicked) }
+                    )
                 }
 
-                Spacer(modifier = Modifier.height(12.dp))
-                // 5. App Version Footer
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 12.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Text(
-                        text = "SnapSweep v${uiState.appVersion}",
-                        style = MaterialTheme.typography.bodyMedium.copy(
-                            color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f),
-                            fontWeight = FontWeight.Medium
-                        )
-                    )
-                    Spacer(modifier = Modifier.height(4.dp))
-                    Text(
-                        text = "Clean your gallery. Free your storage.",
-                        style = MaterialTheme.typography.labelSmall.copy(
-                            color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.4f)
-                        )
-                    )
-                }
+                Spacer(modifier = Modifier.height(24.dp))
+
+                // 5. App version footer
+                SettingsFooter(
+                    version = uiState.appVersion,
+                    tagline = stringResource(R.string.app_tagline)
+                )
+
+                Spacer(modifier = Modifier.height(16.dp))
             }
 
             if (showLanguageBottomSheet) {
@@ -275,5 +231,67 @@ fun SettingsContent(
                 )
             }
         }
+    }
+}
+
+/**
+ * Wraps settings rows in a consistent rounded surface container.
+ * Automatically clips dividers to the rounded corners.
+ */
+@Composable
+fun SettingsGroup(
+    modifier: Modifier = Modifier,
+    content: @Composable ColumnScope.() -> Unit
+) {
+    Surface(
+        color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.4f),
+        shape = RoundedCornerShape(20.dp),
+        modifier = modifier.fillMaxWidth()
+    ) {
+        Column(
+            modifier = Modifier.clip(RoundedCornerShape(20.dp)),
+            content = content
+        )
+    }
+}
+
+/**
+ * Thin divider with consistent inset, used between rows in a SettingsGroup.
+ */
+@Composable
+fun SettingsDivider(modifier: Modifier = Modifier) {
+    HorizontalDivider(
+        modifier = modifier.padding(start = 58.dp, end = 16.dp), // aligns after icon
+        thickness = 0.5.dp,
+        color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.12f)
+    )
+}
+
+@Composable
+fun SettingsFooter(
+    version: String,
+    tagline: String,
+    modifier: Modifier = Modifier
+) {
+    Column(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(vertical = 12.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Text(
+            text = "SnapSweep v$version",
+            style = MaterialTheme.typography.labelMedium.copy(
+                fontWeight = FontWeight.Medium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)
+            )
+        )
+        Spacer(modifier = Modifier.height(4.dp))
+        Text(
+            text = tagline,
+            style = MaterialTheme.typography.labelSmall.copy(
+                color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f)
+            )
+        )
     }
 }
