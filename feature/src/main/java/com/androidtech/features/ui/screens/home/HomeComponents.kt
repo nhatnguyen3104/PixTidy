@@ -253,7 +253,7 @@ fun PermissionRequestCard(
 @Preview(showBackground = true)
 @Composable
 fun PermissionRequestCardPreview(modifier: Modifier = Modifier) {
-    AppTheme(dynamicColor = false) {
+    AppTheme(dynamicColor = false, theme = com.androidtech.domain.model.settings.AppTheme.SYSTEM) {
         PermissionRequestCard(
             onRequestPermissionClick = {},
             onPrivacyPolicyClick = {}

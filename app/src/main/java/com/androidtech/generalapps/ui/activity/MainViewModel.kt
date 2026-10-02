@@ -4,7 +4,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.androidtech.base.viewmodel.BaseViewModel
 import com.androidtech.domain.usecase.FetchAndActiveRemoteConfigsUseCase
-//import com.androidtech.domain.usecase.settings.ObserveSettingsUseCase
+import com.androidtech.domain.usecase.settings.GetUserSettingsUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -15,7 +15,7 @@ import javax.inject.Inject
 class MainViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val fetchAndActiveConfigsUseCase: FetchAndActiveRemoteConfigsUseCase,
-    //private val observeSettingsUseCase: ObserveSettingsUseCase
+    private val getUserSettingsUseCase: GetUserSettingsUseCase
 ): BaseViewModel<MainEvent, MainState, MainEffect>(savedStateHandle) {
 
     init {
@@ -24,11 +24,11 @@ class MainViewModel @Inject constructor(
     }
 
     private fun observeSettings() {
-        /*observeSettingsUseCase()
+        getUserSettingsUseCase()
             .onEach { settings ->
-                setState { copy(isDarkMode = settings.isDarkMode) }
+                setState { copy(theme = settings.theme, language = settings.language, isSettingsReady = true) }
             }
-            .launchIn(viewModelScope)*/
+            .launchIn(viewModelScope)
     }
 
     override fun createInitializeState(): MainState = MainState()
@@ -36,6 +36,7 @@ class MainViewModel @Inject constructor(
     override fun handleEvent(event: MainEvent) {
         when (event) {
             MainEvent.LoadRemoteConfig -> fetchRemoteConfig()
+            MainEvent.LoadUserSettings -> {}
         }
     }
 
@@ -44,4 +45,5 @@ class MainViewModel @Inject constructor(
             fetchAndActiveConfigsUseCase()
         }
     }
+
 }

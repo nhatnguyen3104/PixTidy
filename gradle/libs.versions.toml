@@ -29,7 +29,7 @@ admobAds = "23.6.0"
 googleService = "4.4.2"
 firebaseBom = "33.9.0"
 javaxInject = "1"
-hilt = "2.49"
+hilt = "2.52"
 hitNavigationCompose = "1.2.0"
 permissionsVersion = "0.37.3"
 pagerVersion = "0.34.0"
@@ -41,6 +41,7 @@ visionCommon = "17.3.0"
 playServicesMlkitTextRecognitionCommon = "19.1.0"
 playServicesMlkitTextRecognition = "19.0.1"
 foundation = "1.11.4"
+datastore = "1.1.2"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -102,6 +103,7 @@ vision-common = { group = "com.google.mlkit", name = "vision-common", version.re
 play-services-mlkit-text-recognition-common = { group = "com.google.android.gms", name = "play-services-mlkit-text-recognition-common", version.ref = "playServicesMlkitTextRecognitionCommon" }
 play-services-mlkit-text-recognition = { group = "com.google.android.gms", name = "play-services-mlkit-text-recognition", version.ref = "playServicesMlkitTextRecognition" }
 androidx-compose-foundation = { group = "androidx.compose.foundation", name = "foundation", version.ref = "foundation" }
+androidx-datastore-preferences = { group = "androidx.datastore", name = "datastore-preferences", version.ref = "datastore" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

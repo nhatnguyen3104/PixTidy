@@ -3,14 +3,19 @@ package com.androidtech.generalapps.ui.activity
 import com.androidtech.base.viewmodel.UIEffect
 import com.androidtech.base.viewmodel.UIEvent
 import com.androidtech.base.viewmodel.UIState
+import com.androidtech.domain.model.settings.AppLanguage
+import com.androidtech.domain.model.settings.AppTheme
 
 sealed class MainEvent(): UIEvent {
     data object LoadRemoteConfig: MainEvent()
+    data object LoadUserSettings: MainEvent()
 }
 
 data class MainState(
     val testData: String = "",
-    val isDarkMode: Boolean = false
+    val isSettingsReady: Boolean = false,
+    val theme: AppTheme = AppTheme.SYSTEM,
+    val language: AppLanguage = AppLanguage.SYSTEM
 ): UIState
 
 sealed class MainEffect: UIEffect {

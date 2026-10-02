@@ -154,7 +154,7 @@ fun ScanProgressGauge(
 @Preview(showBackground = true)
 @Composable
 fun ScanProgressGaugePreview(modifier: Modifier = Modifier) {
-    AppTheme( dynamicColor = false) {
+    AppTheme( dynamicColor = false, theme = com.androidtech.domain.model.settings.AppTheme.SYSTEM) {
         ScanProgressGauge (
             progress = 0.5f,
             modifier = modifier.fillMaxSize()

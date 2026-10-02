@@ -77,4 +77,13 @@
 
     <string name="text_screenshots">Screenshots</string>
 
+    <!-- Settings -->
+    <string name="text_settings_title">Settings</string>
+    <string name="text_scan_and_cleanup">SCAN &amp; CLEANUP</string>
+    <string name="text_include_downloads_folder">Include Downloads folder</string>
+    <string name="text_appearance">APPEARANCE</string>
+    <string name="text_about_and_support">ABOUT &amp; SUPPORT</string>
+    <string name="text_select_language">Select Language</string>
+    <string name="text_no_suitable_language_found">No suitable language found.</string>
+
 </resources>

@@ -96,7 +96,7 @@ fun DeleteBottomBar(
 @Preview(showBackground = true)
 @Composable
 fun DeleteBottomBarPreview() {
-    AppTheme {
+    AppTheme(dynamicColor = false, theme = com.androidtech.domain.model.settings.AppTheme.SYSTEM) {
         DeleteBottomBar(
             selectedCount = 5,
             sizeText = "1.2 GB",

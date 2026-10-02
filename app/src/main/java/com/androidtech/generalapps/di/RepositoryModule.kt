@@ -33,12 +33,18 @@ interface RepositoryModule {
     fun bindScanResultsRepository(impl: ScanResultsRepositoryImpl): ScanResultsRepository
 
     @Binds
+    fun bindSettingsRepository(impl: SettingsRepositoryImpl): SettingsRepository
+
+    @Binds
     fun bindImageAnalyzerEngine(impl: ImageAnalyzerEngineImpl): ImageAnalyzerEngine
 
     @Binds
-    abstract fun bindDeepAnalysisEngine(impl: DeepAnalysisEngineImpl): DeepAnalysisEngine
+    fun bindDeepAnalysisEngine(impl: DeepAnalysisEngineImpl): DeepAnalysisEngine
 
     @Binds
-    abstract fun bindRecommendationEngine(impl: RecommendationEngineImpl): RecommendationEngine
+    fun bindRecommendationEngine(impl: RecommendationEngineImpl): RecommendationEngine
+
+    @Binds
+    fun bindLocaleController(impl: AndroidLocaleController): LocaleController
 
 }

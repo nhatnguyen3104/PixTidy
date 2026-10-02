@@ -61,6 +61,8 @@ dependencies {
     implementation(libs.androidx.runtime.room)
     ksp(libs.androidx.room.compiler)
     implementation (libs.androidx.room.ktx)
+    // DataStore
+    implementation(libs.androidx.datastore.preferences)
     // remote config
     implementation(platform(libs.com.google.firebase.bom))
     implementation(libs.com.google.firebase.remote.configs)

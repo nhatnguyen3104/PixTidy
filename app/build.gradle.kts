@@ -162,6 +162,8 @@ dependencies {
     implementation(libs.androidx.runtime.room)
     ksp(libs.androidx.room.compiler)
     implementation (libs.androidx.room.ktx)
+    // DataStore
+    implementation(libs.androidx.datastore.preferences)
     // Navigation
     implementation(libs.androidx.navigation.compose)
     // Live data
