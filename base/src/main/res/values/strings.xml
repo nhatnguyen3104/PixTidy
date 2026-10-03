@@ -89,7 +89,7 @@
     <string name="title_dark_theme">Dark Theme</string>
     <string name="desc_dark_theme">Reduce eye strain and battery usage</string>
     <string name="title_language">Language</string>
-    <string name="text_select_language">Select Language</string>
+    <string name="text_search_language">Search language…</string>
     <string name="text_no_suitable_language_found">No suitable language found.</string>
     <string name="text_about_and_support">ABOUT &amp; SUPPORT</string>
     <string name="title_feedback">Send Feedback &amp; Support</string>

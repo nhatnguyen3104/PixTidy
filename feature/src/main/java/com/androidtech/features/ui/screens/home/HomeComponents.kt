@@ -41,6 +41,7 @@ import com.androidtech.base.theme.StorageBadge
 import com.androidtech.base.ui.animation.bounceClick
 import com.androidtech.base.R
 import com.androidtech.base.theme.AppTheme
+import com.androidtech.base.theme.SurfaceBlack
 import com.androidtech.base.theme.withAlpha1
 import com.androidtech.base.theme.withAlpha5
 import com.androidtech.base.theme.withAlpha6
@@ -294,7 +295,7 @@ fun CategoryCard(
                 val badgeColor =
                     if (isPermissionGranted) badgeColor else MaterialTheme.colorScheme.onSurfaceVariant.withAlpha1()
                 val iconColor =
-                    if (isPermissionGranted) MaterialTheme.colorScheme.onSurfaceVariant.withAlpha8() else MaterialTheme.colorScheme.onSurfaceVariant.withAlpha5()
+                    if (isPermissionGranted) SurfaceBlack.withAlpha8() else MaterialTheme.colorScheme.onSurfaceVariant.withAlpha5()
                 Box(
                     modifier = Modifier
                         .size(48.dp)

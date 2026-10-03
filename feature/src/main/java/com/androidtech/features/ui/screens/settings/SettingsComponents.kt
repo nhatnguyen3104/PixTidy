@@ -124,7 +124,7 @@ fun SettingsClickableRow(
         modifier = modifier
             .fillMaxWidth()
             .bounceClick(onClick = onClick)
-            .padding(horizontal = 16.dp, vertical = 14.dp),
+            .padding(horizontal = 12.dp, vertical = 14.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Icon(
@@ -176,8 +176,8 @@ fun SettingsSwitchRow(
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .clickable { onCheckedChange(!checked) } // Cho phép bấm cả row
-            .padding(horizontal = 16.dp, vertical = 12.dp),
+            .clickable { onCheckedChange(!checked) }
+            .padding(horizontal = 12.dp, vertical = 12.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Icon(
@@ -275,7 +275,7 @@ fun LanguageSelectionBottomSheet(
                     .padding(bottom = 12.dp),
                 placeholder = {
                     Text(
-                        text = "Search language...",
+                        text = stringResource(R.string.text_search_language),
                         style = MaterialTheme.typography.bodyMedium.copy(
                             color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f)
                         )
