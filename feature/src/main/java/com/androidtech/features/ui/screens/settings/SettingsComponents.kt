@@ -176,7 +176,7 @@ fun SettingsSwitchRow(
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .clickable { onCheckedChange(!checked) }
+            .bounceClick { onCheckedChange(!checked) }
             .padding(horizontal = 12.dp, vertical = 12.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
