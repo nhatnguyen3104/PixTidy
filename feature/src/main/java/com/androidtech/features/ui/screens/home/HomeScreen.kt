@@ -326,6 +326,8 @@ fun HomeContent(
                     icon = Icons.Outlined.VideoLibrary,
                     badgeColor = VideoBadge,
                     modifier = Modifier.weight(1f),
+                    isEnabled = false,
+                    comingSoonText = "Soon",
                     onClick = { onEvent(HomeEvent.SmartInsightTypeClick(SmartInsightType.LARGE_VIDEOS)) }
                 )
             }

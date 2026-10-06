@@ -147,10 +147,10 @@ class ScanViewModel @Inject constructor(
                         screenshotCount = insight.affectedItemsCount
                         screenshotBytes = insight.reclaimableBytes
                     }
-                    SmartInsightType.LARGE_VIDEOS -> {
+                    /*SmartInsightType.LARGE_VIDEOS -> {
                         largeVideoCount = insight.affectedItemsCount
                         largeVideoBytes = insight.reclaimableBytes
-                    }
+                    }*/
                     else -> {}
                 }
             }

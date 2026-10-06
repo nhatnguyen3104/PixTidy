@@ -9,6 +9,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.outlined.*
 import androidx.compose.material.icons.outlined.History
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
@@ -178,6 +179,23 @@ fun ScanContent(
                     }
 
                     is ScanProcess.Success -> {
+                        val duplicatesInsight = remember(process.insights) {
+                            process.insights.firstOrNull { it.type == SmartInsightType.EXACT_DUPLICATES || it.type == SmartInsightType.DUPLICATE_VIDEOS }
+                        }
+                        val duplicatesSize = duplicatesInsight?.reclaimableBytes ?: process.summary.duplicatesSizeBytes ?: 0L
+                        val duplicatesCount = duplicatesInsight?.affectedItemsCount ?: 0
+
+                        val similarityInsight = remember(process.insights) {
+                            process.insights.firstOrNull { it.type == SmartInsightType.SIMILAR_PHOTOS }
+                        }
+                        val similaritySize = similarityInsight?.reclaimableBytes ?: process.summary.similaritySizeBytes ?: 0L
+                        val similarityCount = similarityInsight?.affectedItemsCount ?: 0
+
+                        val screenshotSize = process.summary.screenshotBytes
+                        val screenshotCount = process.summary.screenshotCount
+
+                        val videosSize = process.summary.videosSizeBytes
+
                         Column(
                             modifier = Modifier.fillMaxWidth(),
                             horizontalAlignment = Alignment.CenterHorizontally
@@ -199,7 +217,7 @@ fun ScanContent(
                                     fontWeight = FontWeight.Bold
                                 )
                                 Text(
-                                    text = stringResource(R.string.text_groups, process.insights.size),
+                                    text = stringResource(R.string.text_groups, 4),
                                     style = MaterialTheme.typography.bodyMedium,
                                     color = MaterialTheme.colorScheme.primary
                                 )
@@ -207,15 +225,55 @@ fun ScanContent(
 
                             Spacer(modifier = Modifier.height(16.dp))
 
-                            process.insights.forEach { insight ->
-                                ResultCategoryRow(
-                                    category = mapInsightToCategory(insight),
-                                    onClick = {
-                                        onEvent(ScanEvent.SmartInsightTypeClick(insight.type))
-                                    }
-                                )
-                                Spacer(modifier = Modifier.height(12.dp))
-                            }
+                            // 1. Duplicate Photos
+                            ScanCategoryCard(
+                                title = stringResource(R.string.text_duplicate_photos),
+                                sizeText = "$duplicatesCount items • ${duplicatesSize.formatSize()}",
+                                icon = Icons.Outlined.ContentCopy,
+                                badgeColor = ImageBadge,
+                                onClick = {
+                                    onEvent(ScanEvent.SmartInsightTypeClick(SmartInsightType.EXACT_DUPLICATES))
+                                }
+                            )
+
+                            Spacer(modifier = Modifier.height(12.dp))
+
+                            // 2. Similar Photos
+                            ScanCategoryCard(
+                                title = stringResource(R.string.text_similar_photos),
+                                sizeText = "$similarityCount items • ${similaritySize.formatSize()}",
+                                icon = Icons.Outlined.Collections,
+                                badgeColor = AudioBadge,
+                                onClick = {
+                                    onEvent(ScanEvent.SmartInsightTypeClick(SmartInsightType.SIMILAR_PHOTOS))
+                                }
+                            )
+
+                            Spacer(modifier = Modifier.height(12.dp))
+
+                            // 3. Screenshots
+                            ScanCategoryCard(
+                                title = stringResource(R.string.text_screenshots_old),
+                                sizeText = "$screenshotCount items • ${screenshotSize.formatSize()}",
+                                icon = Icons.Outlined.Smartphone,
+                                badgeColor = DocumentBadge,
+                                onClick = {
+                                    onEvent(ScanEvent.SmartInsightTypeClick(SmartInsightType.SCREENSHOTS))
+                                }
+                            )
+
+                            Spacer(modifier = Modifier.height(12.dp))
+
+                            // 4. Large Videos (Disabled / Coming Soon)
+                            ScanCategoryCard(
+                                title = stringResource(R.string.text_large_videos),
+                                sizeText = videosSize.formatSize(),
+                                icon = Icons.Outlined.VideoLibrary,
+                                badgeColor = VideoBadge,
+                                isEnabled = false,
+                                comingSoonText = "Soon",
+                                onClick = {}
+                            )
                         }
                     }
 
@@ -261,46 +319,7 @@ fun ScanContent(
     }
 }
 
-@Composable
-private fun mapInsightToCategory(insight: SmartInsight): ScanResultCategory {
-    val icon = when (insight.type) {
-        SmartInsightType.EXACT_DUPLICATES -> Icons.Default.CopyAll
-        SmartInsightType.SIMILAR_PHOTOS -> Icons.Default.PhotoLibrary
-        SmartInsightType.SCREENSHOTS -> Icons.Default.Screenshot
-        SmartInsightType.LARGE_VIDEOS -> Icons.Default.VideoFile
-        SmartInsightType.BLURRY_PHOTOS -> Icons.Default.BlurOn
-        SmartInsightType.DEEP_OCR_DOCUMENTS -> Icons.Default.Description
-        SmartInsightType.DUPLICATE_VIDEOS -> Icons.Default.VideoLibrary
-    }
 
-    val badgeColor = when (insight.type) {
-        SmartInsightType.EXACT_DUPLICATES -> DocumentBadge
-        SmartInsightType.SIMILAR_PHOTOS -> ImageBadge
-        SmartInsightType.SCREENSHOTS -> StorageBadge
-        SmartInsightType.LARGE_VIDEOS -> VideoBadge
-        SmartInsightType.BLURRY_PHOTOS -> ArchiveBadge
-        SmartInsightType.DEEP_OCR_DOCUMENTS -> DocumentBadge
-        SmartInsightType.DUPLICATE_VIDEOS -> VideoBadge
-    }.copy(alpha = 0.2f)
-
-    val iconTint = when (insight.type) {
-        SmartInsightType.EXACT_DUPLICATES -> DocumentBadge
-        SmartInsightType.SIMILAR_PHOTOS -> ImageBadge
-        SmartInsightType.SCREENSHOTS -> StorageBadge
-        SmartInsightType.LARGE_VIDEOS -> VideoBadge
-        SmartInsightType.BLURRY_PHOTOS -> ArchiveBadge
-        SmartInsightType.DEEP_OCR_DOCUMENTS -> DocumentBadge
-        SmartInsightType.DUPLICATE_VIDEOS -> VideoBadge
-    }
-
-    return ScanResultCategory(
-        title = insight.title,
-        sizeText = "${insight.affectedItemsCount} items • ${insight.reclaimableBytes.formatSize()}",
-        icon = icon,
-        iconTint = iconTint,
-        badgeBgColor = badgeColor
-    )
-}
 
 @Composable
 private fun ScanInfoPlaceholder(

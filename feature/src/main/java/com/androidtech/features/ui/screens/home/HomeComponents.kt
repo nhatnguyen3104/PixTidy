@@ -270,12 +270,15 @@ fun CategoryCard(
     icon: ImageVector,
     badgeColor: Color,
     modifier: Modifier = Modifier,
+    isEnabled: Boolean = true,
+    comingSoonText: String? = null,
     onClick: () -> Unit
 ) {
+    val activeClick = if (isPermissionGranted && isEnabled) { { onClick() } } else null
     Surface(
         color = MaterialTheme.colorScheme.surfaceVariant,
         shape = RoundedCornerShape(24.dp),
-        modifier = modifier.bounceClick(onClick = if (isPermissionGranted) { { onClick() } } else null)
+        modifier = modifier.bounceClick(onClick = activeClick)
     ) {
         Box(modifier = Modifier.padding(16.dp)) {
             if (!isPermissionGranted) {
@@ -287,20 +290,35 @@ fun CategoryCard(
                         .size(16.dp)
                         .align(Alignment.TopEnd)
                 )
+            } else if (!isEnabled && comingSoonText != null) {
+                Text(
+                    text = comingSoonText,
+                    style = MaterialTheme.typography.labelSmall.copy(
+                        color = MaterialTheme.colorScheme.primary,
+                        fontWeight = FontWeight.SemiBold
+                    ),
+                    modifier = Modifier.align(Alignment.TopEnd)
+                )
             }
             Column(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                val badgeColor =
-                    if (isPermissionGranted) badgeColor else MaterialTheme.colorScheme.onSurfaceVariant.withAlpha1()
-                val iconColor =
-                    if (isPermissionGranted) SurfaceBlack.withAlpha8() else MaterialTheme.colorScheme.onSurfaceVariant.withAlpha5()
+                val effectiveBadgeColor = when {
+                    !isPermissionGranted -> MaterialTheme.colorScheme.onSurfaceVariant.withAlpha1()
+                    !isEnabled -> badgeColor.copy(alpha = 0.3f)
+                    else -> badgeColor
+                }
+                val iconColor = when {
+                    !isPermissionGranted -> MaterialTheme.colorScheme.onSurfaceVariant.withAlpha5()
+                    !isEnabled -> MaterialTheme.colorScheme.onSurfaceVariant.withAlpha5()
+                    else -> SurfaceBlack.withAlpha8()
+                }
                 Box(
                     modifier = Modifier
                         .size(48.dp)
                         .clip(CircleShape)
-                        .background(badgeColor),
+                        .background(effectiveBadgeColor),
                     contentAlignment = Alignment.Center
                 ) {
                     Icon(
@@ -327,8 +345,11 @@ fun CategoryCard(
 
                 val descriptionColor =
                     if (isPermissionGranted) MaterialTheme.colorScheme.onSurfaceVariant.withAlpha7() else MaterialTheme.colorScheme.onSurfaceVariant.withAlpha5()
-                val descriptionText =
-                    if (isPermissionGranted) sizeText else stringResource(R.string.text_permission_required)
+                val descriptionText = when {
+                    !isPermissionGranted -> stringResource(R.string.text_permission_required)
+                    !isEnabled -> comingSoonText ?: sizeText
+                    else -> sizeText
+                }
                 Text(
                     text = descriptionText,
                     style = MaterialTheme.typography.bodySmall.copy(

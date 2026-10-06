@@ -24,12 +24,22 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import com.androidtech.base.theme.*
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.androidtech.base.theme.AppTheme
 import com.androidtech.base.ui.animation.bounceClick
+import com.androidtech.domain.model.media.SmartInsightType
+import androidx.compose.material.icons.outlined.ContentCopy
+import androidx.compose.material.icons.outlined.Collections
+import androidx.compose.material.icons.outlined.Smartphone
+import androidx.compose.material.icons.outlined.VideoLibrary
+import androidx.compose.material.icons.filled.BlurOn
+import androidx.compose.material.icons.filled.Description
 import com.androidtech.base.R
 import kotlin.math.cos
 import kotlin.math.sin
@@ -235,55 +245,73 @@ fun ReportHeroCard(totalCleanableSize: String) {
 }
 
 @Composable
-fun ResultCategoryRow(
-    category: ScanResultCategory,
+fun ScanCategoryCard(
+    title: String,
+    sizeText: String,
+    icon: ImageVector,
+    badgeColor: Color,
+    modifier: Modifier = Modifier,
+    isEnabled: Boolean = true,
+    comingSoonText: String? = null,
     onClick: () -> Unit
 ) {
+    val activeClick = if (isEnabled) { { onClick() } } else null
     Surface(
-        color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.7f),
-        shape = RoundedCornerShape(18.dp),
-        modifier = Modifier
-            .fillMaxWidth()
-            .bounceClick(onClick = onClick)
+        color = MaterialTheme.colorScheme.surfaceVariant,
+        shape = RoundedCornerShape(24.dp),
+        modifier = modifier.bounceClick(onClick = activeClick)
     ) {
-        Row(
-            modifier = Modifier.padding(horizontal = 16.dp, vertical = 14.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            // Category Icon with Circle Badge Background
-            Box(
-                modifier = Modifier
-                    .size(44.dp)
-                    .clip(CircleShape)
-                    .background(category.badgeBgColor),
-                contentAlignment = Alignment.Center
-            ) {
-                Icon(
-                    imageVector = category.icon,
-                    contentDescription = null,
-                    tint = category.iconTint,
-                    modifier = Modifier.size(22.dp)
+        Box(modifier = Modifier.padding(16.dp)) {
+            if (!isEnabled && comingSoonText != null) {
+                Text(
+                    text = comingSoonText,
+                    style = MaterialTheme.typography.labelSmall.copy(
+                        color = MaterialTheme.colorScheme.primary,
+                        fontWeight = FontWeight.SemiBold
+                    ),
+                    modifier = Modifier.align(Alignment.TopEnd)
                 )
             }
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                val effectiveBadgeColor = if (isEnabled) badgeColor else badgeColor.copy(alpha = 0.3f)
+                val iconColor = if (isEnabled) SurfaceBlack.withAlpha8() else MaterialTheme.colorScheme.onSurfaceVariant.withAlpha5()
+                Box(
+                    modifier = Modifier
+                        .size(48.dp)
+                        .clip(CircleShape)
+                        .background(effectiveBadgeColor),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Icon(
+                        imageVector = icon,
+                        contentDescription = null,
+                        tint = iconColor,
+                        modifier = Modifier.size(24.dp)
+                    )
+                }
 
-            Spacer(modifier = Modifier.width(16.dp))
+                Spacer(modifier = Modifier.height(12.dp))
 
-            // Category Details (Title & Size)
-            Column {
+                val titleColor = if (isEnabled) MaterialTheme.colorScheme.onSurfaceVariant else MaterialTheme.colorScheme.onSurfaceVariant.withAlpha7()
                 Text(
-                    text = category.title,
-                    style = MaterialTheme.typography.bodyLarge.copy(
-                        fontWeight = FontWeight.SemiBold,
-                        color = MaterialTheme.colorScheme.onSurface,
-                        fontSize = 15.sp
+                    text = title,
+                    style = MaterialTheme.typography.bodyMedium.copy(
+                        fontWeight = FontWeight.Bold,
+                        color = titleColor
                     )
                 )
-                Spacer(modifier = Modifier.height(2.dp))
+
+                Spacer(modifier = Modifier.height(4.dp))
+
+                val descriptionColor = if (isEnabled) MaterialTheme.colorScheme.onSurfaceVariant.withAlpha7() else MaterialTheme.colorScheme.onSurfaceVariant.withAlpha5()
+                val descriptionText = if (isEnabled || comingSoonText == null) sizeText else comingSoonText
                 Text(
-                    text = category.sizeText,
-                    style = MaterialTheme.typography.bodyMedium.copy(
-                        color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.75f),
-                        fontSize = 13.sp
+                    text = descriptionText,
+                    style = MaterialTheme.typography.bodySmall.copy(
+                        color = descriptionColor
                     )
                 )
             }
@@ -291,10 +319,23 @@ fun ResultCategoryRow(
     }
 }
 
-data class ScanResultCategory(
-    val title: String,
-    val sizeText: String,
-    val icon: ImageVector,
-    val iconTint: Color,
-    val badgeBgColor: Color
-)
+val SmartInsightType.icon: ImageVector
+    get() = when (this) {
+        SmartInsightType.EXACT_DUPLICATES, SmartInsightType.DUPLICATE_VIDEOS -> Icons.Outlined.ContentCopy
+        SmartInsightType.SIMILAR_PHOTOS -> Icons.Outlined.Collections
+        SmartInsightType.SCREENSHOTS -> Icons.Outlined.Smartphone
+        SmartInsightType.LARGE_VIDEOS -> Icons.Outlined.VideoLibrary
+        SmartInsightType.BLURRY_PHOTOS -> Icons.Default.BlurOn
+        SmartInsightType.DEEP_OCR_DOCUMENTS -> Icons.Default.Description
+    }
+
+val SmartInsightType.badgeColor: Color
+    get() = when (this) {
+        SmartInsightType.EXACT_DUPLICATES, SmartInsightType.DUPLICATE_VIDEOS -> ImageBadge
+        SmartInsightType.SIMILAR_PHOTOS -> AudioBadge
+        SmartInsightType.SCREENSHOTS -> DocumentBadge
+        SmartInsightType.LARGE_VIDEOS -> VideoBadge
+        SmartInsightType.BLURRY_PHOTOS -> ArchiveBadge
+        SmartInsightType.DEEP_OCR_DOCUMENTS -> DocumentBadge
+    }
+
