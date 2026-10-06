@@ -14,6 +14,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.outlined.Check
 import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material.icons.outlined.Star
 import androidx.compose.material3.*
@@ -163,21 +164,6 @@ fun DuplicatePhotoCard(
             modifier = Modifier.fillMaxSize()
         )
 
-        // Top-Left Checkbox (Only if selectable)
-        if (isSelectable) {
-            Checkbox(
-                checked = duplicateItem.isSelected,
-                onCheckedChange = { onToggle() },
-                modifier = Modifier
-                    .padding(4.dp)
-                    .align(Alignment.TopStart),
-                colors = CheckboxDefaults.colors(
-                    checkedColor = MaterialTheme.colorScheme.primary,
-                    uncheckedColor = Color.White.copy(alpha = 0.8f)
-                )
-            )
-        }
-
         // Bottom-Left "Best Shot / Keep" Star Badge
         if (duplicateItem.isBestKeep) {
             Box(
@@ -195,6 +181,30 @@ fun DuplicatePhotoCard(
                     tint = MaterialTheme.colorScheme.primary,
                     modifier = Modifier.size(18.dp)
                 )
+            }
+        }
+
+        // Selection Circle Checkbox (Bottom-Right)
+        if (isSelectable) {
+            Box(
+                modifier = Modifier
+                    .align(Alignment.BottomEnd)
+                    .padding(8.dp)
+                    .size(24.dp)
+                    .clip(CircleShape)
+                    .background(
+                        if (duplicateItem.isSelected) MaterialTheme.colorScheme.primary else Color.White.copy(alpha = 0.75f)
+                    ),
+                contentAlignment = Alignment.Center
+            ) {
+                if (duplicateItem.isSelected) {
+                    Icon(
+                        imageVector = Icons.Outlined.Check,
+                        contentDescription = "Selected",
+                        tint = MaterialTheme.colorScheme.onPrimary,
+                        modifier = Modifier.size(16.dp)
+                    )
+                }
             }
         }
     }

@@ -111,7 +111,7 @@ fun SimilarGroupSection(
                 )
             }
 
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(12.dp))
 
             // Grid Layout for Group Photos
             val chunkedItems = group.items.chunked(2)
@@ -196,7 +196,7 @@ fun SimilarPhotoCard(
                 .size(24.dp)
                 .clip(CircleShape)
                 .background(
-                    if (photo.isSelected) MaterialTheme.colorScheme.primary else Color.White.copy(alpha = 0.85f)
+                    if (photo.isSelected) MaterialTheme.colorScheme.primary else Color.White.copy(alpha = 0.75f)
                 ),
             contentAlignment = Alignment.Center
         ) {

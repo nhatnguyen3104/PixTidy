@@ -6,7 +6,6 @@ import com.androidtech.base.viewmodel.UIEffect
 import com.androidtech.base.viewmodel.UIEvent
 import com.androidtech.base.viewmodel.UIState
 import com.androidtech.domain.model.media.ScreenshotGroup
-import com.androidtech.features.ui.screens.duplicate.DuplicateEffect
 
 data class ScreenshotState(
     val isLoading: Boolean = false,

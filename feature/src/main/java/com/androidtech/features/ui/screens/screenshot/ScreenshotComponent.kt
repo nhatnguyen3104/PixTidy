@@ -179,7 +179,7 @@ fun ScreenshotCard(
                 .clip(CircleShape)
                 .background(
                     if (photo.isSelected) MaterialTheme.colorScheme.primary else Color.White.copy(
-                        alpha = 0.85f
+                        alpha = 0.75f
                     )
                 ),
             contentAlignment = Alignment.Center
