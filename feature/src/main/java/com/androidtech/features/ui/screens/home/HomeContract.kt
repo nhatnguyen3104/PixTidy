@@ -30,5 +30,6 @@ sealed class HomeEffect : UIEffect {
     object NavigateToSettings : HomeEffect()
     object NavigateToDuplicate : HomeEffect()
     object NavigateToSimilar : HomeEffect()
+    object NavigateToScreenshot : HomeEffect()
     object RequestStoragePermissions : HomeEffect()
 }

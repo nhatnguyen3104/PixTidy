@@ -4,6 +4,7 @@ import com.androidtech.data.logger.DataLogger
 import com.androidtech.domain.engine.RecommendationEngine
 import com.androidtech.domain.model.media.DuplicateGroup
 import com.androidtech.domain.model.media.MediaItem
+import com.androidtech.domain.model.media.ScreenshotGroup
 import com.androidtech.domain.model.media.SimilarGroup
 import com.androidtech.domain.model.media.SmartInsight
 import com.androidtech.domain.model.media.SmartInsightType
@@ -130,24 +131,58 @@ class RecommendationEngineImpl @Inject constructor() : RecommendationEngine {
         )
     }
 
-    // ---- Screenshots older than 30 days -> 0.75 --------------------------------------------------
+    // ---- Screenshots grouped by age buckets (>1 year, 60-365 days, 30-60 days) --------------
 
     private fun buildScreenshotInsight(screenshots: List<MediaItem>): SmartInsight? {
-        val cutoff = System.currentTimeMillis() - TimeUnit.DAYS.toMillis(SCREENSHOT_AGE_THRESHOLD_DAYS)
-        val oldScreenshots = screenshots.filter { it.dateAdded < cutoff }
+        val now = System.currentTimeMillis()
+        val thirtyDaysMillis = TimeUnit.DAYS.toMillis(30)
+        val sixtyDaysMillis = TimeUnit.DAYS.toMillis(60)
+        val yearMillis = TimeUnit.DAYS.toMillis(365)
+
+        val oldScreenshots = screenshots.filter { now - it.dateAdded >= thirtyDaysMillis }
         if (oldScreenshots.isEmpty()) return null
+
+        val groups = listOf(
+            Triple("screenshot_over_1_year", "Older than 1 year", oldScreenshots.filter { now - it.dateAdded >= yearMillis }),
+            Triple("screenshot_60_to_365_days", "60 to 365 days old", oldScreenshots.filter {
+                val age = now - it.dateAdded
+                age in sixtyDaysMillis..<yearMillis
+            }),
+            Triple("screenshot_30_to_60_days", "30 to 60 days old", oldScreenshots.filter {
+                val age = now - it.dateAdded
+                age in thirtyDaysMillis..<sixtyDaysMillis
+            })
+        ).filter { (_, _, items) -> items.isNotEmpty() }
+            .map { (groupId, label, items) ->
+                ScreenshotGroup(
+                    groupId = groupId,
+                    screenshotItems = items,
+                    timeLabel = label,
+                    potentialSavingsBytes = items.sumOf { it.size }
+                )
+            }
+
+        if (groups.isEmpty()) return null
+
+        val allItems = groups.flatMap { group ->
+            group.screenshotItems.map { item ->
+                item.copy(groupId = group.groupId)
+            }
+        }
+        val totalCount = oldScreenshots.size
+        val totalBytes = oldScreenshots.sumOf { it.size }
 
         return SmartInsight(
             id = UUID.randomUUID().toString(),
             title = "Old screenshots",
-            description = "${oldScreenshots.size} screenshot(s) are more than $SCREENSHOT_AGE_THRESHOLD_DAYS days old.",
+            description = "$totalCount screenshot(s) across ${groups.size} time category(ies) are more than 30 days old.",
             type = SmartInsightType.SCREENSHOTS,
-            reclaimableBytes = oldScreenshots.sumOf { it.size },
-            affectedItemsCount = oldScreenshots.size,
-            items = oldScreenshots,
+            reclaimableBytes = totalBytes,
+            affectedItemsCount = totalCount,
+            items = allItems,
             confidenceScore = OLD_SCREENSHOT_CONFIDENCE,
-            explanation = "Screenshots tend to lose relevance quickly. These have been sitting in your " +
-                    "library for over $SCREENSHOT_AGE_THRESHOLD_DAYS days without being revisited."
+            explanation = "Screenshots tend to lose relevance quickly. These have been grouped by age " +
+                    "ranging from 30 days to over a year old without being revisited."
         )
     }
 
@@ -179,6 +214,5 @@ class RecommendationEngineImpl @Inject constructor() : RecommendationEngine {
         const val BLURRY_STANDALONE_CONFIDENCE = 0.55f
         const val OLD_SCREENSHOT_CONFIDENCE = 0.75f
         const val LARGE_VIDEO_CONFIDENCE = 0.30f
-        const val SCREENSHOT_AGE_THRESHOLD_DAYS = 30L
     }
 }

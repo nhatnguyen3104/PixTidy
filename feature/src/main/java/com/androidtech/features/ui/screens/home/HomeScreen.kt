@@ -106,6 +106,10 @@ fun HomeScreen(
                 is HomeEffect.NavigateToSimilar -> {
                     navController.navigate(AppDestination.SimilarScreen.route)
                 }
+
+                is HomeEffect.NavigateToScreenshot -> {
+                    navController.navigate(AppDestination.ScreenshotScreen.route)
+                }
             }
         }
     }
@@ -307,7 +311,7 @@ fun HomeContent(
                 horizontalArrangement = Arrangement.spacedBy(12.dp)
             ) {
                 CategoryCard(
-                    title = stringResource(R.string.text_screenshots),
+                    title = stringResource(R.string.text_screenshots_old),
                     sizeText = uiState.scanSummary.screenshotBytes.formatSize(),
                     isPermissionGranted = uiState.isPermissionGranted,
                     icon = Icons.Outlined.Smartphone,

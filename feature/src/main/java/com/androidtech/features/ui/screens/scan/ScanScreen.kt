@@ -75,6 +75,9 @@ fun ScanScreen(
                 is ScanEffect.NavigateToSimilar -> {
                     navController.navigate(AppDestination.SimilarScreen.route)
                 }
+                is ScanEffect.NavigareToScreenshot -> {
+                    navController.navigate(AppDestination.ScreenshotScreen.route)
+                }
             }
         }
     }

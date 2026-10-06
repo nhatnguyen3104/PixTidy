@@ -181,7 +181,7 @@ class ScanViewModel @Inject constructor(
             }
 
             SmartInsightType.SCREENSHOTS -> {
-
+                setEffect { ScanEffect.NavigareToScreenshot }
             }
 
             SmartInsightType.LARGE_VIDEOS -> {

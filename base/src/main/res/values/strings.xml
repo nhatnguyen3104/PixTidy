@@ -75,7 +75,10 @@
 
     <string name="text_large_videos">Large videos</string>
 
-    <string name="text_screenshots">Screenshots</string>
+    <!-- Screenshot -->
+    <string name="text_screenshots_old">Old Screenshots</string>
+    <string name="text_screenshots_description">%1$d groups • %2$s</string>
+    <string name="text_screenshot_time">%1$s</string>
 
     <!-- Settings -->
     <string name="text_settings_title">Settings</string>

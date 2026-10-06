@@ -111,7 +111,7 @@ class HomeViewModel @Inject constructor(
             }
 
             SmartInsightType.SCREENSHOTS -> {
-
+                setEffect { HomeEffect.NavigateToScreenshot }
             }
 
             SmartInsightType.LARGE_VIDEOS -> {

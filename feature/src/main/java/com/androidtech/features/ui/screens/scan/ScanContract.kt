@@ -25,5 +25,6 @@ sealed class ScanEffect : UIEffect {
     // You could add NavigateToResults(groups) here if you want to move to another screen
     object NavigateToDuplicate : ScanEffect()
     object NavigateToSimilar : ScanEffect()
+    object NavigareToScreenshot : ScanEffect()
 
 }
