@@ -2,6 +2,7 @@ package com.androidtech.data.local.data_store
 
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.emptyPreferences
 import androidx.datastore.preferences.core.stringPreferencesKey
@@ -33,7 +34,8 @@ class SettingsDataStore @Inject constructor(
         .map { preferences ->
             UserSettings(
                 theme = preferences[KEY_APP_THEME]?.toAppThemeOrNull() ?: AppTheme.SYSTEM,
-                language = preferences[KEY_APP_LANGUAGE]?.toAppLanguageOrNull() ?: AppLanguage.SYSTEM
+                language = preferences[KEY_APP_LANGUAGE]?.toAppLanguageOrNull() ?: AppLanguage.SYSTEM,
+                isOnboardingCompleted = preferences[KEY_ONBOARDING_COMPLETED]?.toOnboardingCompleted() ?: false
             )
         }
 
@@ -45,14 +47,21 @@ class SettingsDataStore @Inject constructor(
         dataStore.edit { preferences -> preferences[KEY_APP_LANGUAGE] = language.name }
     }
 
+    suspend fun setOnboardingCompleted(completed: Boolean) {
+        dataStore.edit { preferences -> preferences[KEY_ONBOARDING_COMPLETED] = completed }
+    }
+
     /** Falls back to null (not a thrown exception) for a value from a newer app version we don't recognize. */
     private fun String.toAppThemeOrNull(): AppTheme? = runCatching { AppTheme.valueOf(this) }.getOrNull()
 
     private fun String.toAppLanguageOrNull(): AppLanguage? = runCatching { AppLanguage.valueOf(this) }.getOrNull()
 
+    private fun Boolean.toOnboardingCompleted(): Boolean = this
+
     companion object {
         const val PREFERENCES_NAME = "snapsweep_settings"
         val KEY_APP_THEME = stringPreferencesKey("app_theme")
         val KEY_APP_LANGUAGE = stringPreferencesKey("app_language")
+        val KEY_ONBOARDING_COMPLETED = booleanPreferencesKey("onboarding_completed")
     }
 }

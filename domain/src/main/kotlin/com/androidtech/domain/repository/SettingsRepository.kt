@@ -26,7 +26,12 @@ interface SettingsRepository {
     /** Hot-observable current settings; always emits at least [UserSettings.DEFAULT] immediately. */
     val userSettings: Flow<UserSettings>
 
+    /** Persists a change to the "Theme Mode" setting. */
     suspend fun updateTheme(theme: AppTheme)
 
+    /** Persists a change to the "Language" setting. */
     suspend fun updateLanguage(language: AppLanguage)
+
+    /** Persists a change to whether onboarding has been completed. */
+    suspend fun setOnboardingCompleted(completed: Boolean)
 }

@@ -34,4 +34,7 @@ class SettingsRepositoryImpl @Inject constructor(
     override suspend fun updateTheme(theme: AppTheme) = settingsDataStore.updateTheme(theme)
 
     override suspend fun updateLanguage(language: AppLanguage) = settingsDataStore.updateLanguage(language)
+
+    override suspend fun setOnboardingCompleted(completed: Boolean) = settingsDataStore.setOnboardingCompleted(completed)
+
 }
