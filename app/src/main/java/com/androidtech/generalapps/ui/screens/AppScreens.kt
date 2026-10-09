@@ -16,6 +16,7 @@ import com.androidtech.features.ui.screens.scan.scanScreen
 import com.androidtech.features.ui.screens.screenshot.screenshotScreen
 import com.androidtech.features.ui.screens.settings.settingsScreen
 import com.androidtech.features.ui.screens.similar.similarScreen
+import com.androidtech.features.ui.screens.splash.splashScreen
 
 @Composable
 fun AppScreens(
@@ -32,8 +33,8 @@ fun AppScreens(
                 navController = navController,
                 startDestination = AppDestination.HomeScreen.route
             ) {
+                splashScreen()
                 onboardingScreen()
-                //splashScreen()
                 homeScreen()
                 scanScreen()
                 duplicateScreen()
