@@ -15,7 +15,8 @@ data class MainState(
     val testData: String = "",
     val isSettingsReady: Boolean = false,
     val theme: AppTheme = AppTheme.SYSTEM,
-    val language: AppLanguage = AppLanguage.SYSTEM
+    val language: AppLanguage = AppLanguage.SYSTEM,
+    val isOnboardingCompleted: Boolean = false
 ): UIState
 
 sealed class MainEffect: UIEffect {

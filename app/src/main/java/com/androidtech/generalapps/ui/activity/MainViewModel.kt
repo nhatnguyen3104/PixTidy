@@ -26,7 +26,7 @@ class MainViewModel @Inject constructor(
     private fun observeSettings() {
         getUserSettingsUseCase()
             .onEach { settings ->
-                setState { copy(theme = settings.theme, language = settings.language, isSettingsReady = true) }
+                setState { copy(theme = settings.theme, language = settings.language, isOnboardingCompleted = settings.isOnboardingCompleted, isSettingsReady = true) }
             }
             .launchIn(viewModelScope)
     }

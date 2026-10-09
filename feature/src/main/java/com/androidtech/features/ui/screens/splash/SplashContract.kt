@@ -8,6 +8,7 @@ import com.androidtech.base.viewmodel.UIState
 @Immutable
 data class SplashState(
     val progress: Float = 0f,
+    val isOnboardingCompleted: Boolean = false,
 ): UIState
 
 sealed class SplashEvent: UIEvent {

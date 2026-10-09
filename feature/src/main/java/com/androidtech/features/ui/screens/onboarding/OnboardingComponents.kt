@@ -27,6 +27,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.foundation.text.ClickableText
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.withStyle
 import com.androidtech.base.ui.animation.bounceClick
 
 @Composable
@@ -116,6 +120,10 @@ fun OnboardingBottomNavigation(
     isLastPage: Boolean,
     currentPage: Int,
     pageCount: Int,
+    isPrivacyAccepted: Boolean,
+    onTogglePrivacy: (Boolean) -> Unit,
+    onTermsClick: () -> Unit,
+    onPrivacyClick: () -> Unit,
     onNextClick: () -> Unit
 ) {
     Column(
@@ -124,6 +132,51 @@ fun OnboardingBottomNavigation(
             .padding(horizontal = 24.dp, vertical = 28.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+        if (isLastPage) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 16.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Start
+            ) {
+                Checkbox(
+                    checked = isPrivacyAccepted,
+                    onCheckedChange = onTogglePrivacy,
+                    colors = CheckboxDefaults.colors(checkedColor = MaterialTheme.colorScheme.primary)
+                )
+                Spacer(modifier = Modifier.width(4.dp))
+
+                val annotatedString = buildAnnotatedString {
+                    append("I agree to the ")
+                    pushStringAnnotation(tag = "TERMS", annotation = "terms")
+                    withStyle(style = SpanStyle(color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.SemiBold)) {
+                        append("Terms of Service")
+                    }
+                    pop()
+                    append(" and ")
+                    pushStringAnnotation(tag = "PRIVACY", annotation = "privacy")
+                    withStyle(style = SpanStyle(color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.SemiBold)) {
+                        append("Privacy Policy")
+                    }
+                    pop()
+                }
+
+                ClickableText(
+                    text = annotatedString,
+                    style = MaterialTheme.typography.bodySmall.copy(
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    ),
+                    onClick = { offset ->
+                        annotatedString.getStringAnnotations(tag = "TERMS", start = offset, end = offset)
+                            .firstOrNull()?.let { onTermsClick() }
+                        annotatedString.getStringAnnotations(tag = "PRIVACY", start = offset, end = offset)
+                            .firstOrNull()?.let { onPrivacyClick() }
+                    }
+                )
+            }
+        }
+
         // Page Indicator Dots
         Row(
             horizontalArrangement = Arrangement.spacedBy(8.dp),
@@ -143,17 +196,23 @@ fun OnboardingBottomNavigation(
             }
         }
 
-        Spacer(modifier = Modifier.height(32.dp))
+        Spacer(modifier = Modifier.height(24.dp))
+
+        val isButtonEnabled = !isLastPage || isPrivacyAccepted
 
         // Primary Action Button (Next / Get Started)
         Button(
             onClick = onNextClick,
+            enabled = isButtonEnabled,
             modifier = Modifier
                 .fillMaxWidth()
                 .height(54.dp)
-                .bounceClick(onClick = onNextClick),
+                .then(if (isButtonEnabled) Modifier.bounceClick(onClick = onNextClick) else Modifier),
             shape = RoundedCornerShape(27.dp),
-            colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
+            colors = ButtonDefaults.buttonColors(
+                containerColor = MaterialTheme.colorScheme.primary,
+                disabledContainerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.4f)
+            )
         ) {
             Row(
                 verticalAlignment = Alignment.CenterVertically,

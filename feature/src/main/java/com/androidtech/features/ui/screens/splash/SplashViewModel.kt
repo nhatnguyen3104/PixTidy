@@ -3,8 +3,11 @@ package com.androidtech.features.ui.screens.splash
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.androidtech.base.viewmodel.BaseViewModel
+import com.androidtech.domain.usecase.settings.GetUserSettingsUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 import kotlin.time.Duration.Companion.milliseconds
@@ -12,6 +15,7 @@ import kotlin.time.Duration.Companion.milliseconds
 @HiltViewModel
 class SplashViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
+    private val getUserSettingsUseCase: GetUserSettingsUseCase
 ): BaseViewModel<SplashEvent, SplashState, SplashEffect>(savedStateHandle) {
     override fun createInitializeState(): SplashState = SplashState()
 
@@ -38,12 +42,13 @@ class SplashViewModel @Inject constructor(
                 setState { copy(progress = i.toFloat() / totalSteps) }
             }
 
-            /*val settings = appSettingsRepository.getSettings().first()
+            val settings = getUserSettingsUseCase().first()
+            setState { copy(isOnboardingCompleted = settings.isOnboardingCompleted) }
             if (settings.isOnboardingCompleted) {
                 setEffect { SplashEffect.NavigateToHome }
             } else {
                 setEffect { SplashEffect.NavigateToOnboarding }
-            }*/
+            }
         }
     }
 }

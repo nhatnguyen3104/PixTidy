@@ -31,7 +31,7 @@ fun AppScreens(
         ) {
             NavHost(
                 navController = navController,
-                startDestination = AppDestination.HomeScreen.route
+                startDestination = AppDestination.SplashScreen.route
             ) {
                 splashScreen()
                 onboardingScreen()

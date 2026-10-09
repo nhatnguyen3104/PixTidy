@@ -1,5 +1,7 @@
 package com.androidtech.features.ui.screens.onboarding
 
+import android.content.Intent
+import android.net.Uri
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
@@ -60,6 +62,12 @@ fun OnboardingScreen(
     val context = LocalContext.current
     val pagerState = rememberPagerState(pageCount = { onboardingPages.size })
 
+    LaunchedEffect(pagerState.currentPage) {
+        if (uiState.value.currentPage != pagerState.currentPage) {
+            viewModel.handleEvent(OnboardingEvent.PageChanged(pagerState.currentPage))
+        }
+    }
+
     LaunchedEffect(viewModel.uiEffect, lifecycleOwner) {
         viewModel.uiEffect.flowWithLifecycle(lifecycleOwner.lifecycle).collect { effect ->
             when (effect) {
@@ -74,11 +82,17 @@ fun OnboardingScreen(
                     }
                 }
                 is OnboardingEffect.OpenWebUrl -> {
-                    //context.openUrl(effect.url)
+                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse(effect.url))
+                    context.startActivity(intent)
                 }
             }
         }
     }
+    OnboardingContent (
+        uiState = uiState.value,
+        onEvent = viewModel::handleEvent,
+        pagerState = pagerState,
+    )
 }
 
 private val onboardingPages = listOf(
@@ -107,7 +121,6 @@ private val onboardingPages = listOf(
 fun OnboardingContent(
     uiState: OnboardingState,
     onEvent: (OnboardingEvent) -> Unit,
-    snackbarHostState: SnackbarHostState,
     pagerState: PagerState,
     modifier: Modifier = Modifier,
 ) {
@@ -140,6 +153,10 @@ fun OnboardingContent(
                 isLastPage = uiState.currentPage == onboardingPages.size - 1,
                 currentPage = uiState.currentPage,
                 pageCount = onboardingPages.size,
+                isPrivacyAccepted = uiState.isPrivacyAccepted,
+                onTogglePrivacy = { accepted -> onEvent(OnboardingEvent.TogglePrivacyAcceptance(accepted)) },
+                onTermsClick = { onEvent(OnboardingEvent.TermsOfServiceClicked) },
+                onPrivacyClick = { onEvent(OnboardingEvent.PrivacyPolicyClicked) },
                 onNextClick = {
                     if (uiState.currentPage < onboardingPages.size - 1) {
                         onEvent(OnboardingEvent.PageChanged(uiState.currentPage + 1))
@@ -152,7 +169,7 @@ fun OnboardingContent(
         containerColor = MaterialTheme.colorScheme.background
     ) { paddingValues ->
         Column(
-            modifier = Modifier
+            modifier = modifier
                 .fillMaxSize()
                 .padding(paddingValues)
         ) {
