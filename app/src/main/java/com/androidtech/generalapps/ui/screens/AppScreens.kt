@@ -11,6 +11,7 @@ import com.androidtech.base.extension.AppDestination
 import com.androidtech.base.extension.LocalNavController
 import com.androidtech.features.ui.screens.duplicate.duplicateScreen
 import com.androidtech.features.ui.screens.home.homeScreen
+import com.androidtech.features.ui.screens.onboarding.onboardingScreen
 import com.androidtech.features.ui.screens.scan.scanScreen
 import com.androidtech.features.ui.screens.screenshot.screenshotScreen
 import com.androidtech.features.ui.screens.settings.settingsScreen
@@ -31,6 +32,8 @@ fun AppScreens(
                 navController = navController,
                 startDestination = AppDestination.HomeScreen.route
             ) {
+                onboardingScreen()
+                //splashScreen()
                 homeScreen()
                 scanScreen()
                 duplicateScreen()

@@ -5,6 +5,8 @@ import kotlinx.serialization.Serializable
 @Serializable
 sealed class AppDestination(val route: String) {
     @Serializable
+    data object OnboardingScreen: AppDestination("onboarding_screen")
+    @Serializable
     data object SplashScreen: AppDestination("splash_screen")
     @Serializable
     data object HomeScreen: AppDestination("home_screen")
