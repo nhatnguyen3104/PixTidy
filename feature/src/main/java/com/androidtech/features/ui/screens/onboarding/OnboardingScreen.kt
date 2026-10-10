@@ -43,6 +43,7 @@ import com.androidtech.base.extension.AppDestination
 import com.androidtech.base.extension.LocalNavController
 import com.androidtech.base.theme.Title20Bold
 import com.androidtech.features.ui.screens.home.HomeEvent
+import androidx.core.net.toUri
 
 fun NavGraphBuilder.onboardingScreen() {
     composable(
@@ -82,7 +83,7 @@ fun OnboardingScreen(
                     }
                 }
                 is OnboardingEffect.OpenWebUrl -> {
-                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse(effect.url))
+                    val intent = Intent(Intent.ACTION_VIEW, effect.url.toUri())
                     context.startActivity(intent)
                 }
             }
@@ -137,7 +138,7 @@ fun OnboardingContent(
                 navigationIcon = {
                     IconButton(onClick = { /* do something */ }) {
                         Icon(
-                            painter = painterResource(R.drawable.ic_viet_nam),
+                            painter = painterResource(R.drawable.ic_app),
                             contentDescription = "logo",
                             tint = null,
                             modifier = Modifier.size(24.dp)

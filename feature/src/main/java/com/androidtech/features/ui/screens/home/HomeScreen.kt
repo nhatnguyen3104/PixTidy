@@ -141,7 +141,7 @@ fun HomeContent(
                 navigationIcon = {
                     IconButton(onClick = { /* do something */ }) {
                         Icon(
-                            painter = painterResource(R.drawable.ic_viet_nam),
+                            painter = painterResource(R.drawable.ic_app),
                             contentDescription = "logo",
                             tint = null,
                             modifier = Modifier.size(24.dp)

@@ -121,7 +121,7 @@ fun SplashContent(
                 contentAlignment = Alignment.Center
             ) {
                 Icon(
-                    painter = painterResource(R.drawable.ic_viet_nam),
+                    painter = painterResource(R.drawable.ic_app),
                     contentDescription = "app logo",
                     tint = null,
                     modifier = Modifier.size(52.dp)
