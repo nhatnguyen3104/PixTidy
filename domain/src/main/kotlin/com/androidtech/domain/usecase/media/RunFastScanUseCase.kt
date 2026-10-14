@@ -2,7 +2,6 @@ package com.androidtech.domain.usecase.media
 
 import com.androidtech.domain.model.media.ScanSummary
 import com.androidtech.domain.model.media.MediaItem
-import com.androidtech.domain.model.media.isScreenshot
 import com.androidtech.domain.model.media.isLargeVideo
 import com.androidtech.domain.model.media.ScanLayer
 import com.androidtech.domain.model.media.StorageSummary
@@ -111,8 +110,6 @@ class RunFastScanUseCase @Inject constructor(
 
     private fun ScanSummary.plusBatch(batch: List<MediaItem>): ScanSummary {
         var addedBytes = 0L
-        var addedScreenshots = 0
-        var addedScreenshotBytes = 0L
         var addedLargeVideos = 0
         var addedLargeVideoBytes = 0L
         var addedVideoBytes = 0L
@@ -120,10 +117,6 @@ class RunFastScanUseCase @Inject constructor(
 
         for (item in batch) {
             addedBytes += item.size
-            if (item.isScreenshot) {
-                addedScreenshots++
-                addedScreenshotBytes += item.size
-            }
             if (item.isVideo) {
                 addedVideoBytes += item.size
                 if (item.isLargeVideo) {
@@ -138,8 +131,8 @@ class RunFastScanUseCase @Inject constructor(
         return copy(
             totalMediaCount = totalMediaCount + batch.size,
             totalStorageBytes = totalStorageBytes + addedBytes,
-            screenshotCount = screenshotCount + addedScreenshots,
-            screenshotBytes = screenshotBytes + addedScreenshotBytes,
+            screenshotCount = 0,
+            screenshotBytes = 0L,
             largeVideoCount = largeVideoCount + addedLargeVideos,
             largeVideoBytes = largeVideoBytes + addedLargeVideoBytes,
             photosSizeBytes = photosSizeBytes + addedPhotoBytes,
