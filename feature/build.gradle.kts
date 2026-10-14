@@ -1,3 +1,6 @@
+import java.io.FileInputStream
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
@@ -5,6 +8,12 @@ plugins {
     alias(libs.plugins.com.google.devtools.ksp)
     alias(libs.plugins.com.google.dagger.hilt.android)
     alias(libs.plugins.kotlin.serialization)
+}
+
+val secretsFile = rootProject.file("secrets.properties")
+val secrets = Properties()
+if (secretsFile.exists()) {
+    FileInputStream(secretsFile).use { secrets.load(it) }
 }
 
 android {
@@ -16,6 +25,9 @@ android {
     defaultConfig {
         minSdk = 28
         consumerProguardFiles("consumer-rules.pro")
+
+        buildConfigField("String", "PRIVACY_URL", "\"${secrets.getProperty("PRIVACY_URL_Prod") ?: "https://www.google.com/policies.html"}\"")
+        buildConfigField("String", "TERMS_URL", "\"${secrets.getProperty("TERMS_URL_Prod") ?: "https://www.google.com/terms.html"}\"")
     }
 
     buildTypes {

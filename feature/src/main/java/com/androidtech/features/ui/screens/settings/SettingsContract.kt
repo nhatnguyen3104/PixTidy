@@ -17,6 +17,7 @@ data class SettingsState(
 sealed class SettingsEvent : UIEvent {
     object NavigateBackClicked: SettingsEvent()
     object PrivacyPolicyClicked: SettingsEvent()
+    object TermsOfServiceClicked: SettingsEvent()
     object ManagePermissionsClick: SettingsEvent()
     object FeedbackClicked: SettingsEvent()
     data class ToggleDarkMode(val enabled: Boolean) : SettingsEvent()
@@ -26,4 +27,5 @@ sealed class SettingsEvent : UIEvent {
 sealed class SettingsEffect : UIEffect {
     object NavigateBack: SettingsEffect()
     data class ShowSnackbar(val message: UiText) : SettingsEffect()
+    data class OpenWebUrl(val url: String) : SettingsEffect()
 }

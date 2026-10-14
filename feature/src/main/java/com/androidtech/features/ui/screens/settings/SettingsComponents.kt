@@ -24,6 +24,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.androidtech.base.R
@@ -99,15 +100,6 @@ fun PrivacyGuaranteeHeroCard(
                     )
                 )
             }
-
-            Spacer(modifier = Modifier.width(8.dp))
-
-            Icon(
-                imageVector = Icons.Default.ChevronRight,
-                contentDescription = null,
-                tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f),
-                modifier = Modifier.size(18.dp)
-            )
         }
     }
 }
@@ -404,5 +396,79 @@ fun LanguageItemRow(
                 }
             }
         }
+    }
+}
+
+/**
+ * Wraps settings rows in a consistent rounded surface container.
+ * Automatically clips dividers to the rounded corners.
+ */
+@Composable
+fun SettingsGroup(
+    modifier: Modifier = Modifier,
+    content: @Composable ColumnScope.() -> Unit
+) {
+    Surface(
+        color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.4f),
+        shape = RoundedCornerShape(20.dp),
+        modifier = modifier.fillMaxWidth()
+    ) {
+        Column(
+            modifier = Modifier.clip(RoundedCornerShape(20.dp)),
+            content = content
+        )
+    }
+}
+
+/**
+ * Thin divider with consistent inset, used between rows in a SettingsGroup.
+ */
+object SettingsDimens {
+    val DividerStartIndent = 58.dp
+    val DividerEndIndent = 16.dp
+    val DividerThickness = 0.5.dp
+    const val DividerAlpha = 0.12f
+}
+
+@Composable
+fun SettingsDivider(
+    modifier: Modifier = Modifier,
+    startIndent: Dp = SettingsDimens.DividerStartIndent,
+    endIndent: Dp = SettingsDimens.DividerEndIndent,
+) {
+    HorizontalDivider(
+        modifier = modifier.padding(start = startIndent, end = endIndent),
+        thickness = SettingsDimens.DividerThickness,
+        color = MaterialTheme.colorScheme.onSurfaceVariant
+            .copy(alpha = SettingsDimens.DividerAlpha)
+    )
+}
+
+@Composable
+fun SettingsFooter(
+    version: String,
+    tagline: String,
+    modifier: Modifier = Modifier
+) {
+    Column(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(vertical = 12.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Text(
+            text = stringResource(R.string.app_version, version),
+            style = MaterialTheme.typography.labelMedium.copy(
+                fontWeight = FontWeight.Medium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)
+            )
+        )
+        Spacer(modifier = Modifier.height(4.dp))
+        Text(
+            text = tagline,
+            style = MaterialTheme.typography.labelSmall.copy(
+                color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f)
+            )
+        )
     }
 }

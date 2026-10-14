@@ -35,10 +35,10 @@ class OnboardingViewModel @Inject constructor(
                 }
             }
             is OnboardingEvent.TermsOfServiceClicked -> {
-                viewModelScope.launch { setEffect { OnboardingEffect.OpenWebUrl("https://snapsweep.app/terms") } }
+                viewModelScope.launch { setEffect { OnboardingEffect.OpenWebUrl(BuildConfig.TERMS_URL) } }
             }
             is OnboardingEvent.PrivacyPolicyClicked -> {
-                viewModelScope.launch { setEffect { OnboardingEffect.OpenWebUrl("https://snapsweep.app/privacy") } }
+                viewModelScope.launch { setEffect { OnboardingEffect.OpenWebUrl(BuildConfig.PRIVACY_URL) } }
             }
         }
     }

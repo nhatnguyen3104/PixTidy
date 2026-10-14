@@ -1,5 +1,6 @@
 package com.androidtech.features.ui.screens.settings
 
+import android.content.Intent
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -35,7 +36,9 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.core.net.toUri
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -87,6 +90,10 @@ fun SettingsScreen(
                 }
                 is SettingsEffect.ShowSnackbar -> {
 
+                }
+                is SettingsEffect.OpenWebUrl -> {
+                    val intent = Intent(Intent.ACTION_VIEW, effect.url.toUri())
+                    context.startActivity(intent)
                 }
             }
         }
@@ -158,7 +165,7 @@ fun SettingsContent(
 
                 Spacer(modifier = Modifier.height(20.dp))
 
-                // 2. Scanning preferences
+                /*// 2. Scanning preferences
                 SettingsSectionHeader(title = stringResource(R.string.text_scan_and_cleanup))
                 SettingsGroup {
                     SettingsClickableRow(
@@ -169,7 +176,7 @@ fun SettingsContent(
                     )
                 }
 
-                Spacer(modifier = Modifier.height(20.dp))
+                Spacer(modifier = Modifier.height(20.dp))*/
 
                 // 3. Appearance & theme
                 SettingsSectionHeader(title = stringResource(R.string.text_appearance))
@@ -195,18 +202,25 @@ fun SettingsContent(
                 // 4. Support & legal
                 SettingsSectionHeader(title = stringResource(R.string.text_about_and_support))
                 SettingsGroup {
-                    SettingsClickableRow(
+                    /*SettingsClickableRow(
                         icon = Icons.AutoMirrored.Outlined.HelpOutline,
                         title = stringResource(R.string.title_feedback),
                         subtitle = stringResource(R.string.desc_feedback),
                         onClick = { onEvent(SettingsEvent.FeedbackClicked) }
                     )
-                    SettingsDivider()
+                    SettingsDivider()*/
                     SettingsClickableRow(
                         icon = Icons.Outlined.PrivacyTip,
                         title = stringResource(R.string.title_privacy_policy),
                         subtitle = stringResource(R.string.desc_privacy_policy),
                         onClick = { onEvent(SettingsEvent.PrivacyPolicyClicked) }
+                    )
+                    SettingsDivider()
+                    SettingsClickableRow(
+                        icon = Icons.Outlined.PrivacyTip,
+                        title = stringResource(R.string.title_terms_of_service),
+                        subtitle = stringResource(R.string.desc_terms_of_service),
+                        onClick = { onEvent(SettingsEvent.TermsOfServiceClicked) }
                     )
                 }
 
@@ -215,7 +229,7 @@ fun SettingsContent(
                 // 5. App version footer
                 SettingsFooter(
                     version = uiState.appVersion,
-                    tagline = stringResource(R.string.app_tagline)
+                    tagline = stringResource(R.string.app_slogan)
                 )
 
                 Spacer(modifier = Modifier.height(16.dp))
@@ -234,64 +248,3 @@ fun SettingsContent(
     }
 }
 
-/**
- * Wraps settings rows in a consistent rounded surface container.
- * Automatically clips dividers to the rounded corners.
- */
-@Composable
-fun SettingsGroup(
-    modifier: Modifier = Modifier,
-    content: @Composable ColumnScope.() -> Unit
-) {
-    Surface(
-        color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.4f),
-        shape = RoundedCornerShape(20.dp),
-        modifier = modifier.fillMaxWidth()
-    ) {
-        Column(
-            modifier = Modifier.clip(RoundedCornerShape(20.dp)),
-            content = content
-        )
-    }
-}
-
-/**
- * Thin divider with consistent inset, used between rows in a SettingsGroup.
- */
-@Composable
-fun SettingsDivider(modifier: Modifier = Modifier) {
-    HorizontalDivider(
-        modifier = modifier.padding(start = 58.dp, end = 16.dp), // aligns after icon
-        thickness = 0.5.dp,
-        color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.12f)
-    )
-}
-
-@Composable
-fun SettingsFooter(
-    version: String,
-    tagline: String,
-    modifier: Modifier = Modifier
-) {
-    Column(
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(vertical = 12.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Text(
-            text = "SnapSweep v$version",
-            style = MaterialTheme.typography.labelMedium.copy(
-                fontWeight = FontWeight.Medium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)
-            )
-        )
-        Spacer(modifier = Modifier.height(4.dp))
-        Text(
-            text = tagline,
-            style = MaterialTheme.typography.labelSmall.copy(
-                color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f)
-            )
-        )
-    }
-}

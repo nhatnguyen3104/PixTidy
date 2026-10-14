@@ -9,6 +9,8 @@ import com.androidtech.domain.model.settings.UserSettings
 import com.androidtech.domain.usecase.settings.GetUserSettingsUseCase
 import com.androidtech.domain.usecase.settings.UpdateLanguageUseCase
 import com.androidtech.domain.usecase.settings.UpdateThemeUseCase
+import com.androidtech.features.BuildConfig
+import com.androidtech.features.ui.screens.onboarding.OnboardingEffect
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.launchIn
@@ -44,7 +46,10 @@ class SettingsViewModel @Inject constructor(
                 setEffect { SettingsEffect.NavigateBack }
             }
             is SettingsEvent.PrivacyPolicyClicked -> {
-                // Handle privacy policy click
+                viewModelScope.launch { setEffect { SettingsEffect.OpenWebUrl(BuildConfig.PRIVACY_URL) } }
+            }
+            is SettingsEvent.TermsOfServiceClicked -> {
+                viewModelScope.launch { setEffect { SettingsEffect.OpenWebUrl(BuildConfig.TERMS_URL) } }
             }
             is SettingsEvent.ManagePermissionsClick -> {
                 // Handle permissions click
