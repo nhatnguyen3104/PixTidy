@@ -26,6 +26,7 @@ coil = "2.3.0"
 #workerVersion = "2.10.0"
 #exoPlayer = "1.8.0"
 admobAds = "23.6.0"
+adsMobile = "1.5.0"
 googleService = "4.4.2"
 firebaseBom = "33.9.0"
 javaxInject = "1"
@@ -83,6 +84,7 @@ io-coil-kt-compose = { module = "io.coil-kt:coil-compose", version.ref = "coil" 
 #androidx-media3-exoplayer = { module = "androidx.media3:media3-exoplayer", version.ref = "exoPlayer" }
 #androidx-media3-ui = { module = "androidx.media3:media3-ui", version.ref = "exoPlayer" }
 play-services-ads = { module = "com.google.android.gms:play-services-ads", version.ref = "admobAds" }
+com-android-libraries-ads-mobile = { module = "com.google.android.libraries.ads.mobile.sdk:ads-mobile-sdk", version.ref = "adsMobile" }
 com-google-firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebaseBom" }
 com-google-firebase-analytics = { module = "com.google.firebase:firebase-analytics" }
 com-google-firebase-remote-configs = { module = "com.google.firebase:firebase-config" }

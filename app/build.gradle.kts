@@ -1,4 +1,7 @@
 
+import java.util.Properties
+import java.io.FileInputStream
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
@@ -7,6 +10,12 @@ plugins {
     alias(libs.plugins.com.google.dagger.hilt.android)
     alias(libs.plugins.com.google.gms.google.services)
     alias(libs.plugins.kotlin.serialization)
+}
+
+val secretsFile = rootProject.file("secrets.properties")
+val secrets = Properties()
+if (secretsFile.exists()) {
+    FileInputStream(secretsFile).use { secrets.load(it) }
 }
 
 android {
@@ -51,6 +60,7 @@ android {
             versionNameSuffix = "-dev"
             isDebuggable = true
             signingConfig = signingConfigs.getByName("debug")
+            manifestPlaceholders["admob_app_id"] = secrets.getProperty("ID_ADMOB_Dev") ?: "ca-app-pub-3940256099942544~3347511713"
         }
 
         create("devRelease") {
@@ -64,6 +74,7 @@ android {
                 "proguard-rules.pro"
             )
             matchingFallbacks += "release"
+            manifestPlaceholders["admob_app_id"] = secrets.getProperty("ID_ADMOB_Dev") ?: "ca-app-pub-3940256099942544~3347511713"
         }
 
         create("prodDebug") {
@@ -71,6 +82,7 @@ android {
             isDebuggable = true
             signingConfig = signingConfigs.getByName("debug")
             matchingFallbacks += "debug"
+            manifestPlaceholders["admob_app_id"] = secrets.getProperty("ID_ADMOB_Prod") ?: "ca-app-pub-3940256099942544~3347511713"
         }
 
         create("prodRelease") {
@@ -82,6 +94,7 @@ android {
                 "proguard-rules.pro"
             )
             matchingFallbacks += "release"
+            manifestPlaceholders["admob_app_id"] = secrets.getProperty("ID_ADMOB_Prod") ?: "ca-app-pub-3940256099942544~3347511713"
         }
     }
 
@@ -96,12 +109,12 @@ android {
             buildConfigField("String", "DOMAIN_URL", "\"https://mobiledev-nct.tech/\"")
         }*/
 
-        create("SnapSweep") {
+        create("PixTidy") {
             dimension = "tier"
-            applicationId = "com.androidtech.snapsweep"
+            applicationId = "com.androidtech.pixtidy"
             versionCode = 1
             versionName = "1.0.0"
-            resValue("string", "app_name", "Snap Sweep")
+            resValue("string", "app_name", "PixTidy")
 
             buildConfigField("String", "DOMAIN_URL", "\"https://mobiledev-nate.tech/\"")
         }
@@ -193,6 +206,8 @@ dependencies {
 //    implementation(libs.camera.camera2)
     // Admob
     implementation(libs.play.services.ads)
+    // Admob_GMA
+    implementation(libs.com.android.libraries.ads.mobile)
     // Firebase
     implementation(platform(libs.com.google.firebase.bom))
     implementation(libs.com.google.firebase.analytics)
