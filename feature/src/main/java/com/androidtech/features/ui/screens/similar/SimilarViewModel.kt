@@ -1,0 +1,185 @@
+package com.androidtech.features.ui.screens.similar
+
+import android.os.Build
+import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.viewModelScope
+import com.androidtech.base.R
+import com.androidtech.base.utils.UiText
+import com.androidtech.base.utils.formatSize
+import com.androidtech.base.viewmodel.BaseViewModel
+import com.androidtech.data.repository.RequiresUserConfirmationException
+import com.androidtech.domain.extensions.UiState
+import com.androidtech.domain.model.media.MediaItem
+import com.androidtech.domain.usecase.media.GetLatestSimilarGroupsUseCase
+import com.androidtech.domain.usecase.media.PerformSafeCleanupUseCase
+import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
+import javax.inject.Inject
+
+@HiltViewModel
+class SimilarViewModel @Inject constructor(
+    savedStateHandle: SavedStateHandle,
+    private val getLatestSimilarGroupsUseCase: GetLatestSimilarGroupsUseCase,
+    private val performSafeCleanupUseCase: PerformSafeCleanupUseCase
+): BaseViewModel<SimilarEvent, SimilarState, SimilarEffect>(savedStateHandle) {
+    override fun createInitializeState(): SimilarState = SimilarState()
+
+    init {
+        loadSimilarPhotos()
+    }
+
+    private fun loadSimilarPhotos() {
+        getLatestSimilarGroupsUseCase(Unit)
+            .onEach { result ->
+                when (result) {
+                    is UiState.Loading -> setState { copy(isLoading = true) }
+                    is UiState.Success -> setState {
+                        copy(
+                            isLoading = false,
+                            similarGroups = result.data
+                        )
+                    }
+                    is UiState.Error -> setState { copy(isLoading = false) }
+                    else -> {}
+                }
+            }
+            .launchIn(viewModelScope)
+    }
+
+    override fun handleEvent(event: SimilarEvent) {
+        when (event) {
+            is SimilarEvent.SelectAllClicked -> {
+                setAllSelection(true)
+            }
+            is SimilarEvent.ClearSelectionClicked -> {
+                setAllSelection(false)
+            }
+            is SimilarEvent.NavigateBackClick -> {
+                handleBack()
+            }
+            is SimilarEvent.DeleteClick -> {
+                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
+                    setEffect { SimilarEffect.RequestWritePermission(event.selectedPhotoIds) }
+                } else {
+                    deletePhotos(event.selectedPhotoIds)
+                }
+            }
+            is SimilarEvent.PhotoToggleSelection -> {
+                togglePhotoSelection(event.photoId)
+            }
+            is SimilarEvent.GroupToggleClicked -> {
+                toggleGroupSelection(event.groupId, event.isSelected)
+            }
+            is SimilarEvent.ConfirmCacheCleanup -> {
+                confirmCacheCleanup(event.photoIds)
+            }
+            is SimilarEvent.DismissBackConfirmation -> {
+                setState { copy(showBackConfirmationDialog = false) }
+            }
+            is SimilarEvent.ConfirmBackClicked -> {
+                setState { copy(showBackConfirmationDialog = false) }
+                setEffect { SimilarEffect.NavigateBack }
+            }
+        }
+    }
+
+    private fun confirmCacheCleanup(photoIds: List<Long>) {
+        viewModelScope.launch {
+            val itemsToRemove = mutableListOf<MediaItem>()
+            uiState.value.similarGroups.forEach { group ->
+                group.items.forEach { item ->
+                    if (item.id in photoIds) itemsToRemove.add(item)
+                }
+            }
+            performSafeCleanupUseCase.updateCacheOnly(itemsToRemove)
+        }
+    }
+
+    private fun deletePhotos(selectedPhotoIds: List<Long>) {
+        if (selectedPhotoIds.isEmpty()) return
+
+        viewModelScope.launch {
+            setState { copy(isLoading = true) }
+
+            val itemsToDelete = mutableListOf<MediaItem>()
+            uiState.value.similarGroups.forEach { group ->
+                group.items.forEach { item ->
+                    if (item.id in selectedPhotoIds) {
+                        itemsToDelete.add(item)
+                    }
+                }
+            }
+
+            performSafeCleanupUseCase(itemsToDelete, confirmed = true)
+                .onSuccess { result ->
+                    setState { copy(isLoading = false) }
+                    val message = UiText.StringResource(R.string.text_notification_clean, result.itemsDeletedCount, result.bytesReclaimed.formatSize())
+                    setEffect { SimilarEffect.ShowSnackbar(message) }
+                }
+                .onFailure { error ->
+                    setState { copy(isLoading = false) }
+                    if (error is RequiresUserConfirmationException) {
+                        setEffect { SimilarEffect.LaunchIntentSender(error.intentSender) }
+                    } else {
+                        setEffect { SimilarEffect.ShowSnackbar(UiText.StringResource(R.string.text_error_clean)) }
+                    }
+                }
+        }
+    }
+
+    private fun togglePhotoSelection(photoId: Long) {
+        val currentGroups = uiState.value.similarGroups
+        val updatedGroups = currentGroups.map { group ->
+            if (group.items.any { it.id == photoId }) {
+                group.copy(
+                    items = group.items.map { item ->
+                        if (item.id == photoId) item.copy(isSelected = !item.isSelected) else item
+                    }
+                )
+            } else {
+                group
+            }
+        }
+        setState { copy(similarGroups = updatedGroups) }
+    }
+
+    private fun toggleGroupSelection(groupId: String, isSelected: Boolean) {
+        val updatedGroups = uiState.value.similarGroups.map { group ->
+            if (group.groupId == groupId) {
+                group.copy(
+                    items = group.items.map { item ->
+                        if (item.id == group.bestCandidateId) item.copy(isSelected = false)
+                        else item.copy(isSelected = isSelected) }
+                )
+            } else {
+                group
+            }
+        }
+        setState { copy(similarGroups = updatedGroups) }
+    }
+
+    private fun setAllSelection(isSelected: Boolean) {
+        val currentGroups = uiState.value.similarGroups
+        val updatedGroups = currentGroups.map { group ->
+            group.copy(
+                items = group.items.map { item ->
+                    if (item.id == group.bestCandidateId) item.copy(isSelected = false)
+                    else item.copy(isSelected = isSelected) }
+            )
+        }
+        setState { copy(similarGroups = updatedGroups) }
+    }
+
+    private fun handleBack() {
+        val hasSelectedItems = currentState.similarGroups.any { group ->
+            group.items.any { it.isSelected }
+        }
+        if (hasSelectedItems) {
+            setState { copy(showBackConfirmationDialog = true) }
+        } else {
+            setEffect { SimilarEffect.NavigateBack }
+        }
+    }
+}
