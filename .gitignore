@@ -7,6 +7,7 @@ local.properties
 secrets.properties
 .artifacts
 .kotlin
+**/google-services.json
 
 # Log/OS Files
 *.log
