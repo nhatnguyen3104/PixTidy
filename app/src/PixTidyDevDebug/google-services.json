@@ -26,6 +26,25 @@
     },
     {
       "client_info": {
+        "mobilesdk_app_id": "1:1078318067019:android:d2068d414a047f728d4cce",
+        "android_client_info": {
+          "package_name": "com.androidtech.pixtidy.dev"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAfD0OMu7dy0t_6OrN1rF7xQezgUP8rslM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
         "mobilesdk_app_id": "1:1078318067019:android:663873caee5b34ad8d4cce",
         "android_client_info": {
           "package_name": "com.androidtech.printprep.dev"

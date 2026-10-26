@@ -36,7 +36,7 @@ class AppModule {
 
     @Singleton
     @Provides
-    fun provideAdManager(context: Context): AdManager = AdMobManager(context)
+    fun provideAdManager(adMobManager: AdMobManager): AdManager = adMobManager
 
     @Provides
     @Singleton

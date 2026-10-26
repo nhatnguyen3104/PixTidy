@@ -23,7 +23,7 @@ import com.androidtech.base.logger.Logger
 import com.google.android.gms.ads.LoadAdError
 import com.google.android.gms.ads.nativead.MediaView
 import com.google.android.gms.ads.nativead.NativeAd
-import com.google.android.gms.ads.nativead.NativeAdView
+import com.google.android.gms.ads.nativead.NativeAdView as GmsNativeAdView
 import androidx.core.graphics.toColorInt
 
 @Composable
@@ -32,7 +32,7 @@ fun NativeAdView(
     adUnitId: String,
     onAdLoaded: () -> Unit = {},
     onAdFailedToLoad: (LoadAdError) -> Unit = {},
-    customView: ((NativeAdView, NativeAd) -> Unit)? = null,
+    customView: ((GmsNativeAdView, NativeAd) -> Unit)? = null,
     onAdClicked: () -> Unit = {}
 ) {
     val context = LocalContext.current
@@ -64,7 +64,7 @@ fun NativeAdView(
         AndroidView(
             modifier = modifier,
             factory = { cxt ->
-                NativeAdView(cxt).apply {
+                GmsNativeAdView(cxt).apply {
                     if (customView != null) {
                         customView(this, mNativeAd)
                     } else {
@@ -77,7 +77,7 @@ fun NativeAdView(
 }
 
 private fun setupDefaultNativeAdView(
-    adView: NativeAdView,
+    adView: GmsNativeAdView,
     nativeAd: NativeAd,
     onAdClicked: () -> Unit
 ) {

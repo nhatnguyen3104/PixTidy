@@ -207,7 +207,7 @@ dependencies {
     // Admob
     implementation(libs.play.services.ads)
     // Admob_GMA
-    implementation(libs.com.android.libraries.ads.mobile)
+    //implementation(libs.com.android.libraries.ads.mobile)
     // Firebase
     implementation(platform(libs.com.google.firebase.bom))
     implementation(libs.com.google.firebase.analytics)

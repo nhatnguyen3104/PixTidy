@@ -58,7 +58,7 @@ dependencies {
     implementation(libs.javax.inject)
     // Admob
     implementation(libs.play.services.ads)
-    // Admob_GMA
-    implementation(libs.com.android.libraries.ads.mobile)
+    // Admob_GMA (Next-Gen)
+    //implementation(libs.com.android.libraries.ads.mobile)
 
 }

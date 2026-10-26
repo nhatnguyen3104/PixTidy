@@ -8,6 +8,7 @@ import com.google.android.gms.ads.AdLoader
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.LoadAdError
 import com.google.android.gms.ads.nativead.NativeAd
+import com.google.android.gms.ads.nativead.NativeAd.OnNativeAdLoadedListener
 import com.google.android.gms.ads.nativead.NativeAdOptions
 
 class NativeAdLoader(
@@ -30,7 +31,7 @@ class NativeAdLoader(
         isLoadingAd = true
 
         val adLoader = AdLoader.Builder(context, adUnitId)
-            .forNativeAd { ad ->
+            .forNativeAd(NativeAd.OnNativeAdLoadedListener { ad ->
                 Log.d(AdConfig.TAG, "Native Ad loaded thành công")
 
                 // Nếu có ad cũ, destroy nó trước
@@ -41,7 +42,7 @@ class NativeAdLoader(
                 nativeAd = ad
                 isLoadingAd = false
                 onAdLoaded(ad)
-            }
+            })
             .withAdListener(object : AdListener() {
                 override fun onAdFailedToLoad(error: LoadAdError) {
                     Log.e(AdConfig.TAG, "Native Ad failed: ${error.message}")
