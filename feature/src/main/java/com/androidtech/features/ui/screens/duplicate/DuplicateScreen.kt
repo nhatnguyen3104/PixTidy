@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -44,6 +45,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.LocalLifecycleOwner
@@ -272,33 +274,65 @@ fun DuplicateContent(
                     }
                 )
             }
-            LazyColumn(
-                modifier = modifier
-                    .fillMaxSize()
-                    .padding(paddingValues)
-                    .padding(horizontal = 20.dp),
-                verticalArrangement = Arrangement.spacedBy(24.dp),
-                contentPadding = PaddingValues(bottom = 24.dp)
-            ) {
-                items(duplicateGroups, key = { it.groupId }) { group ->
-                    DuplicateGroupSection(
-                        group = group,
-                        onPhotoToggle = { photoId ->
-                            onEvent(
-                                DuplicateEvent.PhotoToggleSelection(
-                                    photoId
-                                )
-                            )
-                        },
-                        onGroupToggle = { isSelected ->
-                            onEvent(
-                                DuplicateEvent.GroupToggleClicked(
-                                    group.groupId,
-                                    isSelected
-                                )
-                            )
-                        }
+            if (duplicateGroups.isEmpty()) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(paddingValues)
+                        .padding(horizontal = 24.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center
+                ) {
+                    Icon(
+                        painter = painterResource(R.drawable.ic_broom),
+                        contentDescription = null,
+                        modifier = Modifier.size(64.dp),
+                        tint = MaterialTheme.colorScheme.primary
                     )
+                    Spacer(modifier = Modifier.height(16.dp))
+                    Text(
+                        text = stringResource(R.string.text_no_duplicates_found),
+                        style = Title20Bold,
+                        color = MaterialTheme.colorScheme.onBackground,
+                        textAlign = TextAlign.Center
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Text(
+                        text = stringResource(R.string.text_no_duplicates_description),
+                        style = Body16Medium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        textAlign = TextAlign.Center
+                    )
+                }
+            } else {
+                LazyColumn(
+                    modifier = modifier
+                        .fillMaxSize()
+                        .padding(paddingValues)
+                        .padding(horizontal = 20.dp),
+                    verticalArrangement = Arrangement.spacedBy(24.dp),
+                    contentPadding = PaddingValues(bottom = 24.dp)
+                ) {
+                    items(duplicateGroups, key = { it.groupId }) { group ->
+                        DuplicateGroupSection(
+                            group = group,
+                            onPhotoToggle = { photoId ->
+                                onEvent(
+                                    DuplicateEvent.PhotoToggleSelection(
+                                        photoId
+                                    )
+                                )
+                            },
+                            onGroupToggle = { isSelected ->
+                                onEvent(
+                                    DuplicateEvent.GroupToggleClicked(
+                                        group.groupId,
+                                        isSelected
+                                    )
+                                )
+                            }
+                        )
+                    }
                 }
             }
         }

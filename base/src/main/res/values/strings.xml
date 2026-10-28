@@ -46,7 +46,7 @@
     <string name="text_learn_privacy">Learn about our on-device privacy guarantee</string>
     <string name="text_permission_required">Permission needed</string>
     <string name="text_unknow_error">Unknown error</string>
-    <string name="text_dialog_back_title">Cancel scanning?</string>
+    <string name="text_dialog_back_title">Confirm back</string>
     <string name="text_dialog_back_desc">If you go back now, your current progress and selections will be lost.</string>
     <string name="text_dialog_exit">Yes, cancel</string>
     <string name="text_dialog_cancel">Keep going</string>
@@ -67,6 +67,8 @@
     <string name="text_original">Original</string>
     <string name="text_select_all">Select all</string>
     <string name="text_clear_selection">Clear selection</string>
+    <string name="text_no_duplicates_found">No duplicate photos found</string>
+    <string name="text_no_duplicates_description">Your media library is clean and organized.</string>
 
 
     <!-- Similar -->
@@ -74,6 +76,8 @@
     <string name="text_similar_photos_description">%1$d groups • %2$s</string>
     <string name="text_percent_similar">%1$d%% similar</string>
     <string name="text_best_shot">Best Shot</string>
+    <string name="text_no_similar_photos_found">No similar photos found</string>
+    <string name="text_no_similar_photos_description">Your photo gallery has no similar items.</string>
 
     <string name="text_large_videos">Large videos</string>
 
@@ -81,6 +85,8 @@
     <string name="text_screenshots_old">Old Screenshots</string>
     <string name="text_screenshots_description">%1$d groups • %2$s</string>
     <string name="text_screenshot_time">%1$s</string>
+    <string name="text_no_screenshots_found">No old screenshots found</string>
+    <string name="text_no_screenshots_description">Your screenshot library is clean and organized.</string>
 
     <!-- Settings -->
     <string name="text_settings_title">Settings</string>
