@@ -38,6 +38,11 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.flowWithLifecycle
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.animation.core.tween
 import com.androidtech.base.R
 import com.androidtech.base.extension.AppDestination
 import com.androidtech.base.extension.LocalNavController
@@ -48,6 +53,8 @@ import androidx.core.net.toUri
 fun NavGraphBuilder.onboardingScreen() {
     composable(
         route = AppDestination.OnboardingScreen.route,
+        exitTransition = { fadeOut(animationSpec = tween(300)) + slideOutHorizontally(targetOffsetX = { -it / 4 }, animationSpec = tween(300)) },
+        popEnterTransition = { fadeIn(animationSpec = tween(300)) + slideInHorizontally(initialOffsetX = { -it / 4 }, animationSpec = tween(300)) }
     ) {
         OnboardingScreen()
     }
@@ -99,7 +106,7 @@ fun OnboardingScreen(
 private val onboardingPages = listOf(
     OnboardingPageData(
         title = "Clean Similar & Duplicate Photos",
-        description = "SnapSweep automatically detects duplicate photos, best shots, and similar burst images to free up space.",
+        description = "PixTidy automatically detects duplicate photos, best shots, and similar burst images to free up space.",
         icon = Icons.Outlined.Collections,
         highlightBadgeText = "Smart AI Detection"
     ),
@@ -110,7 +117,7 @@ private val onboardingPages = listOf(
         highlightBadgeText = "Storage Saver"
     ),
     OnboardingPageData(
-        title = "100% Private & Local Processing",
+        title = "Private & Local Processing",
         description = "Your photos and videos are scanned completely on your device. Zero data ever leaves your phone.",
         icon = Icons.Outlined.Shield,
         highlightBadgeText = "Privacy Guarantee"
@@ -159,11 +166,7 @@ fun OnboardingContent(
                 onTermsClick = { onEvent(OnboardingEvent.TermsOfServiceClicked) },
                 onPrivacyClick = { onEvent(OnboardingEvent.PrivacyPolicyClicked) },
                 onNextClick = {
-                    if (uiState.currentPage < onboardingPages.size - 1) {
-                        onEvent(OnboardingEvent.PageChanged(uiState.currentPage + 1))
-                    } else {
-                        onEvent(OnboardingEvent.NextClicked)
-                    }
+                    onEvent(OnboardingEvent.NextClicked)
                 }
             )
         },
