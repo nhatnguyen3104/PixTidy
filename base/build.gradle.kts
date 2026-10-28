@@ -66,4 +66,7 @@ dependencies {
     implementation(libs.lottie.compose)
     // Serialization
     implementation(libs.org.jetbrains.kotlinx.serialization.json)
+    // App Update
+    implementation(libs.com.google.android.play.app.update)
+    implementation(libs.com.google.android.play.app.update.ktx)
 }

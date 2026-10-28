@@ -12,6 +12,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.ads.monetization.AdManager
+import com.androidtech.base.helper.AppUpdateChecker
 import com.androidtech.base.theme.AppTheme
 import com.androidtech.domain.usecase.settings.GetUserSettingsUseCase
 import com.androidtech.generalapps.ui.screens.AppScreens
@@ -49,9 +50,12 @@ class MainActivity : ComponentActivity() {
     @Inject
     lateinit var getUserSettingsUseCase: GetUserSettingsUseCase
 
+    private val appUpdateChecker by lazy { AppUpdateChecker(this) }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+        appUpdateChecker.check()
 
         /*splashScreen.setKeepOnScreenCondition { !mainViewModel.uiState.value.isSettingsReady }*/
         setContent {

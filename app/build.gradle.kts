@@ -212,4 +212,7 @@ dependencies {
     implementation(platform(libs.com.google.firebase.bom))
     implementation(libs.com.google.firebase.analytics)
     implementation(libs.com.google.firebase.remote.configs)
+    // App Update
+    implementation(libs.com.google.android.play.app.update)
+    implementation(libs.com.google.android.play.app.update.ktx)
 }

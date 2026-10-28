@@ -105,4 +105,12 @@
     <string name="desc_terms_of_service">Read our terms of service</string>
     <string name="app_tagline">Clean your gallery. Free your storage.</string>
 
+    <!-- App Update -->
+    <string name="update_dialog_title">Update Available</string>
+    <string name="update_dialog_message">A new version of the app is available. Please update to the latest version for better performance and new features.</string>
+    <string name="update_dialog_positive">Update</string>
+    <string name="update_dialog_negative">Skip</string>
+    <string name="update_uptodate_title">App is up to date</string>
+    <string name="update_uptodate_message">You are using the latest version of the App.</string>
+
 </resources>
