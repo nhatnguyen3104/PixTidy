@@ -188,13 +188,13 @@ fun SettingsContent(
                         checked = uiState.theme == AppTheme.DARK,
                         onCheckedChange = { onEvent(SettingsEvent.ToggleDarkMode(it)) }
                     )
-                    SettingsDivider()
+                    /*SettingsDivider()
                     SettingsClickableRow(
                         icon = Icons.Outlined.Language,
                         title = stringResource(R.string.title_language),
                         subtitle = "${uiState.language.flagEmoji}  ${uiState.language.nativeName}",
                         onClick = { showLanguageBottomSheet = true }
-                    )
+                    )*/
                 }
 
                 Spacer(modifier = Modifier.height(20.dp))

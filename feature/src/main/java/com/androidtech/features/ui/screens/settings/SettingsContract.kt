@@ -11,7 +11,7 @@ data class SettingsState(
     val isLoading: Boolean = false,
     val theme: AppTheme = AppTheme.SYSTEM,
     val language: AppLanguage = AppLanguage.SYSTEM,
-    val appVersion: String = "1.0.0"
+    val appVersion: String = "0.0.1"
 ) : UIState
 
 sealed class SettingsEvent : UIEvent {
