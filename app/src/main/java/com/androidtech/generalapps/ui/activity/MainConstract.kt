@@ -5,6 +5,7 @@ import com.androidtech.base.viewmodel.UIEvent
 import com.androidtech.base.viewmodel.UIState
 import com.androidtech.domain.model.settings.AppLanguage
 import com.androidtech.domain.model.settings.AppTheme
+import com.androidtech.domain.model.settings.UserSettings
 
 sealed class MainEvent(): UIEvent {
     data object LoadRemoteConfig: MainEvent()
@@ -14,8 +15,8 @@ sealed class MainEvent(): UIEvent {
 data class MainState(
     val testData: String = "",
     val isSettingsReady: Boolean = false,
-    val theme: AppTheme = AppTheme.SYSTEM,
-    val language: AppLanguage = AppLanguage.SYSTEM,
+    val theme: AppTheme = UserSettings.DEFAULT.theme,
+    val language: AppLanguage = UserSettings.DEFAULT.language,
     val isOnboardingCompleted: Boolean = false
 ): UIState
 

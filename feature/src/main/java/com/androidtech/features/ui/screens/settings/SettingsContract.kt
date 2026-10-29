@@ -6,11 +6,12 @@ import com.androidtech.base.viewmodel.UIEvent
 import com.androidtech.base.viewmodel.UIState
 import com.androidtech.domain.model.settings.AppLanguage
 import com.androidtech.domain.model.settings.AppTheme
+import com.androidtech.domain.model.settings.UserSettings
 
 data class SettingsState(
     val isLoading: Boolean = false,
-    val theme: AppTheme = AppTheme.SYSTEM,
-    val language: AppLanguage = AppLanguage.SYSTEM,
+    val theme: AppTheme = UserSettings.DEFAULT.theme,
+    val language: AppLanguage = UserSettings.DEFAULT.language,
     val appVersion: String = "0.0.1"
 ) : UIState
 

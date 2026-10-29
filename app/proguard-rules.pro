@@ -19,3 +19,28 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
+
+# OkHttp platform used on non-Android JVMs
+-dontwarn org.bouncycastle.jsse.**
+-dontwarn org.conscrypt.**
+-dontwarn org.openjsse.**
+
+# PDFBox Android
+-dontwarn com.gemalto.jp2.**
+-dontwarn com.tom_roush.pdfbox.filter.JPXFilter
+
+# SLF4J
+-dontwarn org.slf4j.impl.**
+
+# Osmdroid keep rules
+-keep class org.osmdroid.** { *; }
+-dontwarn org.osmdroid.**
+
+# If use SQLite for MBTiles
+-keep class android.database.sqlite.** { *; }
+
+# Gson rules
+-keepattributes Signature, *Annotation*, EnclosingMethod, InnerClasses
+-dontwarn sun.misc.**
+-keep class com.google.gson.** { *; }
+-keep class com.google.gson.reflect.TypeToken

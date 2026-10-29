@@ -33,9 +33,9 @@ class SettingsDataStore @Inject constructor(
         }
         .map { preferences ->
             UserSettings(
-                theme = preferences[KEY_APP_THEME]?.toAppThemeOrNull() ?: AppTheme.SYSTEM,
-                language = preferences[KEY_APP_LANGUAGE]?.toAppLanguageOrNull() ?: AppLanguage.SYSTEM,
-                isOnboardingCompleted = preferences[KEY_ONBOARDING_COMPLETED]?.toOnboardingCompleted() ?: false
+                theme = preferences[KEY_APP_THEME]?.toAppThemeOrNull() ?: UserSettings.DEFAULT.theme,
+                language = preferences[KEY_APP_LANGUAGE]?.toAppLanguageOrNull() ?: UserSettings.DEFAULT.language,
+                isOnboardingCompleted = preferences[KEY_ONBOARDING_COMPLETED]?.toOnboardingCompleted() ?: UserSettings.DEFAULT.isOnboardingCompleted //false
             )
         }
 

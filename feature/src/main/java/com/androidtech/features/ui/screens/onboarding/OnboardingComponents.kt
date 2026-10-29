@@ -138,7 +138,7 @@ fun OnboardingBottomNavigation(
                     .fillMaxWidth()
                     .padding(bottom = 16.dp),
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.Start
+                horizontalArrangement = Arrangement.Center
             ) {
                 Checkbox(
                     checked = isPrivacyAccepted,
@@ -165,7 +165,8 @@ fun OnboardingBottomNavigation(
                 ClickableText(
                     text = annotatedString,
                     style = MaterialTheme.typography.bodySmall.copy(
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        textAlign = TextAlign.Center
                     ),
                     onClick = { offset ->
                         annotatedString.getStringAnnotations(tag = "TERMS", start = offset, end = offset)

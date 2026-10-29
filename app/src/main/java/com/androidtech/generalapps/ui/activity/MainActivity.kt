@@ -61,9 +61,9 @@ class MainActivity : ComponentActivity() {
         setContent {
             val uiState by mainViewModel.uiState.collectAsStateWithLifecycle()
             AppTheme(theme = uiState.theme) {
-                Scaffold(modifier = Modifier.Companion.fillMaxSize()) { innerPadding ->
+                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                     AppScreens(
-                        modifier = Modifier.Companion.fillMaxSize()
+                        modifier = Modifier.fillMaxSize()
                             .padding(innerPadding)
                     )
                 }
