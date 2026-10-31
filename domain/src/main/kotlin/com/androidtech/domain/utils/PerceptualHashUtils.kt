@@ -3,8 +3,8 @@ package com.androidtech.domain.utils
 /**
  * Pure-Kotlin operations on hex-encoded perceptual hashes (dHash/pHash strings produced by the
  * data layer). Lives in domain because it is plain bit arithmetic with zero Android dependency,
- * and both [com.androidtech.domain.usecase.RunSmartScanUseCase] and
- * [com.androidtech.domain.usecase.RunDeepSmartScanUseCase] need it for clustering.
+ * and both [com.androidtech.domain.usecase.media.RunSmartScanUseCase] and
+ * [com.androidtech.domain.usecase.media.RunDeepScanUseCase] need it for clustering.
  */
 object PerceptualHashUtils {
 
