@@ -60,7 +60,10 @@ class MainActivity : ComponentActivity() {
         /*splashScreen.setKeepOnScreenCondition { !mainViewModel.uiState.value.isSettingsReady }*/
         setContent {
             val uiState by mainViewModel.uiState.collectAsStateWithLifecycle()
-            AppTheme(theme = uiState.theme) {
+            AppTheme(
+                theme = uiState.theme,
+                dynamicColor = false
+            ) {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                     AppScreens(
                         modifier = Modifier.fillMaxSize()
