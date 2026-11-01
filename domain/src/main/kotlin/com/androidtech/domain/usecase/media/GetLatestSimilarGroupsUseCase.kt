@@ -39,7 +39,7 @@ class GetLatestSimilarGroupsUseCase @Inject constructor(
                                 groupId = groupId,
                                 items = items,
                                 bestCandidateId = bestCandidate.id,
-                                similarityPercentage = 85, // Default or extracted if available
+                                similarityPercentage = items.firstOrNull()?.similarityPercentage ?: 85,
                                 potentialSavingsBytes = items.filter { it.id != bestCandidate.id }.sumOf { it.size }
                             )
                         }

@@ -60,7 +60,9 @@ fun HomeScreen(
     val navController = LocalNavController.current
     val context = LocalContext.current
 
-    val permissions = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+    val permissions = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+        listOf(Permission.ReadMediaImages, Permission.ReadMediaVideos, Permission.ReadMediaVisualUserSelected)
+    } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
         listOf(Permission.ReadMediaImages, Permission.ReadMediaVideos)
     } else {
         listOf(Permission.ReadExternalStorage)
@@ -71,8 +73,19 @@ fun HomeScreen(
         onAllGranted = { viewModel.handleEvent(HomeEvent.FastScan) }
     )
 
-    LaunchedEffect(permissionState.allGranted) {
-        viewModel.handleEvent(HomeEvent.PermissionStatusChanged(permissionState.allGranted))
+    val hasStoragePermission = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+        permissionState.grantedMap[android.Manifest.permission.READ_MEDIA_IMAGES] == true ||
+        permissionState.grantedMap[android.Manifest.permission.READ_MEDIA_VIDEO] == true ||
+        permissionState.grantedMap[android.Manifest.permission.READ_MEDIA_VISUAL_USER_SELECTED] == true
+    } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+        permissionState.grantedMap[android.Manifest.permission.READ_MEDIA_IMAGES] == true ||
+        permissionState.grantedMap[android.Manifest.permission.READ_MEDIA_VIDEO] == true
+    } else {
+        permissionState.grantedMap[android.Manifest.permission.READ_EXTERNAL_STORAGE] == true
+    }
+
+    LaunchedEffect(hasStoragePermission) {
+        viewModel.handleEvent(HomeEvent.PermissionStatusChanged(hasStoragePermission))
     }
 
     val snackbarHostState = remember { SnackbarHostState() }
@@ -89,7 +102,7 @@ fun HomeScreen(
         viewModel.uiEffect.flowWithLifecycle(lifecycleOwner.lifecycle).collect { effect ->
             when (effect) {
                 is HomeEffect.RequestStoragePermissions -> {
-                    if (!permissionState.allGranted) {
+                    if (!hasStoragePermission) {
                         permissionState.requestAll()
                     }
                 }

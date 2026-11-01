@@ -80,7 +80,8 @@ class RecommendationEngineImpl @Inject constructor() : RecommendationEngine {
             group.items.map { item ->
                 item.copy(
                     groupId = group.groupId,
-                    isBestKeep = item.id == group.bestCandidateId
+                    isBestKeep = item.id == group.bestCandidateId,
+                    similarityPercentage = group.similarityPercentage
                 )
             }
         }

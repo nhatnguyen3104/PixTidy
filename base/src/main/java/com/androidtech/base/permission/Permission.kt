@@ -29,6 +29,10 @@ sealed class Permission(val permission: String) {
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     data object ReadMediaVideos : Permission(Manifest.permission.READ_MEDIA_VIDEO)
 
+    // For android 14+ (API 34+) partial access
+    @RequiresApi(Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
+    data object ReadMediaVisualUserSelected : Permission(Manifest.permission.READ_MEDIA_VISUAL_USER_SELECTED)
+
 }
 
 class SinglePermissionState(

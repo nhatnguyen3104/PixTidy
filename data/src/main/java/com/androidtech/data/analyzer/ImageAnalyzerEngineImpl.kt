@@ -280,7 +280,7 @@ class ImageAnalyzerEngineImpl @Inject constructor(
 
     private companion object {
         const val MAX_CONCURRENT_DECODES = 4
-        const val SIMILARITY_HAMMING_THRESHOLD = 14 // out of 64 bits
+        const val SIMILARITY_HAMMING_THRESHOLD = 10 // out of 64 bits (tightened to prevent false positives from color-similar images)
         const val QUALITY_WEIGHT = 1L
         const val RESOLUTION_WEIGHT = 1L
         // A cached/computed blurScore is QualityScore.score (0..100), not the raw Laplacian
