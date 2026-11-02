@@ -93,8 +93,8 @@
     <string name="privacy_guarantee_title">Privacy Guarantee</string>
     <string name="privacy_guarantee_desc">Your photos and videos are scanned locally and never leave your phone.</string>
     <string name="text_scan_and_cleanup">SCAN &amp; CLEANUP</string>
-    <string name="title_manage_permissions">Include Downloads folder</string>
-    <string name="desc_manage_permissions">Scan files in the system Downloads directory</string>
+    <string name="title_manage_permissions">Manage Permissions</string>
+    <string name="desc_manage_permissions">Manage app access to photos and media</string>
     <string name="text_include_downloads_folder">Include Downloads folder</string>
     <string name="text_appearance">APPEARANCE</string>
     <string name="title_dark_theme">Dark Theme</string>

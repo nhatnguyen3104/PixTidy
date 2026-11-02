@@ -48,10 +48,14 @@ import androidx.navigation.compose.composable
 import com.androidtech.base.extension.AppDestination
 import com.androidtech.base.R
 import com.androidtech.base.extension.LocalNavController
+import com.androidtech.base.permission.MediaPermissionHelper
+import com.androidtech.base.permission.MediaPermissionStatus
+import com.androidtech.base.permission.rememberMultiplePermissions
 import com.androidtech.base.theme.Title20Bold
 import com.androidtech.domain.model.settings.AppLanguage
 import com.androidtech.domain.model.settings.AppTheme
-import com.androidtech.features.ui.screens.home.HomeViewModel
+import com.androidtech.features.ui.components.PermissionRationaleDialog
+import com.androidtech.features.ui.components.SettingsRedirectDialog
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
@@ -72,6 +76,23 @@ fun SettingsScreen(
     val navController = LocalNavController.current
     val context = LocalContext.current
 
+    val requiredPermissions = remember { MediaPermissionHelper.getRequiredPermissions() }
+    val permissionState = rememberMultiplePermissions(
+        permissions = requiredPermissions,
+        onAllGranted = {
+            viewModel.handleEvent(SettingsEvent.UpdatePermissionStatus(MediaPermissionStatus.FULL_ACCESS))
+        },
+        onAnyDenied = { _ ->
+            val status = MediaPermissionHelper.checkPermissionStatus(context)
+            viewModel.handleEvent(SettingsEvent.UpdatePermissionStatus(status))
+        }
+    )
+
+    LaunchedEffect(Unit) {
+        val status = MediaPermissionHelper.checkPermissionStatus(context)
+        viewModel.handleEvent(SettingsEvent.UpdatePermissionStatus(status))
+    }
+
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
     var snackbarJob by remember { mutableStateOf<Job?>(null) }
@@ -89,15 +110,40 @@ fun SettingsScreen(
                     navController.popBackStack()
                 }
                 is SettingsEffect.ShowSnackbar -> {
-
                 }
                 is SettingsEffect.OpenWebUrl -> {
                     val intent = Intent(Intent.ACTION_VIEW, effect.url.toUri())
                     context.startActivity(intent)
                 }
+                is SettingsEffect.OpenAppPermissions -> {
+                    val intent = Intent(
+                        android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+                        "package:${context.packageName}".toUri()
+                    )
+                    context.startActivity(intent)
+                }
+                is SettingsEffect.RequestPermissions -> {
+                    MediaPermissionHelper.setHasRequestedBefore(context, true)
+                    permissionState.requestAll()
+                }
             }
         }
     }
+
+    if (uiState.value.showRationaleDialog) {
+        PermissionRationaleDialog(
+            onDismiss = { viewModel.handleEvent(SettingsEvent.DismissRationaleDialog) },
+            onConfirm = { viewModel.handleEvent(SettingsEvent.ConfirmRationaleDialog) }
+        )
+    }
+
+    if (uiState.value.showSettingsRedirectDialog) {
+        SettingsRedirectDialog(
+            onDismiss = { viewModel.handleEvent(SettingsEvent.DismissSettingsRedirectDialog) },
+            onOpenSettings = { viewModel.handleEvent(SettingsEvent.ConfirmSettingsRedirectDialog) }
+        )
+    }
+
     SettingsContent(
         uiState = uiState.value,
         onEvent = { viewModel.handleEvent(it) },
@@ -165,18 +211,23 @@ fun SettingsContent(
 
                 Spacer(modifier = Modifier.height(20.dp))
 
-                /*// 2. Scanning preferences
+                // 2. Scanning preferences
                 SettingsSectionHeader(title = stringResource(R.string.text_scan_and_cleanup))
                 SettingsGroup {
                     SettingsClickableRow(
                         icon = Icons.Outlined.Security,
                         title = stringResource(R.string.title_manage_permissions),
-                        subtitle = stringResource(R.string.desc_manage_permissions),
+                        subtitle = when (uiState.permissionStatus) {
+                            MediaPermissionStatus.FULL_ACCESS -> "Full Access Granted"
+                            MediaPermissionStatus.PARTIAL_ACCESS -> "Partial Access (Tap to upgrade)"
+                            MediaPermissionStatus.DENIED -> "Access Denied (Tap to grant)"
+                            MediaPermissionStatus.PERMANENTLY_DENIED -> "Blocked (Tap to open Settings)"
+                        },
                         onClick = { onEvent(SettingsEvent.ManagePermissionsClick) }
                     )
                 }
 
-                Spacer(modifier = Modifier.height(20.dp))*/
+                Spacer(modifier = Modifier.height(20.dp))
 
                 // 3. Appearance & theme
                 SettingsSectionHeader(title = stringResource(R.string.text_appearance))
@@ -188,13 +239,6 @@ fun SettingsContent(
                         checked = uiState.theme == AppTheme.DARK,
                         onCheckedChange = { onEvent(SettingsEvent.ToggleDarkMode(it)) }
                     )
-                    /*SettingsDivider()
-                    SettingsClickableRow(
-                        icon = Icons.Outlined.Language,
-                        title = stringResource(R.string.title_language),
-                        subtitle = "${uiState.language.flagEmoji}  ${uiState.language.nativeName}",
-                        onClick = { showLanguageBottomSheet = true }
-                    )*/
                 }
 
                 Spacer(modifier = Modifier.height(20.dp))
@@ -202,13 +246,6 @@ fun SettingsContent(
                 // 4. Support & legal
                 SettingsSectionHeader(title = stringResource(R.string.text_about_and_support))
                 SettingsGroup {
-                    /*SettingsClickableRow(
-                        icon = Icons.AutoMirrored.Outlined.HelpOutline,
-                        title = stringResource(R.string.title_feedback),
-                        subtitle = stringResource(R.string.desc_feedback),
-                        onClick = { onEvent(SettingsEvent.FeedbackClicked) }
-                    )
-                    SettingsDivider()*/
                     SettingsClickableRow(
                         icon = Icons.Outlined.PrivacyTip,
                         title = stringResource(R.string.title_privacy_policy),
@@ -247,4 +284,3 @@ fun SettingsContent(
         }
     }
 }
-

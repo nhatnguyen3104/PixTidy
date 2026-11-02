@@ -1,5 +1,6 @@
 package com.androidtech.features.ui.screens.home
 
+import android.content.Intent
 import android.os.Build
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -17,6 +18,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.net.toUri
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -31,6 +33,8 @@ import androidx.compose.animation.core.tween
 import com.androidtech.base.R
 import com.androidtech.base.extension.AppDestination
 import com.androidtech.base.extension.LocalNavController
+import com.androidtech.base.permission.MediaPermissionHelper
+import com.androidtech.base.permission.MediaPermissionStatus
 import com.androidtech.base.permission.Permission
 import com.androidtech.base.permission.rememberMultiplePermissions
 import com.androidtech.base.theme.*
@@ -38,6 +42,8 @@ import com.androidtech.base.ui.animation.bounceClick
 import com.androidtech.base.utils.formatSize
 import com.androidtech.domain.model.media.ScanLayer
 import com.androidtech.domain.model.media.SmartInsightType
+import com.androidtech.features.ui.components.PermissionRationaleDialog
+import com.androidtech.features.ui.components.SettingsRedirectDialog
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
@@ -60,32 +66,36 @@ fun HomeScreen(
     val navController = LocalNavController.current
     val context = LocalContext.current
 
-    val permissions = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
-        listOf(Permission.ReadMediaImages, Permission.ReadMediaVideos, Permission.ReadMediaVisualUserSelected)
-    } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-        listOf(Permission.ReadMediaImages, Permission.ReadMediaVideos)
-    } else {
-        listOf(Permission.ReadExternalStorage)
-    }
+    var permissionStatus by remember { mutableStateOf(MediaPermissionHelper.checkPermissionStatus(context)) }
+    var showRationaleDialog by remember { mutableStateOf(false) }
+    var showSettingsRedirectDialog by remember { mutableStateOf(false) }
 
+    val requiredPermissions = remember { MediaPermissionHelper.getRequiredPermissions() }
     val permissionState = rememberMultiplePermissions(
-        permissions = permissions.toTypedArray(),
-        onAllGranted = { viewModel.handleEvent(HomeEvent.FastScan) }
+        permissions = requiredPermissions,
+        onAllGranted = {
+            permissionStatus = MediaPermissionHelper.checkPermissionStatus(context)
+            viewModel.handleEvent(HomeEvent.FastScan)
+        },
+        onAnyDenied = { _ ->
+            permissionStatus = MediaPermissionHelper.checkPermissionStatus(context)
+        }
     )
 
-    val hasStoragePermission = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
-        permissionState.grantedMap[android.Manifest.permission.READ_MEDIA_IMAGES] == true ||
-        permissionState.grantedMap[android.Manifest.permission.READ_MEDIA_VIDEO] == true ||
-        permissionState.grantedMap[android.Manifest.permission.READ_MEDIA_VISUAL_USER_SELECTED] == true
-    } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-        permissionState.grantedMap[android.Manifest.permission.READ_MEDIA_IMAGES] == true ||
-        permissionState.grantedMap[android.Manifest.permission.READ_MEDIA_VIDEO] == true
-    } else {
-        permissionState.grantedMap[android.Manifest.permission.READ_EXTERNAL_STORAGE] == true
+    DisposableEffect(lifecycleOwner) {
+        val observer = androidx.lifecycle.LifecycleEventObserver { _, event ->
+            if (event == androidx.lifecycle.Lifecycle.Event.ON_RESUME) {
+                permissionStatus = MediaPermissionHelper.checkPermissionStatus(context)
+            }
+        }
+        lifecycleOwner.lifecycle.addObserver(observer)
+        onDispose {
+            lifecycleOwner.lifecycle.removeObserver(observer)
+        }
     }
 
-    LaunchedEffect(hasStoragePermission) {
-        viewModel.handleEvent(HomeEvent.PermissionStatusChanged(hasStoragePermission))
+    LaunchedEffect(permissionStatus) {
+        viewModel.handleEvent(HomeEvent.PermissionStatusChanged(permissionStatus == MediaPermissionStatus.FULL_ACCESS || permissionStatus == MediaPermissionStatus.PARTIAL_ACCESS))
     }
 
     val snackbarHostState = remember { SnackbarHostState() }
@@ -102,8 +112,19 @@ fun HomeScreen(
         viewModel.uiEffect.flowWithLifecycle(lifecycleOwner.lifecycle).collect { effect ->
             when (effect) {
                 is HomeEffect.RequestStoragePermissions -> {
-                    if (!hasStoragePermission) {
-                        permissionState.requestAll()
+                    when (permissionStatus) {
+                        MediaPermissionStatus.FULL_ACCESS -> {}
+                        MediaPermissionStatus.PARTIAL_ACCESS, MediaPermissionStatus.DENIED -> {
+                            if (!MediaPermissionHelper.hasRequestedBefore(context)) {
+                                MediaPermissionHelper.setHasRequestedBefore(context, true)
+                                permissionState.requestAll()
+                            } else {
+                                showRationaleDialog = true
+                            }
+                        }
+                        MediaPermissionStatus.PERMANENTLY_DENIED -> {
+                            showSettingsRedirectDialog = true
+                        }
                     }
                 }
 
@@ -133,6 +154,32 @@ fun HomeScreen(
             }
         }
     }
+
+    if (showRationaleDialog) {
+        PermissionRationaleDialog(
+            onDismiss = { showRationaleDialog = false },
+            onConfirm = {
+                showRationaleDialog = false
+                MediaPermissionHelper.setHasRequestedBefore(context, true)
+                permissionState.requestAll()
+            }
+        )
+    }
+
+    if (showSettingsRedirectDialog) {
+        SettingsRedirectDialog(
+            onDismiss = { showSettingsRedirectDialog = false },
+            onOpenSettings = {
+                showSettingsRedirectDialog = false
+                val intent = Intent(
+                    android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+                    "package:${context.packageName}".toUri()
+                )
+                context.startActivity(intent)
+            }
+        )
+    }
+
     HomeContent(
         uiState = uiState.value,
         onEvent = { viewModel.handleEvent(it) },
@@ -359,6 +406,7 @@ fun HomeContent(
                 horizontalArrangement = Arrangement.Center,
                 modifier = Modifier.fillMaxWidth()
             ) {
+                Spacer(modifier = Modifier.width(6.dp))
                 Icon(
                     imageVector = Icons.Outlined.Lock,
                     contentDescription = null,

@@ -2,6 +2,7 @@ package com.androidtech.features.ui.screens.settings
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
+import com.androidtech.base.permission.MediaPermissionStatus
 import com.androidtech.base.viewmodel.BaseViewModel
 import com.androidtech.domain.model.settings.AppLanguage
 import com.androidtech.domain.model.settings.AppTheme
@@ -10,7 +11,6 @@ import com.androidtech.domain.usecase.settings.GetUserSettingsUseCase
 import com.androidtech.domain.usecase.settings.UpdateLanguageUseCase
 import com.androidtech.domain.usecase.settings.UpdateThemeUseCase
 import com.androidtech.features.BuildConfig
-import com.androidtech.features.ui.screens.onboarding.OnboardingEffect
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.launchIn
@@ -52,7 +52,36 @@ class SettingsViewModel @Inject constructor(
                 viewModelScope.launch { setEffect { SettingsEffect.OpenWebUrl(BuildConfig.TERMS_URL) } }
             }
             is SettingsEvent.ManagePermissionsClick -> {
-                // Handle permissions click
+                when (uiState.value.permissionStatus) {
+                    MediaPermissionStatus.FULL_ACCESS -> {
+                        // Already full access - do nothing or show message
+                    }
+                    MediaPermissionStatus.PARTIAL_ACCESS, MediaPermissionStatus.DENIED -> {
+                        // Show educational rationale dialog before requesting
+                        setState { copy(showRationaleDialog = true) }
+                    }
+                    MediaPermissionStatus.PERMANENTLY_DENIED -> {
+                        // Show settings redirect dialog
+                        setState { copy(showSettingsRedirectDialog = true) }
+                    }
+                }
+            }
+            is SettingsEvent.DismissRationaleDialog -> {
+                setState { copy(showRationaleDialog = false) }
+            }
+            is SettingsEvent.ConfirmRationaleDialog -> {
+                setState { copy(showRationaleDialog = false) }
+                setEffect { SettingsEffect.RequestPermissions }
+            }
+            is SettingsEvent.DismissSettingsRedirectDialog -> {
+                setState { copy(showSettingsRedirectDialog = false) }
+            }
+            is SettingsEvent.ConfirmSettingsRedirectDialog -> {
+                setState { copy(showSettingsRedirectDialog = false) }
+                setEffect { SettingsEffect.OpenAppPermissions }
+            }
+            is SettingsEvent.UpdatePermissionStatus -> {
+                setState { copy(permissionStatus = event.status) }
             }
             is SettingsEvent.FeedbackClicked -> {
                 // Handle feedback click
@@ -69,8 +98,6 @@ class SettingsViewModel @Inject constructor(
 
     val userSettings = getUserSettingsUseCase().stateIn(
         scope = viewModelScope,
-        // 5s grace period so a config change (e.g. the locale-triggered Activity recreation
-        // this screen itself can cause) doesn't tear down and immediately restart collection.
         started = SharingStarted.WhileSubscribed(5_000),
         initialValue = UserSettings.DEFAULT
     )
