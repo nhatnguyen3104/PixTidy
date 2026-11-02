@@ -112,8 +112,8 @@ android {
         create("PixTidy") {
             dimension = "tier"
             applicationId = "com.androidtech.pixtidy"
-            versionCode = 1
-            versionName = "0.0.1"
+            versionCode = 2
+            versionName = "0.0.2"
             resValue("string", "app_name", "PixTidy")
 
             buildConfigField("String", "DOMAIN_URL", "\"https://mobiledev-nate.tech/\"")
