@@ -45,13 +45,14 @@ class AppUpdateChecker(
         activity.lifecycleScope.launch {
             try {
                 val info = appUpdateManager.requestAppUpdateInfo()
-                val updateAvailable =
+                Logger.d("AppUpdateChecker: updateAvailability = ${info.updateAvailability()}, availableVersionCode = ${info.availableVersionCode()}, installStatus = ${info.installStatus()}")
+                val updateAvailability =
                     info.updateAvailability() == UpdateAvailability.UPDATE_AVAILABLE
 
                 if (activity.isFinishing || activity.isDestroyed) return@launch
 
                 // Check update available
-                if (updateAvailable) {
+                if (updateAvailability) {
                     // Nếu là manual check hoặc vượt qua được điều kiện 3 ngày -> Hiện Dialog cập nhật
                     if (isManualCheck || shouldShowUpdateDialog(info)) {
                         showUpdateDialog(info)
@@ -65,7 +66,7 @@ class AppUpdateChecker(
             } catch (e: Exception) {
                 // Not installed from Play, Play Store missing/outdated, no network, etc.
                 // An update check must never crash or block the app.
-                Logger.d("Update check failed", e)
+                Logger.e(e, "AppUpdateChecker: Update check failed with exception")
             }
         }
     }

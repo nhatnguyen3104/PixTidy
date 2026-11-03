@@ -32,6 +32,7 @@ sealed class SettingsEvent : UIEvent {
     object FeedbackClicked: SettingsEvent()
     data class ToggleDarkMode(val enabled: Boolean) : SettingsEvent()
     data class LanguageSelected(val language: AppLanguage) : SettingsEvent()
+    object CheckForUpdatesClicked : SettingsEvent()
 }
 
 sealed class SettingsEffect : UIEffect {
@@ -40,4 +41,5 @@ sealed class SettingsEffect : UIEffect {
     data class OpenWebUrl(val url: String) : SettingsEffect()
     object OpenAppPermissions : SettingsEffect()
     object RequestPermissions : SettingsEffect()
+    object CheckForUpdates : SettingsEffect()
 }

@@ -93,6 +93,9 @@ class SettingsViewModel @Inject constructor(
             is SettingsEvent.LanguageSelected -> {
                 onLanguageSelected(event.language)
             }
+            is SettingsEvent.CheckForUpdatesClicked -> {
+                setEffect { SettingsEffect.CheckForUpdates }
+            }
         }
     }
 

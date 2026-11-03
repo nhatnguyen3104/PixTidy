@@ -20,7 +20,8 @@ import com.androidtech.features.ui.screens.splash.splashScreen
 
 @Composable
 fun AppScreens(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onCheckForUpdates: () -> Unit = {}
 ) {
     val navController = rememberNavController()
 
@@ -40,7 +41,7 @@ fun AppScreens(
                 duplicateScreen()
                 similarScreen()
                 screenshotScreen()
-                settingsScreen()
+                settingsScreen(onCheckForUpdates = onCheckForUpdates)
             }
         }
     }

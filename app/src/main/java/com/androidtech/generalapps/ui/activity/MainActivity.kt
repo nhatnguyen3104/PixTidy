@@ -67,7 +67,8 @@ class MainActivity : ComponentActivity() {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                     AppScreens(
                         modifier = Modifier.fillMaxSize()
-                            .padding(innerPadding)
+                            .padding(innerPadding),
+                        onCheckForUpdates = { appUpdateChecker.check(isManualCheck = true) }
                     )
                 }
             }

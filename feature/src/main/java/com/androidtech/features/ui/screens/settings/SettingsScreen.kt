@@ -13,6 +13,7 @@ import androidx.compose.material.icons.outlined.FolderDelete
 import androidx.compose.material.icons.outlined.Language
 import androidx.compose.material.icons.outlined.PrivacyTip
 import androidx.compose.material.icons.outlined.Security
+import androidx.compose.material.icons.outlined.SystemUpdate
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.*
@@ -59,16 +60,19 @@ import com.androidtech.features.ui.components.SettingsRedirectDialog
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
-fun NavGraphBuilder.settingsScreen() {
+fun NavGraphBuilder.settingsScreen(
+    onCheckForUpdates: () -> Unit = {}
+) {
     composable(
         route = AppDestination.SettingsScreen.route,
     ) {
-        SettingsScreen()
+        SettingsScreen(onCheckForUpdates = onCheckForUpdates)
     }
 }
 
 @Composable
 fun SettingsScreen(
+    onCheckForUpdates: () -> Unit = {},
     viewModel: SettingsViewModel = hiltViewModel()
 ) {
     val uiState = viewModel.uiState.collectAsStateWithLifecycle()
@@ -125,6 +129,9 @@ fun SettingsScreen(
                 is SettingsEffect.RequestPermissions -> {
                     MediaPermissionHelper.setHasRequestedBefore(context, true)
                     permissionState.requestAll()
+                }
+                is SettingsEffect.CheckForUpdates -> {
+                    onCheckForUpdates()
                 }
             }
         }
@@ -246,6 +253,13 @@ fun SettingsContent(
                 // 4. Support & legal
                 SettingsSectionHeader(title = stringResource(R.string.text_about_and_support))
                 SettingsGroup {
+                    SettingsClickableRow(
+                        icon = Icons.Outlined.SystemUpdate,
+                        title = stringResource(R.string.title_check_for_updates),
+                        subtitle = stringResource(R.string.desc_check_for_updates),
+                        onClick = { onEvent(SettingsEvent.CheckForUpdatesClicked) }
+                    )
+                    SettingsDivider()
                     SettingsClickableRow(
                         icon = Icons.Outlined.PrivacyTip,
                         title = stringResource(R.string.title_privacy_policy),

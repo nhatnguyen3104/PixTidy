@@ -112,6 +112,8 @@
     <string name="app_tagline">Clean your gallery. Free your storage.</string>
 
     <!-- App Update -->
+    <string name="title_check_for_updates">Check for Updates</string>
+    <string name="desc_check_for_updates">Check if a new version is available</string>
     <string name="update_dialog_title">Update Available</string>
     <string name="update_dialog_message">A new version of the app is available. Please update to the latest version for better performance and new features.</string>
     <string name="update_dialog_positive">Update</string>
