@@ -38,6 +38,7 @@ import coil.compose.AsyncImage
 import com.androidtech.domain.model.media.MediaItem
 import androidx.core.net.toUri
 import androidx.media3.common.util.UnstableApi
+import kotlin.math.absoluteValue
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -50,7 +51,6 @@ fun MediaPreviewScreen(
     val pagerState = rememberPagerState(initialPage = initialIndex) { mediaList.size }
     var isUIControlsVisible by remember { mutableStateOf(true) }
 
-    // Peek width: how much of the neighbouring item is visible on each side.
     val peekWidth = 32.dp
     val pageSpacing = 12.dp
 
@@ -59,7 +59,6 @@ fun MediaPreviewScreen(
             .fillMaxSize()
             .background(Color.Black)
     ) {
-        // 1. Horizontal pager with peek + swipe-to-change
         HorizontalPager(
             state = pagerState,
             modifier = Modifier.fillMaxSize(),
@@ -70,9 +69,28 @@ fun MediaPreviewScreen(
             val isVideo = mediaItem.mimeType.startsWith("video") ||
                     (mediaItem.duration ?: 0L) > 0
 
+            // --- Carousel animation ---
+            // offsetFraction: 0f when centred, ±1f when one full page away.
+            // Use it to drive scale, alpha and a slight vertical float.
+            val offsetFraction = ((pagerState.currentPage - page) +
+                    pagerState.currentPageOffsetFraction).absoluteValue
+                .coerceIn(0f, 1f)
+
+            val scale = 1f - (offsetFraction * 0.12f)        // 1.0 → 0.88
+            val alpha = 1f - (offsetFraction * 0.55f)        // 1.0 → 0.45
+            val rotationZ = (pagerState.currentPage - page +
+                    pagerState.currentPageOffsetFraction) * 3f // subtle tilt
+
             Box(
                 modifier = Modifier
                     .fillMaxSize()
+                    .graphicsLayer {
+                        scaleX = scale
+                        scaleY = scale
+                        this.alpha = alpha
+                        translationY = offsetFraction * 24.dp.toPx()
+                        this.rotationZ = rotationZ
+                    }
                     .combinedClickable(
                         onClick = { isUIControlsVisible = !isUIControlsVisible },
                         onDoubleClick = {}
@@ -82,7 +100,6 @@ fun MediaPreviewScreen(
                 if (isVideo) {
                     VideoPlayerComponent(uri = mediaItem.uri)
                 } else {
-                    // Simple image — no zoom, swipe is handled by the pager
                     AsyncImage(
                         model = mediaItem.uri,
                         contentDescription = null,
@@ -95,7 +112,7 @@ fun MediaPreviewScreen(
             }
         }
 
-        // 2. Top bar: back button + page indicator, with gradient scrim for readability
+        // 2. Top bar
         AnimatedVisibility(
             visible = isUIControlsVisible,
             enter = fadeIn() + slideInVertically { -it },
@@ -147,36 +164,6 @@ fun MediaPreviewScreen(
                 }
             }
         }
-
-        /*// 3. Bottom dots indicator – only when there are multiple items
-        AnimatedVisibility(
-            visible = isUIControlsVisible && mediaList.size > 1,
-            enter = fadeIn(),
-            exit = fadeOut(),
-            modifier = Modifier
-                .align(Alignment.BottomCenter)
-                .navigationBarsPadding()
-                .padding(bottom = 24.dp)
-        ) {
-            Row(
-                horizontalArrangement = Arrangement.spacedBy(6.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                repeat(mediaList.size) { index ->
-                    val selected = pagerState.currentPage == index
-                    Box(
-                        modifier = Modifier
-                            .height(6.dp)
-                            .width(if (selected) 18.dp else 6.dp)
-                            .clip(CircleShape)
-                            .background(
-                                if (selected) Color.White
-                                else Color.White.copy(alpha = 0.35f)
-                            )
-                    )
-                }
-            }
-        }*/
     }
 }
 
