@@ -33,6 +33,7 @@ import com.androidtech.base.theme.Title20Bold
 import com.androidtech.base.utils.UiText
 import com.androidtech.base.utils.formatSize
 import com.androidtech.features.ui.components.DeleteBottomBar
+import com.androidtech.features.ui.components.MediaPreviewScreen
 import com.androidtech.features.ui.screens.duplicate.DuplicateEvent
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
@@ -108,11 +109,19 @@ fun SimilarScreen(
         }
     }
 
-    SimilarContent(
-        uiState = uiState.value,
-        onEvent = { viewModel.handleEvent(it) },
-        snackbarHostState = snackbarHostState
-    )
+    if (uiState.value.previewMediaList != null) {
+        MediaPreviewScreen(
+            mediaList = uiState.value.previewMediaList!!,
+            initialIndex = uiState.value.previewInitialIndex,
+            onBackClick = { viewModel.handleEvent(SimilarEvent.ClosePreview) }
+        )
+    } else {
+        SimilarContent(
+            uiState = uiState.value,
+            onEvent = { viewModel.handleEvent(it) },
+            snackbarHostState = snackbarHostState
+        )
+    }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -274,6 +283,9 @@ fun SimilarContent(
                     items(similarGroups, key = { it.groupId }) { group ->
                         SimilarGroupSection(
                             group = group,
+                            onPhotoClick = { photoId ->
+                                onEvent(SimilarEvent.PhotoClicked(photoId))
+                            },
                             onPhotoToggle = { photoId ->
                                 onEvent(
                                     SimilarEvent.PhotoToggleSelection(

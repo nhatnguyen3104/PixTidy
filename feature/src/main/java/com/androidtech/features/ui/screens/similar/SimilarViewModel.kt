@@ -66,6 +66,12 @@ class SimilarViewModel @Inject constructor(
                     deletePhotos(event.selectedPhotoIds)
                 }
             }
+            is SimilarEvent.PhotoClicked -> {
+                previewPhoto(event.photoId)
+            }
+            is SimilarEvent.ClosePreview -> {
+                closePreview()
+            }
             is SimilarEvent.PhotoToggleSelection -> {
                 togglePhotoSelection(event.photoId)
             }
@@ -127,6 +133,25 @@ class SimilarViewModel @Inject constructor(
                     }
                 }
         }
+    }
+
+    private fun previewPhoto(photoId: Long) {
+        val group = uiState.value.similarGroups.find { group -> group.items.any { it.id == photoId } }
+        if (group != null) {
+            val index = group.items.indexOfFirst { it.id == photoId }
+            if (index != -1) {
+                setState {
+                    copy(
+                        previewMediaList = group.items,
+                        previewInitialIndex = index
+                    )
+                }
+            }
+        }
+    }
+
+    private fun closePreview() {
+        setState { copy(previewMediaList = null) }
     }
 
     private fun togglePhotoSelection(photoId: Long) {

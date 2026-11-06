@@ -159,8 +159,8 @@ dependencies {
     // Work manager
 //    implementation(libs.androidx.runtime.worker)
     // Exo player
-//    implementation(libs.androidx.media3.exoplayer)
-//    implementation(libs.androidx.media3.ui)
+    implementation(libs.androidx.media3.exoplayer)
+    implementation(libs.androidx.media3.ui)
     // Moshi
     implementation(libs.com.squareup.moshi.kotlin)
     implementation(libs.com.squareup.retrofit2.converter.moshi)

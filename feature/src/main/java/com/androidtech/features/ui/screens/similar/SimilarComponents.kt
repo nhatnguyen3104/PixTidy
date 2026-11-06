@@ -33,6 +33,7 @@ import com.androidtech.base.R
 @Composable
 fun SimilarGroupSection(
     group: SimilarGroup,
+    onPhotoClick: (Long) -> Unit,
     onPhotoToggle: (Long) -> Unit,
     onGroupToggle: (Boolean) -> Unit
 ) {
@@ -129,6 +130,7 @@ fun SimilarGroupSection(
                                 SimilarPhotoCard(
                                     photo = item,
                                     isBestShot = item.id == isBestShot,
+                                    onItemClick = { onPhotoClick(item.id) },
                                     onToggle = { onPhotoToggle(item.id) }
                                 )
                             }
@@ -147,6 +149,7 @@ fun SimilarGroupSection(
 fun SimilarPhotoCard(
     photo: MediaItem,
     isBestShot: Boolean,
+    onItemClick: () -> Unit,
     onToggle: () -> Unit
 ) {
     val borderColor = if (photo.isSelected) MaterialTheme.colorScheme.primary else Color.Transparent
@@ -157,7 +160,7 @@ fun SimilarPhotoCard(
             .aspectRatio(1f)
             .clip(RoundedCornerShape(16.dp))
             .border(borderWidth, borderColor, RoundedCornerShape(16.dp))
-            .clickable { onToggle() }
+            .clickable { onItemClick() }
     ) {
         // Photo Image
         AsyncImage(
@@ -197,7 +200,8 @@ fun SimilarPhotoCard(
                 .clip(CircleShape)
                 .background(
                     if (photo.isSelected) MaterialTheme.colorScheme.primary else Color.White.copy(alpha = 0.75f)
-                ),
+                )
+                .clickable { onToggle() },
             contentAlignment = Alignment.Center
         ) {
             if (photo.isSelected) {

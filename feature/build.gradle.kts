@@ -76,6 +76,10 @@ dependencies {
     // Coil
     implementation(libs.io.coil.kt.compose)
 
+    // Exo player
+    implementation(libs.androidx.media3.exoplayer)
+    implementation(libs.androidx.media3.ui)
+
     // Navigation
     implementation(libs.androidx.navigation.compose)
     implementation(libs.hilt.navigation.compose)

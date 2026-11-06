@@ -24,7 +24,7 @@ systemUiController = "0.31.5-beta"
 serializableJson = "1.6.3"
 coil = "2.3.0"
 #workerVersion = "2.10.0"
-#exoPlayer = "1.8.0"
+exoPlayer = "1.8.0"
 admobAds = "23.6.0"
 adsMobile = "1.5.0"
 googleService = "4.4.2"
@@ -82,8 +82,8 @@ com-google-accompanist-systemuicontroller = { module = "com.google.accompanist:a
 org-jetbrains-kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "serializableJson" }
 io-coil-kt-compose = { module = "io.coil-kt:coil-compose", version.ref = "coil" }
 #androidx-runtime-worker = { module =  "androidx.work:work-runtime-ktx", version.ref = "workerVersion" }
-#androidx-media3-exoplayer = { module = "androidx.media3:media3-exoplayer", version.ref = "exoPlayer" }
-#androidx-media3-ui = { module = "androidx.media3:media3-ui", version.ref = "exoPlayer" }
+androidx-media3-exoplayer = { module = "androidx.media3:media3-exoplayer", version.ref = "exoPlayer" }
+androidx-media3-ui = { module = "androidx.media3:media3-ui", version.ref = "exoPlayer" }
 play-services-ads = { module = "com.google.android.gms:play-services-ads", version.ref = "admobAds" }
 com-android-libraries-ads-mobile = { module = "com.google.android.libraries.ads.mobile.sdk:ads-mobile-sdk", version.ref = "adsMobile" }
 com-google-firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebaseBom" }
