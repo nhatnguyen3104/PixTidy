@@ -5,4 +5,7 @@ object AdPlaceName {
 
     // Interstitial
     const val OPEN_FIRST = "open_first"
+
+    // Native
+    const val OPEN_NATIVE_FIRST = "open_native_first"
 }

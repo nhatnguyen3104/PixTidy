@@ -2,6 +2,7 @@ package com.androidtech.generalapps.ui.activity
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
+import com.ads.monetization.AdManager
 import com.androidtech.base.viewmodel.BaseViewModel
 import com.androidtech.domain.usecase.FetchAndActiveRemoteConfigsUseCase
 import com.androidtech.domain.usecase.settings.GetUserSettingsUseCase
@@ -15,12 +16,14 @@ import javax.inject.Inject
 class MainViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val fetchAndActiveConfigsUseCase: FetchAndActiveRemoteConfigsUseCase,
+    private val adManager: AdManager,
     private val getUserSettingsUseCase: GetUserSettingsUseCase
 ): BaseViewModel<MainEvent, MainState, MainEffect>(savedStateHandle) {
 
     init {
         observeSettings()
         fetchRemoteConfig()
+        initializeMobileAdsSdk()
     }
 
     private fun observeSettings() {
@@ -43,6 +46,12 @@ class MainViewModel @Inject constructor(
     private fun fetchRemoteConfig() {
         viewModelScope.launch {
             fetchAndActiveConfigsUseCase()
+        }
+    }
+
+    private fun initializeMobileAdsSdk() {
+        viewModelScope.launch {
+            adManager.initializeMobileAdsSdk()
         }
     }
 

@@ -1,30 +1,31 @@
 package com.androidtech.features.ui.screens.splash
 
+import androidx.activity.compose.LocalActivity
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ProgressIndicatorDefaults
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -33,12 +34,11 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.flowWithLifecycle
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
+import com.ads.monetization.ui.nativead.SmallNativeAdView
 import com.androidtech.base.R
 import com.androidtech.base.extension.AppDestination
 import com.androidtech.base.extension.LocalNavController
-import com.androidtech.base.theme.AppTheme
 import com.androidtech.base.theme.Body12Medium
-import com.androidtech.base.theme.Body12SemiBold
 import com.androidtech.base.theme.Title24Bold
 
 fun NavGraphBuilder.splashScreen() {
@@ -56,10 +56,16 @@ fun SplashScreen(
     val uiState = viewModel.uiState.collectAsStateWithLifecycle()
     val lifecycleOwner = LocalLifecycleOwner.current
     val navController = LocalNavController.current
-    val context = LocalContext.current
+    val activity = LocalActivity.current
 
     LaunchedEffect(Unit) {
         viewModel.handleEvent(SplashEvent.StartInitialization)
+    }
+
+    LaunchedEffect(activity) {
+        activity?.let { act ->
+            viewModel.handleEvent(SplashEvent.PreloadAds(act))
+        }
     }
 
     LaunchedEffect(viewModel.uiEffect, lifecycleOwner) {
@@ -80,17 +86,17 @@ fun SplashScreen(
                     }
                 }
                 is SplashEffect.ShowFullScreenAd -> {
-                    /*activity?.let {
+                    activity?.let {
                         viewModel.handleEvent(SplashEvent.ShowInterAd(activity))
-                    }*/
+                    }
                 }
             }
         }
     }
+
     SplashContent(
         uiState = uiState.value,
     )
-
 }
 
 @Composable
@@ -110,7 +116,7 @@ fun SplashContent(
             .background(MaterialTheme.colorScheme.background),
         contentAlignment = Alignment.Center
     ) {
-        // Logo
+        // Logo & Title
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center,
@@ -155,7 +161,7 @@ fun SplashContent(
             )
         }
 
-        // Bottom
+        // Bottom Progress & Native Ad
         Column(
             modifier = Modifier
                 .fillMaxWidth()
@@ -182,12 +188,11 @@ fun SplashContent(
                 Spacer(modifier = Modifier.height(20.dp))
             }
 
-            // Banner or Native Ads
-            /*AdMobBannerView(
-                adManager = viewModel.adManager,
-                adUnitId = viewModel.adManager.getAdConfig().bannerAdId,
-                preloadedAdView = viewModel.adManager.getPreloadedBannerAd()
-            )*/
+            // Native Ad
+            SmallNativeAdView(
+                adHolder = uiState.nativeHolder,
+                modifier = Modifier.padding(16.dp)
+            )
         }
     }
 }

@@ -1,13 +1,18 @@
 package com.androidtech.features.ui.screens.splash
 
+import android.app.Activity
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
+import com.ads.monetization.AdManager
+import com.ads.monetization.adplacename.AdPlaceName
 import com.androidtech.base.viewmodel.BaseViewModel
+import com.androidtech.data.model.aduiresource.AdFullScreenUiResource
+import com.androidtech.data.model.aduiresource.getAdPlaceName
+import com.androidtech.domain.usecase.FetchAndActiveRemoteConfigsUseCase
 import com.androidtech.domain.usecase.settings.GetUserSettingsUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 import kotlin.time.Duration.Companion.milliseconds
@@ -15,8 +20,14 @@ import kotlin.time.Duration.Companion.milliseconds
 @HiltViewModel
 class SplashViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
-    private val getUserSettingsUseCase: GetUserSettingsUseCase
+    private val getUserSettingsUseCase: GetUserSettingsUseCase,
+    private val adManager: AdManager,
+    private val fetchAndActiveConfigsUseCase: FetchAndActiveRemoteConfigsUseCase
 ): BaseViewModel<SplashEvent, SplashState, SplashEffect>(savedStateHandle) {
+
+    private var isInterAdLoaded = false
+    private var isInterAdShowingOrCompleted = false
+
     override fun createInitializeState(): SplashState = SplashState()
 
     override fun handleEvent(event: SplashEvent) {
@@ -24,33 +35,78 @@ class SplashViewModel @Inject constructor(
             is SplashEvent.StartInitialization -> {
                 startInitialization()
             }
-            is SplashEvent.ShowInterAd -> {
-
+            is SplashEvent.PreloadAds -> {
+                preloadAds(event.activity)
             }
-            is SplashEvent.PreloadInterAd -> {
-
+            is SplashEvent.ShowInterAd -> {
+                showInterAd(event.activity)
             }
         }
     }
 
+    init {
+        listenAdFullScreenEvents()
+    }
+
     private fun startInitialization() {
-
-        /** Preload ads if wish
-         * adManager.preloadAd(context, AdType.NATIVE)
-         * adManager.preloadAd(context, AdType.BANNER)
-         * adManager.preloadAd(context, AdType.INTERSTITIAL)
-         */
-
         viewModelScope.launch {
             val totalSteps = 100
             for (i in 1..totalSteps) {
-                delay(10.milliseconds) // Reduced delay for faster dev testing if needed
+                delay(15.milliseconds)
                 setState { copy(progress = i.toFloat() / totalSteps) }
             }
 
+            // Progress completed -> Check if Interstitial Ad was loaded and shown
+            if (!isInterAdLoaded && !isInterAdShowingOrCompleted) {
+                navigateToNextScreen()
+            }
+        }
+    }
+
+    private fun preloadAds(activity: Activity) {
+        viewModelScope.launch {
+            fetchAndActiveConfigsUseCase()
+            adManager.preloadFullScreenAd(activity, AdPlaceName.OPEN_FIRST)
+            adManager.preloadBannerNativeAd(placeName = AdPlaceName.OPEN_NATIVE_FIRST)
+            val nativeHolder = adManager.getNativeAdHolder(AdPlaceName.OPEN_NATIVE_FIRST)
+            setState { copy(nativeHolder = nativeHolder) }
+        }
+    }
+
+    private fun showInterAd(activity: Activity) {
+        viewModelScope.launch {
+            isInterAdShowingOrCompleted = true
+            adManager.showFullScreenAd(activity, AdPlaceName.OPEN_FIRST)
+        }
+    }
+
+    private fun listenAdFullScreenEvents() {
+        viewModelScope.launch {
+            adManager.adFullScreenFlow.collect { uiResource ->
+                val adPlaceName = uiResource.getAdPlaceName()
+                if (adPlaceName == AdPlaceName.OPEN_FIRST) {
+                    when(uiResource) {
+                        is AdFullScreenUiResource.AdLoaded -> {
+                            isInterAdLoaded = true
+                            setEffect { SplashEffect.ShowFullScreenAd }
+                        }
+                        is AdFullScreenUiResource.AdCompleted,
+                        is AdFullScreenUiResource.AdNotValidOrLoadFailed -> {
+                            isInterAdShowingOrCompleted = true
+                            navigateToNextScreen()
+                        }
+                        else -> Unit
+                    }
+                }
+            }
+        }
+    }
+
+    private fun navigateToNextScreen() {
+        viewModelScope.launch {
             val settings = getUserSettingsUseCase().first()
             setState { copy(isOnboardingCompleted = settings.isOnboardingCompleted) }
-            if (settings.isOnboardingCompleted) {
+            if (settings.languageCode.isNotBlank()) {
                 setEffect { SplashEffect.NavigateToHome }
             } else {
                 setEffect { SplashEffect.NavigateToLanguage }
