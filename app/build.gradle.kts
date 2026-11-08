@@ -205,7 +205,7 @@ dependencies {
 //    implementation(libs.camera.view)
 //    implementation(libs.camera.camera2)
     // Admob
-    implementation(libs.play.services.ads)
+    implementation(libs.ads.mobile.sdk)
     // Admob_GMA
     //implementation(libs.com.android.libraries.ads.mobile)
     // Firebase

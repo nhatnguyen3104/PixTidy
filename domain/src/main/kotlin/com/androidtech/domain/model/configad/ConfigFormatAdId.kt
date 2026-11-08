@@ -1,29 +1,39 @@
 package com.androidtech.domain.model.configad
 
 data class ConfigAdId(
-    val adUnitId: String
+    val adUnitId: String,
+    val allPrice: String,
+    val mediumPrice: String,
+    val highPrice: String,
 )
 
 data class ConfigFormatAdId(
-    val interAd: ConfigAdId? = null,
-    val rewardedAd: ConfigAdId? = null,
-    val appOpenAd: ConfigAdId? = null,
-    val bannerAd: ConfigAdId? = null,
-    val nativeAd: ConfigAdId? = null,
-    val languageNativeAd: ConfigAdId? = null,
-    val splashBannerAd: ConfigAdId? = null
+    val interstitial: ConfigAdId? = null,
+    val rewarded: ConfigAdId? = null,
+    val rewardedInterstitial: ConfigAdId? = null,
+    val appOpen: ConfigAdId? = null,
+    val banner: ConfigAdId? = null,
+    val nativeSmall: ConfigAdId? = null,
+    val nativeMedium: ConfigAdId? = null
 ) {
-    fun getConfigAdIdByType(adType: AdType): ConfigAdId {
-        return ConfigAdId(
-            when (adType) {
-                AdType.Interstitial -> interAd?.adUnitId ?: ""
-                AdType.Rewarded -> rewardedAd?.adUnitId ?: ""
-                AdType.AppOpen -> appOpenAd?.adUnitId ?: ""
-                AdType.Banner -> bannerAd?.adUnitId ?: ""
-                AdType.Native -> nativeAd?.adUnitId ?: ""
-                AdType.LanguageNative -> languageNativeAd?.adUnitId ?: ""
-                AdType.SplashBanner -> splashBannerAd?.adUnitId ?: ""
+    companion object {
+        val default = ConfigFormatAdId()
+    }
+
+    fun getConfigAdIdByAdType(adType: AdType, nativeTemplateType: NativeTemplateType): ConfigAdId? {
+        return when (adType) {
+            AdType.AppOpen -> appOpen
+            AdType.Banner -> banner
+            AdType.Interstitial -> interstitial
+            AdType.Native -> {
+                when {
+                    nativeTemplateType.isSmall() -> nativeSmall
+                    else -> nativeMedium
+                }
             }
-        )
+            AdType.Rewarded -> rewarded
+            AdType.RewardedInterstitial -> rewardedInterstitial
+            else -> null
+        }
     }
 }

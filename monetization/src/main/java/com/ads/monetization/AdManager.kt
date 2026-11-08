@@ -1,46 +1,78 @@
 package com.ads.monetization
 
 import android.app.Activity
-import com.ads.monetization.config.AdType
+import com.androidtech.data.model.aduiresource.AdFullScreenUiResource
+import com.androidtech.data.model.aduiresource.AdLoadBannerNativeUiResource
+import com.androidtech.domain.model.configad.AdUnit
+import com.androidtech.domain.model.configad.ConfigPreventAdClick
+import com.androidtech.domain.model.configad.AdPlace
+import com.ads.monetization.adholder.BannerAdHolder
+import com.ads.monetization.adholder.NativeAdHolder
 import com.ads.monetization.config.ConsentFromUiResource
+import com.google.android.libraries.ads.mobile.sdk.common.AdRequest
+import com.google.android.libraries.ads.mobile.sdk.common.AdSourceResponseInfo
 import kotlinx.coroutines.flow.SharedFlow
 
 interface AdManager {
 
     val requestConsentFlow: SharedFlow<ConsentFromUiResource>
 
+    val adBannerNativeFlow: SharedFlow<AdLoadBannerNativeUiResource>
+
+    val adFullScreenFlow: SharedFlow<AdFullScreenUiResource>
+
     fun initializeMobileAdsSdk()
+
+    fun getConfigCountriesDisableAds(): List<String>
+
+    fun getConfigPreventAdClick(): ConfigPreventAdClick
+
+    fun startDisableAdCountDownTimer()
+
+    fun isNotAbleToVisibleAdsToUser(placeName: String): Boolean
+
+    fun isCannotShowInterAd(adPlace: AdPlace): Boolean
+
+    fun getAdUnit(adPlace: AdPlace): AdUnit
+
+    fun getAdPlaceBy(adPlaceName: String): AdPlace
+
+    fun getAdRequest(adId: String): AdRequest
+
+    fun getUniqueAdSourceName(loadedAdapterResponseInfo: AdSourceResponseInfo?): String
 
     fun preloadFullScreenAd(
         activity: Activity,
+        placeName: String
+    )
+
+    fun preloadBannerNativeAd(
         placeName: String,
-        isNeedNotifyEvent: Boolean = false
+        subPlaceLevel: Int = 0,
+        isCanShowBannerCollapsibleIfNeed: Boolean = true,
+        isPreloadForTheSameActivity: Boolean = true
     )
 
-    fun preloadAds(activity: Activity)
+    fun showFullScreenAd(activity: Activity, placeName: String)
 
-    fun preloadAd(
-        activity: Activity,
-        adType: AdType
+    fun showBannerNativeAd(
+        placeName: String,
+        subPlaceLevel: Int = 0,
+        isCanShowBannerCollapsibleIfNeed: Boolean = true,
     )
 
-    fun showAdIfAvailable(
-        activity: Activity,
-        adType: AdType,
-        onAdShown: () -> Unit = {},
-        onAdFailed: (String) -> Unit = {},
-        onAdClosed: () -> Unit = {}
+    fun releaseBannerNative(
+        placeName: String,
+        subPlaceLevel: Int = 0
     )
 
-    fun isAdLoaded(adType: AdType): Boolean
+    fun getBannerAdHolder(
+        placeName: String,
+        subPlaceLevel: Int = 0
+    ): BannerAdHolder?
 
-    /**
-     * Xóa cache quảng cáo
-     */
-    fun clearAd(adType: AdType)
-
-    /**
-     * Xóa tất cả quảng cáo
-     */
-    fun clearAllAds()
+    fun getNativeAdHolder(
+        placeName: String,
+        subPlaceLevel: Int = 0
+    ): NativeAdHolder?
 }

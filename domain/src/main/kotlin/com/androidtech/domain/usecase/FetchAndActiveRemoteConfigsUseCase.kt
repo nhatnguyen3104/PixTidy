@@ -6,7 +6,7 @@ import javax.inject.Inject
 class FetchAndActiveRemoteConfigsUseCase @Inject constructor(
     private val remoteConfigRepository: RemoteConfigRepository
 ) {
-    operator fun invoke() {
+    suspend operator fun invoke() {
         remoteConfigRepository.fetchAndActive()
     }
 }

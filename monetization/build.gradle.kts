@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.com.google.devtools.ksp)
 }
 
 android {
@@ -47,7 +48,9 @@ dependencies {
     implementation(libs.androidx.compose.ui.tooling.preview)
     implementation(libs.androidx.compose.material3)
     implementation(libs.material)
+    implementation(libs.androidx.lifecycle.process)
     debugImplementation(libs.androidx.compose.ui.tooling)
+    debugImplementation(libs.androidx.compose.ui.test.manifest)
     implementation(project(path = ":data"))
     implementation(project(path = ":domain"))
     implementation(project(path = ":base"))
@@ -56,9 +59,14 @@ dependencies {
     implementation(libs.org.jetbrains.kotlinx.coroutines)
     // Inject
     implementation(libs.javax.inject)
+    // Hilt
+    implementation(libs.dagger.hilt)
+    ksp(libs.dagger.hilt.android.compiler)
+    implementation(libs.hilt.navigation.compose)
     // Admob
-    implementation(libs.play.services.ads)
-    // Admob_GMA (Next-Gen)
-    //implementation(libs.com.android.libraries.ads.mobile)
+    implementation(libs.ads.mobile.sdk)
+    // Moshi
+    implementation(libs.com.squareup.moshi.kotlin)
+    implementation(libs.com.squareup.retrofit2.converter.moshi)
 
 }

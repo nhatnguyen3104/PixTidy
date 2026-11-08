@@ -71,4 +71,6 @@ dependencies {
     ksp(libs.dagger.hilt.android.compiler)
     // Timber
     implementation(libs.com.jakewharton.timber)
+    // Admob
+    implementation(libs.ads.mobile.sdk)
 }

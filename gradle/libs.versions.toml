@@ -85,7 +85,7 @@ io-coil-kt-compose = { module = "io.coil-kt:coil-compose", version.ref = "coil" 
 androidx-media3-exoplayer = { module = "androidx.media3:media3-exoplayer", version.ref = "exoPlayer" }
 androidx-media3-ui = { module = "androidx.media3:media3-ui", version.ref = "exoPlayer" }
 play-services-ads = { module = "com.google.android.gms:play-services-ads", version.ref = "admobAds" }
-com-android-libraries-ads-mobile = { module = "com.google.android.libraries.ads.mobile.sdk:ads-mobile-sdk", version.ref = "adsMobile" }
+ads-mobile-sdk = { module = "com.google.android.libraries.ads.mobile.sdk:ads-mobile-sdk", version.ref = "adsMobile" }
 com-google-firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebaseBom" }
 com-google-firebase-analytics = { module = "com.google.firebase:firebase-analytics" }
 com-google-firebase-remote-configs = { module = "com.google.firebase:firebase-config" }
@@ -109,6 +109,7 @@ androidx-compose-foundation = { group = "androidx.compose.foundation", name = "f
 androidx-datastore-preferences = { group = "androidx.datastore", name = "datastore-preferences", version.ref = "datastore" }
 com-google-android-play-app-update = { module = "com.google.android.play:app-update", version.ref = "appUpdate" }
 com-google-android-play-app-update-ktx = { module = "com.google.android.play:app-update-ktx", version.ref = "appUpdate" }
+androidx-lifecycle-process = { module = "androidx.lifecycle:lifecycle-process", version.ref = "lifecycle" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

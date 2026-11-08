@@ -1,6 +1,5 @@
 package com.androidtech.data.remoteconfig
 
-import com.androidtech.data.model.remoteconfig.RemoteConfigParam
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.Moshi

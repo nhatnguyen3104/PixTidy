@@ -1,9 +1,10 @@
 package com.androidtech.data.remoteconfig
 
 import com.androidtech.data.R
-import com.androidtech.data.model.remoteconfig.ConfigAdsModel
-import com.androidtech.data.model.remoteconfig.ConfigFormatAdIdModel
-import com.androidtech.data.model.remoteconfig.RemoteConfigParam
+import com.androidtech.data.model.adplace.AdPlaceModel
+import com.androidtech.data.model.configads.ConfigAdsModel
+import com.androidtech.data.model.configads.ConfigPreventAdClickModel
+import com.androidtech.data.model.formatadid.ConfigFormatAdIdModel
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.remoteconfig.ktx.remoteConfig
 import com.google.firebase.remoteconfig.ktx.remoteConfigSettings
@@ -15,7 +16,6 @@ import javax.inject.Singleton
 class RemoteConfigService @Inject constructor(
     private val moshi: Moshi
 ) {
-
     private val remoteConfig by lazy {
         val settings = remoteConfigSettings {
             fetchTimeoutInSeconds = 30
@@ -27,10 +27,24 @@ class RemoteConfigService @Inject constructor(
         }
     }
 
+    fun getFormatAdIdModel(): ConfigFormatAdIdModel? {
+        return remoteConfig.read(
+            moshi,
+            RemoteConfigParam.ConfigFormatAdIdParam
+        )
+    }
+
     fun getConfigBannerAdsModel(): ConfigAdsModel? {
         return remoteConfig.read(
             moshi,
             RemoteConfigParam.ConfigAdsBannerParam
+        )
+    }
+
+    fun getConfigAppOpenAdModel(): ConfigAdsModel? {
+        return remoteConfig.read(
+            moshi,
+            RemoteConfigParam.ConfigAdsAppOpenParam
         )
     }
 
@@ -41,10 +55,10 @@ class RemoteConfigService @Inject constructor(
         )
     }
 
-    fun getConfigAppOpenAdModel(): ConfigAdsModel? {
+    fun getConfigInterstitialAdsModel(): ConfigAdsModel? {
         return remoteConfig.read(
             moshi,
-            RemoteConfigParam.ConfigAdsAppOpenAdParam
+            RemoteConfigParam.ConfigAdsInterstitialParam
         )
     }
 
@@ -55,31 +69,59 @@ class RemoteConfigService @Inject constructor(
         )
     }
 
-    fun getConfigInterstitialAdsModel(): ConfigAdsModel? {
+    fun getConfigRewardedInterstitialAdsModel(): ConfigAdsModel? {
         return remoteConfig.read(
             moshi,
-            RemoteConfigParam.ConfigAdsInterstitialParam
+            RemoteConfigParam.ConfigAdsRewardedInterstitialParam
         )
     }
 
-    fun getFormatAdIdModel(): ConfigFormatAdIdModel? {
+    fun getConfigCountriesDisableAds(): List<String>? {
         return remoteConfig.read(
             moshi,
-            RemoteConfigParam.ConfigFormatAdIdParam
+            RemoteConfigParam.ConfigCountriesDisableAdsParam
         )
     }
 
-    fun getRemoteConfigAdsActive(): Boolean? {
+    fun getConfigPreventAdClick(): ConfigPreventAdClickModel? {
         return remoteConfig.read(
             moshi,
-            RemoteConfigParam.ConfigAdsActive
+            RemoteConfigParam.ConfigPreventAdClickParam
         )
     }
 
-    fun getRemoteCountriesDisableAds(): List<String>? {
+    fun getRemoteConfigAdsActive(): Boolean {
         return remoteConfig.read(
             moshi,
-            RemoteConfigParam.ConfigCountriesDisableAds
+            RemoteConfigParam.ConfigAdsActiveParam
+        ) ?: true
+    }
+
+    fun getAdPlacesAppOpenModel(): List<AdPlaceModel> {
+        return remoteConfig.readList(
+            moshi,
+            RemoteConfigParam.AdPlacesAppOpenParam
+        )
+    }
+
+    fun getAdPlacesBannerModel(): List<AdPlaceModel> {
+        return remoteConfig.readList(
+            moshi,
+            RemoteConfigParam.AdPlacesBannerParam
+        )
+    }
+
+    fun getAdPlacesNativeModel(): List<AdPlaceModel> {
+        return remoteConfig.readList(
+            moshi,
+            RemoteConfigParam.AdPlacesNativeParam
+        )
+    }
+
+    fun getAdPlacesFullScreenModel(): List<AdPlaceModel> {
+        return remoteConfig.readList(
+            moshi,
+            RemoteConfigParam.AdPlacesFullScreenParam
         )
     }
 }
