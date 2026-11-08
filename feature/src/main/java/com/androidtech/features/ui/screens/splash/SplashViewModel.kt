@@ -24,6 +24,12 @@ class SplashViewModel @Inject constructor(
             is SplashEvent.StartInitialization -> {
                 startInitialization()
             }
+            is SplashEvent.ShowInterAd -> {
+
+            }
+            is SplashEvent.PreloadInterAd -> {
+
+            }
         }
     }
 
@@ -47,7 +53,7 @@ class SplashViewModel @Inject constructor(
             if (settings.isOnboardingCompleted) {
                 setEffect { SplashEffect.NavigateToHome }
             } else {
-                setEffect { SplashEffect.NavigateToOnboarding }
+                setEffect { SplashEffect.NavigateToLanguage }
             }
         }
     }

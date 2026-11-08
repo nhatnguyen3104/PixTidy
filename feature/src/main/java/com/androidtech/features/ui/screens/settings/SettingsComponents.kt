@@ -1,17 +1,13 @@
 package com.androidtech.features.ui.screens.settings
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.automirrored.outlined.HelpOutline
 import androidx.compose.material.icons.filled.ChevronRight
 import androidx.compose.material.icons.outlined.*
 import androidx.compose.material3.*
@@ -21,16 +17,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.androidtech.base.R
-import com.androidtech.base.theme.AppTheme
+import com.androidtech.base.model.LanguageModel
 import com.androidtech.base.ui.animation.bounceClick
-import com.androidtech.domain.model.settings.AppLanguage
 
 @Composable
 fun SettingsSectionHeader(
@@ -65,7 +60,6 @@ fun PrivacyGuaranteeHeroCard(
             modifier = Modifier.padding(horizontal = 16.dp, vertical = 14.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            // Icon badge
             Box(
                 modifier = Modifier
                     .size(42.dp)
@@ -217,20 +211,19 @@ fun SettingsSwitchRow(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LanguageSelectionBottomSheet(
-    currentLanguage: AppLanguage,
-    onLanguageSelected: (AppLanguage) -> Unit,
+    currentLanguageCode: String,
+    onLanguageSelected: (LanguageModel) -> Unit,
     onDismissRequest: () -> Unit
 ) {
     var searchQuery by remember { mutableStateOf("") }
 
     val filteredLanguages = remember(searchQuery) {
         if (searchQuery.isBlank()) {
-            AppLanguage.entries
+            LanguageModel.allLanguages
         } else {
-            AppLanguage.entries.filter {
-                it.nativeName.contains(searchQuery, ignoreCase = true) ||
-                        it.englishName.contains(searchQuery, ignoreCase = true) ||
-                        (it.languageTag?.contains(searchQuery, ignoreCase = true) == true)
+            LanguageModel.allLanguages.filter {
+                it.displayName.contains(searchQuery, ignoreCase = true) ||
+                        it.languageCode.contains(searchQuery, ignoreCase = true)
             }
         }
     }
@@ -247,9 +240,8 @@ fun LanguageSelectionBottomSheet(
                 .padding(horizontal = 20.dp)
                 .navigationBarsPadding()
         ) {
-            // Header
             Text(
-                text = "Select Language",
+                text = stringResource(R.string.text_select_language),
                 style = MaterialTheme.typography.titleLarge.copy(
                     fontWeight = FontWeight.Bold,
                     fontSize = 20.sp,
@@ -258,7 +250,6 @@ fun LanguageSelectionBottomSheet(
                 modifier = Modifier.padding(bottom = 16.dp)
             )
 
-            // Search Bar Component
             OutlinedTextField(
                 value = searchQuery,
                 onValueChange = { searchQuery = it },
@@ -301,7 +292,6 @@ fun LanguageSelectionBottomSheet(
                 )
             )
 
-            // Language Items List
             LazyColumn(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -311,11 +301,13 @@ fun LanguageSelectionBottomSheet(
             ) {
                 items(
                     items = filteredLanguages,
-                    key = { it.name }
+                    key = { it.languageCode }
                 ) { language ->
+                    val isSelected = language.languageCode.equals(currentLanguageCode, ignoreCase = true) ||
+                            (currentLanguageCode.isNotEmpty() && currentLanguageCode.startsWith(language.languageCode, ignoreCase = true))
                     LanguageItemRow(
                         language = language,
-                        isSelected = language == currentLanguage,
+                        isSelected = isSelected,
                         onClick = {
                             onLanguageSelected(language)
                             onDismissRequest()
@@ -331,7 +323,7 @@ fun LanguageSelectionBottomSheet(
 
 @Composable
 fun LanguageItemRow(
-    language: AppLanguage,
+    language: LanguageModel,
     isSelected: Boolean,
     onClick: () -> Unit
 ) {
@@ -352,33 +344,27 @@ fun LanguageItemRow(
             modifier = Modifier.padding(horizontal = 16.dp, vertical = 14.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            // Flag Emoji Badge
-            Text(
-                text = language.flagEmoji,
-                fontSize = 24.sp,
-                modifier = Modifier.padding(end = 16.dp)
+            Image(
+                painter = painterResource(language.flagRes),
+                contentDescription = language.displayName,
+                modifier = Modifier
+                    .size(32.dp)
+                    .padding(end = 4.dp)
             )
 
-            // Language Name Details
+            Spacer(modifier = Modifier.width(12.dp))
+
             Column(modifier = Modifier.weight(1f)) {
                 Text(
-                    text = language.nativeName,
+                    text = language.displayName,
                     style = MaterialTheme.typography.bodyLarge.copy(
                         fontWeight = if (isSelected) FontWeight.Bold else FontWeight.SemiBold,
                         color = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface,
                         fontSize = 15.sp
                     )
                 )
-                Text(
-                    text = language.englishName,
-                    style = MaterialTheme.typography.bodySmall.copy(
-                        color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
-                        fontSize = 12.sp
-                    )
-                )
             }
 
-            // Selection Indicator
             if (isSelected) {
                 Box(
                     modifier = Modifier
@@ -399,10 +385,6 @@ fun LanguageItemRow(
     }
 }
 
-/**
- * Wraps settings rows in a consistent rounded surface container.
- * Automatically clips dividers to the rounded corners.
- */
 @Composable
 fun SettingsGroup(
     modifier: Modifier = Modifier,
@@ -420,9 +402,6 @@ fun SettingsGroup(
     }
 }
 
-/**
- * Thin divider with consistent inset, used between rows in a SettingsGroup.
- */
 object SettingsDimens {
     val DividerStartIndent = 58.dp
     val DividerEndIndent = 16.dp

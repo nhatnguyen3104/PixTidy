@@ -3,7 +3,6 @@ package com.androidtech.generalapps.ui.activity
 import com.androidtech.base.viewmodel.UIEffect
 import com.androidtech.base.viewmodel.UIEvent
 import com.androidtech.base.viewmodel.UIState
-import com.androidtech.domain.model.settings.AppLanguage
 import com.androidtech.domain.model.settings.AppTheme
 import com.androidtech.domain.model.settings.UserSettings
 
@@ -16,7 +15,7 @@ data class MainState(
     val testData: String = "",
     val isSettingsReady: Boolean = false,
     val theme: AppTheme = UserSettings.DEFAULT.theme,
-    val language: AppLanguage = UserSettings.DEFAULT.language,
+    val languageCode: String = UserSettings.DEFAULT.languageCode,
     val isOnboardingCompleted: Boolean = false
 ): UIState
 

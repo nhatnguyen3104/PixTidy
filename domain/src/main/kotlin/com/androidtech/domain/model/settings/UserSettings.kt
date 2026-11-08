@@ -2,10 +2,10 @@ package com.androidtech.domain.model.settings
 
 data class UserSettings(
     val theme: AppTheme,
-    val language: AppLanguage,
+    val languageCode: String,
     val isOnboardingCompleted: Boolean,
 ) {
     companion object {
-        val DEFAULT = UserSettings(theme = AppTheme.LIGHT, language = AppLanguage.SYSTEM, isOnboardingCompleted = false)
+        val DEFAULT = UserSettings(theme = AppTheme.LIGHT, languageCode = "en", isOnboardingCompleted = false)
     }
 }

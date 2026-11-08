@@ -72,12 +72,17 @@ fun SplashScreen(
                         }
                     }
                 }
-                is SplashEffect.NavigateToOnboarding -> {
-                    navController.navigate(AppDestination.OnboardingScreen.route) {
+                is SplashEffect.NavigateToLanguage -> {
+                    navController.navigate(AppDestination.LanguageScreen.route) {
                         popUpTo(AppDestination.SplashScreen.route) {
                             inclusive = true
                         }
                     }
+                }
+                is SplashEffect.ShowFullScreenAd -> {
+                    /*activity?.let {
+                        viewModel.handleEvent(SplashEvent.ShowInterAd(activity))
+                    }*/
                 }
             }
         }

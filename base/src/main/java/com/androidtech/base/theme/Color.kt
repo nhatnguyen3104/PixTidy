@@ -123,6 +123,7 @@ val OverlayHeavy = Color(0x4D000000)               // 30% overlay
 val GlassBackground = Color(0xCCFFFFFF)            // White glass (80%)
 val GlassBackgroundDark = Color(0xCC0A0E17)        // Dark glass (80%)
 val GlassBorder = Color(0x33FFFFFF)                // Frosted glass border
+val SurfaceBlack20 = Color(0x33000000)
 
 // Ads
 val NativeAdTitleColor = Color(0xFF1D1D1D)

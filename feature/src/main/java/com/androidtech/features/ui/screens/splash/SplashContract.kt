@@ -1,5 +1,6 @@
 package com.androidtech.features.ui.screens.splash
 
+import android.app.Activity
 import androidx.compose.runtime.Immutable
 import com.androidtech.base.viewmodel.UIEffect
 import com.androidtech.base.viewmodel.UIEvent
@@ -13,9 +14,12 @@ data class SplashState(
 
 sealed class SplashEvent: UIEvent {
     object StartInitialization : SplashEvent()
+    data class PreloadInterAd(val activity: Activity): SplashEvent()
+    data class ShowInterAd(val activity: Activity): SplashEvent()
 }
 
 sealed class SplashEffect : UIEffect {
     object NavigateToHome : SplashEffect()
-    object NavigateToOnboarding : SplashEffect()
+    object NavigateToLanguage : SplashEffect()
+    object ShowFullScreenAd: SplashEffect()
 }

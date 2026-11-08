@@ -2,9 +2,9 @@ package com.androidtech.features.ui.screens.settings
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
+import com.androidtech.base.model.LanguageModel
 import com.androidtech.base.permission.MediaPermissionStatus
 import com.androidtech.base.viewmodel.BaseViewModel
-import com.androidtech.domain.model.settings.AppLanguage
 import com.androidtech.domain.model.settings.AppTheme
 import com.androidtech.domain.model.settings.UserSettings
 import com.androidtech.domain.usecase.settings.GetUserSettingsUseCase
@@ -35,7 +35,7 @@ class SettingsViewModel @Inject constructor(
     private fun observeUserSettings() {
         getUserSettingsUseCase()
             .onEach { settings ->
-                setState { copy(theme = settings.theme, language = settings.language) }
+                setState { copy(theme = settings.theme, languageCode = settings.languageCode) }
             }
             .launchIn(viewModelScope)
     }
@@ -54,14 +54,11 @@ class SettingsViewModel @Inject constructor(
             is SettingsEvent.ManagePermissionsClick -> {
                 when (uiState.value.permissionStatus) {
                     MediaPermissionStatus.FULL_ACCESS -> {
-                        // Already full access - do nothing or show message
                     }
                     MediaPermissionStatus.PARTIAL_ACCESS, MediaPermissionStatus.DENIED -> {
-                        // Show educational rationale dialog before requesting
                         setState { copy(showRationaleDialog = true) }
                     }
                     MediaPermissionStatus.PERMANENTLY_DENIED -> {
-                        // Show settings redirect dialog
                         setState { copy(showSettingsRedirectDialog = true) }
                     }
                 }
@@ -84,14 +81,13 @@ class SettingsViewModel @Inject constructor(
                 setState { copy(permissionStatus = event.status) }
             }
             is SettingsEvent.FeedbackClicked -> {
-                // Handle feedback click
             }
             is SettingsEvent.ToggleDarkMode -> {
                 val theme = if (event.enabled) AppTheme.DARK else AppTheme.LIGHT
                 onThemeSelected(theme)
             }
             is SettingsEvent.LanguageSelected -> {
-                onLanguageSelected(event.language)
+                onLanguageSelected(event.languageModel)
             }
             is SettingsEvent.CheckForUpdatesClicked -> {
                 setEffect { SettingsEffect.CheckForUpdates }
@@ -108,7 +104,7 @@ class SettingsViewModel @Inject constructor(
         viewModelScope.launch { updateThemeUseCase(theme) }
     }
 
-    fun onLanguageSelected(language: AppLanguage) {
-        viewModelScope.launch { updateLanguageUseCase(language) }
+    fun onLanguageSelected(languageModel: LanguageModel) {
+        viewModelScope.launch { updateLanguageUseCase(languageModel.languageCode) }
     }
 }
