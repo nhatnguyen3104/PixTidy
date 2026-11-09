@@ -61,7 +61,7 @@ class RemoteConfigRepositoryImp @Inject constructor(
     private val remoteConfigScope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
     private var isFetchComplete = false
     private val computeMutex = Mutex()
-    private val remoteConfig by lazy {
+    /*private val remoteConfig by lazy {
         val settings = remoteConfigSettings {
             fetchTimeoutInSeconds = 30
             minimumFetchIntervalInSeconds = 0
@@ -70,7 +70,7 @@ class RemoteConfigRepositoryImp @Inject constructor(
             setConfigSettingsAsync(settings)
             setDefaultsAsync(R.xml.remote_configs_default)
         }
-    }
+    }*/
     private var configCountriesDisableAdsCache = listOf<String>()
     private var configPreventAdClickCache: ConfigPreventAdClick? = null
 
@@ -115,7 +115,7 @@ class RemoteConfigRepositoryImp @Inject constructor(
             val isSuccess = withTimeoutOrNull(Constants.FETCH_REMOTE_CONFIG_TIMEOUT.milliseconds) {
                 try {
                     suspendCancellableCoroutine { continuation ->
-                        remoteConfig.fetchAndActivate()
+                        remoteConfigService.remoteConfig.fetchAndActivate()
                             .addOnCompleteListener { task ->
                                 if (continuation.isActive) {
                                     continuation.resume(task.isSuccessful && task.result == true)

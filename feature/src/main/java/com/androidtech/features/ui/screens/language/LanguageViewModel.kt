@@ -1,8 +1,14 @@
 package com.androidtech.features.ui.screens.language
 
+import android.app.Activity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
+import com.ads.monetization.AdManager
+import com.ads.monetization.adplacename.AdPlaceName
+import com.ads.monetization.adholder.NativeAdHolder
+import com.androidtech.data.model.aduiresource.AdLoadBannerNativeUiResource
+import com.androidtech.data.model.aduiresource.getAdPlaceName
 import com.androidtech.base.model.LanguageModel
 import com.androidtech.base.prefs.PreferenceHelper
 import com.androidtech.base.viewmodel.BaseViewModel
@@ -21,7 +27,8 @@ class LanguageViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val preferenceHelper: PreferenceHelper,
     private val getUserSettingsUseCase: GetUserSettingsUseCase,
-    private val updateLanguageUseCase: UpdateLanguageUseCase
+    private val updateLanguageUseCase: UpdateLanguageUseCase,
+    private val adManager: AdManager,
 ) : BaseViewModel<LanguageEvent, LanguageState, LanguageEffect>(savedStateHandle) {
     override fun createInitializeState(): LanguageState = LanguageState()
 
@@ -29,11 +36,23 @@ class LanguageViewModel @Inject constructor(
         when (event) {
             is LanguageEvent.ClickLanguageItem -> clickLanguage(event.languageModel)
             is LanguageEvent.ClickToSaveLanguage -> saveLanguageAndNavigateToHome()
+            is LanguageEvent.PreloadAds -> preloadAds()
         }
     }
 
     init {
         initializeCurrentLanguage()
+        preloadAds()
+        observeAds()
+    }
+
+    private fun observeAds() {
+        viewModelScope.launch {
+            adManager.observeBannerNativeAd(AdPlaceName.LANGUAGE_BOTTOM).collect {
+                val nativeHolder = adManager.getNativeAdHolder(AdPlaceName.LANGUAGE_BOTTOM)
+                setState { copy(nativeHolder = nativeHolder, adLoadTrigger = adLoadTrigger + 1) }
+            }
+        }
     }
 
     private fun clickLanguage(selectedLanguageModel: LanguageModel) {
@@ -95,6 +114,14 @@ class LanguageViewModel @Inject constructor(
                     saveLanguageModel = selectedModel
                 )
             }
+        }
+    }
+
+    private fun preloadAds() {
+        viewModelScope.launch {
+            adManager.preloadBannerNativeAd(placeName = AdPlaceName.LANGUAGE_BOTTOM)
+            val nativeHolder = adManager.getNativeAdHolder(AdPlaceName.LANGUAGE_BOTTOM)
+            setState { copy(nativeHolder = nativeHolder, adLoadTrigger = adLoadTrigger + 1) }
         }
     }
 }

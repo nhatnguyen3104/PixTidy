@@ -75,14 +75,19 @@ import com.google.android.libraries.ads.mobile.sdk.rewarded.RewardedAdPreloader
 import com.google.android.libraries.ads.mobile.sdk.rewardedinterstitial.RewardedInterstitialAd
 import com.google.android.libraries.ads.mobile.sdk.rewardedinterstitial.RewardedInterstitialAdEventCallback
 import com.google.android.libraries.ads.mobile.sdk.rewardedinterstitial.RewardedInterstitialAdPreloader
+import com.androidtech.data.model.aduiresource.getAdPlaceName
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -144,10 +149,16 @@ class AdMobManager @Inject constructor(
     private var _requestConsentFlow = MutableSharedFlow<ConsentFromUiResource>()
     override val requestConsentFlow = _requestConsentFlow.asSharedFlow()
 
-    private val _adLoadBannerNativeFlow = MutableSharedFlow<AdLoadBannerNativeUiResource>()
+    private val _adLoadBannerNativeFlow = MutableSharedFlow<AdLoadBannerNativeUiResource>(
+        extraBufferCapacity = 64,
+        onBufferOverflow = BufferOverflow.DROP_OLDEST
+    )
     override val adBannerNativeFlow = _adLoadBannerNativeFlow.asSharedFlow()
 
-    private val _adFullScreenFlow = MutableSharedFlow<AdFullScreenUiResource>()
+    private val _adFullScreenFlow = MutableSharedFlow<AdFullScreenUiResource>(
+        extraBufferCapacity = 64,
+        onBufferOverflow = BufferOverflow.DROP_OLDEST
+    )
     override val adFullScreenFlow = _adFullScreenFlow.asSharedFlow()
 
     private val adHolderMap = mutableMapOf<String, AdHolder>()
@@ -530,6 +541,53 @@ class AdMobManager @Inject constructor(
         val adPlace = getAdPlaceBy(placeName)
         val adHolder = getOrCreateBannerNativeAdHolderBy(adPlace, subPlaceLevel)
         return adHolder as? NativeAdHolder
+    }
+
+    override fun observeBannerNativeAd(
+        placeName: String,
+        subPlaceLevel: Int
+    ): Flow<AdLoadBannerNativeUiResource> {
+        return adBannerNativeFlow
+            .filter { resource ->
+                resource.getAdPlaceName() == placeName
+            }
+            .onStart {
+                val adPlace = getAdPlaceBy(placeName)
+                val holder = adHolderMap[getAdHolderMapKey(adPlace, subPlaceLevel)]
+                if (holder is NativeAdHolder && holder.nativeAd != null) {
+                    emit(
+                        AdLoadBannerNativeUiResource.NativeAdLoaded(
+                            nativeAd = holder.nativeAd!!,
+                            nativeAdPlace = holder.adPlace as NativeAdPlace,
+                            subPlaceLevel = holder.subPlaceLevel
+                        )
+                    )
+                } else if (holder is BannerAdHolder && holder.bannerAd != null) {
+                    emit(
+                        AdLoadBannerNativeUiResource.BannerAdLoaded(
+                            bannerAd = holder.bannerAd!!,
+                            bannerAdPlace = holder.adPlace as BannerAdPlace,
+                            subPlaceLevel = holder.subPlaceLevel
+                        )
+                    )
+                }
+            }
+    }
+
+    override fun observeFullScreenAd(
+        placeName: String
+    ): Flow<AdFullScreenUiResource> {
+        return adFullScreenFlow
+            .filter { resource ->
+                resource.getAdPlaceName() == placeName
+            }
+            .onStart {
+                val adPlace = getAdPlaceBy(placeName)
+                val holder = adHolderFullScreenMap[adPlace.adUnit.adUnitId]
+                if (holder != null && holder.isAdLoaded()) {
+                    emit(AdFullScreenUiResource.AdLoaded(adPlace))
+                }
+            }
     }
 
     private fun isCountryNotAvailableToShowAd(): Boolean {
@@ -1350,7 +1408,7 @@ class AdMobManager @Inject constructor(
         subPlaceModel: Int,
         orientationOverride: Int? = null,
     ): String {
-        val adIdAllPrice = adPlace.adUnit.adUnitId
+        val placeKey = adPlace.placeName.ifBlank { adPlace.adUnit.adUnitId }
         var subKeyPlaceScreenLevelInOrder = ""
         if (adPlace.placeScreenLevelInOrder != null) {
             subKeyPlaceScreenLevelInOrder = "-${adPlace.placeScreenLevelInOrder}"
@@ -1369,7 +1427,7 @@ class AdMobManager @Inject constructor(
                 ?: this
             orientationKey = "o$orientation;"   // "o1;" portrait, "o2;" landscape
         }
-        return "$adIdAllPrice;${adPlace.placeScreenLevel};$subKeyPlaceScreenLevelInOrder;$nativeFull$subPlaceModel;$collapsiblePosition$orientationKey"
+        return "$placeKey;${adPlace.placeScreenLevel};$subKeyPlaceScreenLevelInOrder;$nativeFull$subPlaceModel;$collapsiblePosition$orientationKey"
     }
 
     private fun shouldStopBannerRetry(retryCount: Int, maxRetryCount: Int): Boolean = when {

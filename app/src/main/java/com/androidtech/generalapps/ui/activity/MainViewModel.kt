@@ -15,14 +15,14 @@ import javax.inject.Inject
 @HiltViewModel
 class MainViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
-    private val fetchAndActiveConfigsUseCase: FetchAndActiveRemoteConfigsUseCase,
+    //private val fetchAndActiveConfigsUseCase: FetchAndActiveRemoteConfigsUseCase,
     private val adManager: AdManager,
     private val getUserSettingsUseCase: GetUserSettingsUseCase
 ): BaseViewModel<MainEvent, MainState, MainEffect>(savedStateHandle) {
 
     init {
         observeSettings()
-        fetchRemoteConfig()
+        //fetchRemoteConfig()
         initializeMobileAdsSdk()
     }
 
@@ -38,16 +38,16 @@ class MainViewModel @Inject constructor(
 
     override fun handleEvent(event: MainEvent) {
         when (event) {
-            MainEvent.LoadRemoteConfig -> fetchRemoteConfig()
+            MainEvent.LoadRemoteConfig -> { /*fetchRemoteConfig()*/ }
             MainEvent.LoadUserSettings -> {}
         }
     }
 
-    private fun fetchRemoteConfig() {
+    /*private fun fetchRemoteConfig() {
         viewModelScope.launch {
             fetchAndActiveConfigsUseCase()
         }
-    }
+    }*/
 
     private fun initializeMobileAdsSdk() {
         viewModelScope.launch {

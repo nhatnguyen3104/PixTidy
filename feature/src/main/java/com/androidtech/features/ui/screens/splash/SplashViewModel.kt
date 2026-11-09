@@ -46,6 +46,7 @@ class SplashViewModel @Inject constructor(
 
     init {
         listenAdFullScreenEvents()
+        observeNativeAds()
     }
 
     private fun startInitialization() {
@@ -82,22 +83,28 @@ class SplashViewModel @Inject constructor(
 
     private fun listenAdFullScreenEvents() {
         viewModelScope.launch {
-            adManager.adFullScreenFlow.collect { uiResource ->
-                val adPlaceName = uiResource.getAdPlaceName()
-                if (adPlaceName == AdPlaceName.OPEN_FIRST) {
-                    when(uiResource) {
-                        is AdFullScreenUiResource.AdLoaded -> {
-                            isInterAdLoaded = true
-                            setEffect { SplashEffect.ShowFullScreenAd }
-                        }
-                        is AdFullScreenUiResource.AdCompleted,
-                        is AdFullScreenUiResource.AdNotValidOrLoadFailed -> {
-                            isInterAdShowingOrCompleted = true
-                            navigateToNextScreen()
-                        }
-                        else -> Unit
+            adManager.observeFullScreenAd(AdPlaceName.OPEN_FIRST).collect { uiResource ->
+                when(uiResource) {
+                    is AdFullScreenUiResource.AdLoaded -> {
+                        isInterAdLoaded = true
+                        setEffect { SplashEffect.ShowFullScreenAd }
                     }
+                    is AdFullScreenUiResource.AdCompleted,
+                    is AdFullScreenUiResource.AdNotValidOrLoadFailed -> {
+                        isInterAdShowingOrCompleted = true
+                        navigateToNextScreen()
+                    }
+                    else -> Unit
                 }
+            }
+        }
+    }
+
+    private fun observeNativeAds() {
+        viewModelScope.launch {
+            adManager.observeBannerNativeAd(AdPlaceName.OPEN_NATIVE_FIRST).collect {
+                val nativeHolder = adManager.getNativeAdHolder(AdPlaceName.OPEN_NATIVE_FIRST)
+                setState { copy(nativeHolder = nativeHolder) }
             }
         }
     }

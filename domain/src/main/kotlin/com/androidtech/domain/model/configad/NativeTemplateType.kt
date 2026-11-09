@@ -5,9 +5,10 @@ sealed class NativeTemplateType {
 
     companion object {
         fun getTypeBy(key: String): NativeTemplateType {
-            return when (key) {
-                "small" -> Small
-                "medium" -> Medium
+            val lowercaseKey = key.lowercase()
+            return when {
+                lowercaseKey.contains("small") -> Small
+                lowercaseKey.contains("medium") -> Medium
                 else -> Full
             }
         }
@@ -25,7 +26,7 @@ sealed class NativeTemplateType {
         override val key: String = "full"
     }
 
-    fun isMedium() = key == "medium"
-    fun isSmall() = key == "small"
-    fun isFull() = key == "full"
+    fun isMedium() = this is Medium || key == "medium"
+    fun isSmall() = this is Small || key == "small"
+    fun isFull() = this is Full || key == "full"
 }

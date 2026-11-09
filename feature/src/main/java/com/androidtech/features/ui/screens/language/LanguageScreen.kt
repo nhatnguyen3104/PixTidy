@@ -1,5 +1,6 @@
 package com.androidtech.features.ui.screens.language
 
+import androidx.activity.compose.LocalActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -39,6 +40,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
+import com.ads.monetization.ui.nativead.MediumNativeAdView
+import com.ads.monetization.ui.nativead.SmallNativeAdView
 import com.androidtech.base.R
 import com.androidtech.base.extension.AppDestination
 import com.androidtech.base.extension.LocalNavController
@@ -75,6 +78,13 @@ fun LanguageScreen(
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val navController = LocalNavController.current
+    val activity = LocalActivity.current
+
+    LaunchedEffect(activity) {
+        activity?.let { act ->
+            viewModel.handleEvent(LanguageEvent.PreloadAds(act))
+        }
+    }
 
     LaunchedEffect(Unit) {
         viewModel.uiEffect.collect { effect ->
@@ -117,6 +127,9 @@ fun LanguageScreen(
                         LanguageEvent.ClickLanguageItem(languageModel)
                     )
                 }
+                is LanguageEvent.PreloadAds -> {
+                    viewModel.setEvent(event)
+                }
             }
         }
     )
@@ -136,11 +149,14 @@ private fun LanguageScreenContent(
     onActionEvent: (LanguageEvent) -> Unit
 ) {
     Column(
-        modifier = modifier,
+        modifier = modifier.fillMaxSize(),
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
+        // 1. Header (title + save button)
         Row(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 16.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
@@ -148,19 +164,14 @@ private fun LanguageScreenContent(
                 style = Title20Bold,
                 color = Color.Black,
                 textAlign = TextAlign.Center,
-                modifier = Modifier
-                    .weight(1f)
+                modifier = Modifier.weight(1f)
             )
 
             Button(
-                onClick = {
-                    onActionEvent(LanguageEvent.ClickToSaveLanguage)
-                },
+                onClick = { onActionEvent(LanguageEvent.ClickToSaveLanguage) },
                 contentPadding = PaddingValues(2.dp),
                 shape = RoundedCornerShape(100.dp),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = Color.Blue
-                ),
+                colors = ButtonDefaults.buttonColors(containerColor = Color.Blue),
                 modifier = Modifier.padding(end = 16.dp)
             ) {
                 Image(
@@ -171,6 +182,7 @@ private fun LanguageScreenContent(
             }
         }
 
+        // 2. Language list — weight(1f)
         LanguageList(
             modifier = Modifier
                 .padding(horizontal = 16.dp)
@@ -178,6 +190,14 @@ private fun LanguageScreenContent(
                 .weight(1f),
             allLanguages = uiState.allLanguages,
             onActionEvent = onActionEvent
+        )
+
+        // 3. Ad view
+        MediumNativeAdView(
+            adHolder = uiState.nativeHolder,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp)
         )
     }
 }

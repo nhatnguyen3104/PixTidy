@@ -16,7 +16,7 @@ import javax.inject.Singleton
 class RemoteConfigService @Inject constructor(
     private val moshi: Moshi
 ) {
-    private val remoteConfig by lazy {
+    val remoteConfig by lazy {
         val settings = remoteConfigSettings {
             fetchTimeoutInSeconds = 30
             minimumFetchIntervalInSeconds = 0

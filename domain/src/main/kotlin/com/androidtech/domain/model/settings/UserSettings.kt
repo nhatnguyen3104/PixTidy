@@ -6,6 +6,6 @@ data class UserSettings(
     val isOnboardingCompleted: Boolean,
 ) {
     companion object {
-        val DEFAULT = UserSettings(theme = AppTheme.LIGHT, languageCode = "en", isOnboardingCompleted = false)
+        val DEFAULT = UserSettings(theme = AppTheme.LIGHT, languageCode = "", isOnboardingCompleted = false)
     }
 }

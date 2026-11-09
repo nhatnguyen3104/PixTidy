@@ -8,4 +8,5 @@ object AdPlaceName {
 
     // Native
     const val OPEN_NATIVE_FIRST = "open_native_first"
+    const val LANGUAGE_BOTTOM = "language_bottom"
 }

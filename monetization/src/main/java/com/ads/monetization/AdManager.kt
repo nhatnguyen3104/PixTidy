@@ -11,6 +11,7 @@ import com.ads.monetization.adholder.NativeAdHolder
 import com.ads.monetization.config.ConsentFromUiResource
 import com.google.android.libraries.ads.mobile.sdk.common.AdRequest
 import com.google.android.libraries.ads.mobile.sdk.common.AdSourceResponseInfo
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharedFlow
 
 interface AdManager {
@@ -75,4 +76,13 @@ interface AdManager {
         placeName: String,
         subPlaceLevel: Int = 0
     ): NativeAdHolder?
+
+    fun observeBannerNativeAd(
+        placeName: String,
+        subPlaceLevel: Int = 0
+    ): Flow<AdLoadBannerNativeUiResource>
+
+    fun observeFullScreenAd(
+        placeName: String
+    ): Flow<AdFullScreenUiResource>
 }

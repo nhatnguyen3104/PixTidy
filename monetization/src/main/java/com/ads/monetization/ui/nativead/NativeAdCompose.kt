@@ -11,6 +11,7 @@ import android.widget.ImageView
 import androidx.appcompat.widget.AppCompatButton
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
@@ -25,6 +26,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -87,20 +89,65 @@ val MEDIUM_NATIVE_AD_HEIGHT = 260.dp
 
 @Composable
 fun SmallNativeAdView(adHolder: NativeAdHolder?, modifier: Modifier = Modifier) {
-    val ad = adHolder?.nativeAd ?: return
-    SmallNativeAdView(ad = ad, modifier = modifier)
+    val ad = adHolder?.nativeAd
+    if (ad != null) {
+        SmallNativeAdView(ad = ad, modifier = modifier)
+    } else {
+        NativeAdPlaceholder(height = SMALL_NATIVE_AD_HEIGHT, modifier = modifier)
+    }
 }
 
 @Composable
 fun MediumNativeAdView(adHolder: NativeAdHolder?, modifier: Modifier = Modifier) {
-    val ad = adHolder?.nativeAd ?: return
-    MediumNativeAdView(ad = ad, modifier = modifier)
+    val ad = adHolder?.nativeAd
+    if (ad != null) {
+        MediumNativeAdView(ad = ad, modifier = modifier)
+    } else {
+        NativeAdPlaceholder(height = MEDIUM_NATIVE_AD_HEIGHT, modifier = modifier)
+    }
 }
 
 @Composable
 fun FullNativeAdView(adHolder: NativeAdHolder?, modifier: Modifier = Modifier) {
-    val ad = adHolder?.nativeAd ?: return
-    FullNativeAdView(ad = ad, modifier = modifier)
+    val ad = adHolder?.nativeAd
+    if (ad != null) {
+        FullNativeAdView(ad = ad, modifier = modifier)
+    } else {
+        NativeAdPlaceholder(height = 300.dp, modifier = modifier)
+    }
+}
+
+@Composable
+fun NativeAdPlaceholder(
+    height: androidx.compose.ui.unit.Dp,
+    modifier: Modifier = Modifier
+) {
+    Box(
+        modifier = modifier
+            .fillMaxWidth()
+            .height(height)
+            .background(
+                color = SurfaceWhite,
+                shape = RoundedCornerShape(16.dp)
+            ),
+        contentAlignment = Alignment.Center
+    ) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            CircularProgressIndicator(
+                modifier = Modifier.size(24.dp),
+                strokeWidth = 2.dp,
+                color = PrimaryBlue
+            )
+            Text(
+                text = "Loading Ad...",
+                style = Body14Regular,
+                color = NativeAdBodyColor
+            )
+        }
+    }
 }
 
 @Composable
