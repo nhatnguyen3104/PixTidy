@@ -18,6 +18,7 @@ import com.androidtech.features.ui.screens.screenshot.screenshotScreen
 import com.androidtech.features.ui.screens.settings.settingsScreen
 import com.androidtech.features.ui.screens.similar.similarScreen
 import com.androidtech.features.ui.screens.splash.splashScreen
+import com.androidtech.features.ui.screens.trash.trashScreen
 
 @Composable
 fun AppScreens(
@@ -39,6 +40,7 @@ fun AppScreens(
                 languageScreen()
                 onboardingScreen()
                 homeScreen()
+                trashScreen()
                 scanScreen()
                 duplicateScreen()
                 similarScreen()

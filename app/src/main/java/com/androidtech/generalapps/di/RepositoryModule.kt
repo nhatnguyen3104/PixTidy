@@ -36,6 +36,9 @@ interface RepositoryModule {
     fun bindSettingsRepository(impl: SettingsRepositoryImpl): SettingsRepository
 
     @Binds
+    fun bindTrashRepository(impl: TrashRepositoryImpl): TrashRepository
+
+    @Binds
     fun bindImageAnalyzerEngine(impl: ImageAnalyzerEngineImpl): ImageAnalyzerEngine
 
     @Binds

@@ -85,6 +85,10 @@ class HomeViewModel @Inject constructor(
                 setEffect { HomeEffect.NavigateToSettings }
             }
 
+            is HomeEvent.TrashClicked -> {
+                setEffect { HomeEffect.NaviagteToTrash }
+            }
+
             is HomeEvent.FastScan -> {
                 fastScan(uiState.value.isPermissionGranted)
             }

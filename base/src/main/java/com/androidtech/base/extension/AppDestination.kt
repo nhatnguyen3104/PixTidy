@@ -16,6 +16,10 @@ sealed class AppDestination(val route: String) {
 
     @Serializable
     data object HomeScreen: AppDestination("home_screen")
+
+    @Serializable
+    data object TrashScreen: AppDestination("trash_screen")
+
     @Serializable
     data object ScanScreen: AppDestination("scan_screen/{mode}") {
         fun createRoute(mode: String) = "scan_screen/$mode"

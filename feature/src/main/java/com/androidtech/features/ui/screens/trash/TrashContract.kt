@@ -1,0 +1,35 @@
+package com.androidtech.features.ui.screens.trash
+
+import com.androidtech.base.utils.UiText
+import com.androidtech.base.viewmodel.UIEffect
+import com.androidtech.base.viewmodel.UIEvent
+import com.androidtech.base.viewmodel.UIState
+import com.androidtech.domain.model.media.MediaItem
+import com.androidtech.features.ui.screens.similar.SimilarEvent
+
+data class TrashState(
+    val isLoading: Boolean = false,
+    val showBackConfirmationDialog: Boolean = false,
+    val trashMedia: List<MediaItem> = emptyList(),
+    val previewMediaList: List<MediaItem>? = null,
+    val previewInitialIndex: Int = 0
+): UIState {
+    val isSelectionActive: Boolean
+        get() = trashMedia.any { it.isSelected }
+}
+
+sealed class TrashEvent: UIEvent {
+    object SelectAllClicked: TrashEvent()
+    object ClearSelectionClicked : TrashEvent()
+    data class OnItemClick(val id: Long): TrashEvent()
+    data class ToggleItem(val id: Long): TrashEvent()
+    data class RestoreClick(val selectedIds: List<Long>): TrashEvent()
+    data class DeleteClick(val selectedIds: List<Long>): TrashEvent()
+    object NavigateBackClick: TrashEvent()
+    object ClosePreview : TrashEvent()
+}
+
+sealed class TrashEffect: UIEffect {
+    object NavigateBack: TrashEffect()
+    data class ShowSnackbar(val message: UiText) : TrashEffect()
+}

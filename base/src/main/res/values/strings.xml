@@ -52,6 +52,12 @@
     <string name="text_dialog_exit">Yes, cancel</string>
     <string name="text_dialog_cancel">Keep going</string>
 
+    <!-- Trash -->
+    <string name="text_trash">Trash Bin</string>
+    <string name="text_restore">Restore</string>
+    <string name="text_delete">Delete</string>
+    <string name="text_no_media_trash">Empty trash bin</string>
+
     <!-- Scan -->
     <string name="text_scan_failed">Scan failed</string>
     <string name="text_canning_storage">Scanning Storage…</string>

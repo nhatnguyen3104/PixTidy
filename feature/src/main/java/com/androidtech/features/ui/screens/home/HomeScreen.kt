@@ -140,6 +140,10 @@ fun HomeScreen(
                     navController.navigate(AppDestination.SettingsScreen.route)
                 }
 
+                is HomeEffect.NaviagteToTrash -> {
+                    navController.navigate(AppDestination.TrashScreen.route)
+                }
+
                 is HomeEffect.NavigateToDuplicate -> {
                     navController.navigate(AppDestination.DuplicateScreen.route)
                 }
@@ -216,6 +220,18 @@ fun HomeContent(
                     }
                 },
                 actions = {
+                    IconButton(
+                        onClick = { onEvent(HomeEvent.TrashClicked) },
+                        modifier = Modifier.size(40.dp)
+                    ) {
+                        Icon(
+                            painter = painterResource(R.drawable.ic_trash),
+                            contentDescription = "trash",
+                            tint = MaterialTheme.colorScheme.error.withAlpha7(),
+                            modifier = Modifier.size(24.dp)
+                        )
+                    }
+                    Spacer(modifier = Modifier.width(8.dp))
                     IconButton(
                         onClick = { onEvent(HomeEvent.SettingsClicked) },
                         modifier = Modifier.size(40.dp)
