@@ -1,19 +1,29 @@
 package com.androidtech.features.ui.screens.trash
 
+import android.app.PendingIntent
+import android.content.IntentSender
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
+import com.androidtech.base.R
+import com.androidtech.base.utils.UiText
 import com.androidtech.base.viewmodel.BaseViewModel
 import com.androidtech.domain.extensions.UiState
+import com.androidtech.domain.model.media.TrashActionResult
+import com.androidtech.domain.usecase.media.DeletePermanentlyUseCase
 import com.androidtech.domain.usecase.media.GetTrashedMediaUseCase
+import com.androidtech.domain.usecase.media.RestoreItemsUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class TrashViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
-    private val getTrashedMediaUseCase: GetTrashedMediaUseCase
+    private val getTrashedMediaUseCase: GetTrashedMediaUseCase,
+    private val restoreItemsUseCase: RestoreItemsUseCase,
+    private val deletePermanentlyUseCase: DeletePermanentlyUseCase
 ): BaseViewModel<TrashEvent, TrashState, TrashEffect>(savedStateHandle) {
     override fun createInitializeState(): TrashState = TrashState()
 
@@ -79,11 +89,57 @@ class TrashViewModel @Inject constructor(
     }
 
     private fun restoreItems(selectedItems: List<Long>) {
-
+        if (selectedItems.isEmpty()) return
+        viewModelScope.launch {
+            setState { copy(isLoading = true) }
+            when (val result = restoreItemsUseCase(selectedItems)) {
+                is TrashActionResult.Success -> {
+                    setState { copy(isLoading = false) }
+                    setEffect { TrashEffect.ShowSnackbar(UiText.StringResource(R.string.text_notification_clean, selectedItems.size, "")) }
+                }
+                is TrashActionResult.RequiresUserConsent -> {
+                    setState { copy(isLoading = false) }
+                    val intentSender = (result.actionSender as? PendingIntent)?.intentSender
+                        ?: (result.actionSender as? IntentSender)
+                    if (intentSender != null) {
+                        setEffect { TrashEffect.LaunchIntentSender(intentSender) }
+                    } else {
+                        setEffect { TrashEffect.ShowSnackbar(UiText.StringResource(R.string.text_error_clean)) }
+                    }
+                }
+                is TrashActionResult.Error -> {
+                    setState { copy(isLoading = false) }
+                    setEffect { TrashEffect.ShowSnackbar(UiText.StringResource(R.string.text_error_clean)) }
+                }
+            }
+        }
     }
 
     private fun deleteItems(selectedItems: List<Long>) {
-
+        if (selectedItems.isEmpty()) return
+        viewModelScope.launch {
+            setState { copy(isLoading = true) }
+            when (val result = deletePermanentlyUseCase(selectedItems)) {
+                is TrashActionResult.Success -> {
+                    setState { copy(isLoading = false) }
+                    setEffect { TrashEffect.ShowSnackbar(UiText.StringResource(R.string.text_notification_clean, selectedItems.size, "")) }
+                }
+                is TrashActionResult.RequiresUserConsent -> {
+                    setState { copy(isLoading = false) }
+                    val intentSender = (result.actionSender as? PendingIntent)?.intentSender
+                        ?: (result.actionSender as? IntentSender)
+                    if (intentSender != null) {
+                        setEffect { TrashEffect.LaunchIntentSender(intentSender) }
+                    } else {
+                        setEffect { TrashEffect.ShowSnackbar(UiText.StringResource(R.string.text_error_clean)) }
+                    }
+                }
+                is TrashActionResult.Error -> {
+                    setState { copy(isLoading = false) }
+                    setEffect { TrashEffect.ShowSnackbar(UiText.StringResource(R.string.text_error_clean)) }
+                }
+            }
+        }
     }
 
     private fun previewPhoto(itemId: Long) {

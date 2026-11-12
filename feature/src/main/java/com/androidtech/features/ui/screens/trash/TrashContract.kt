@@ -1,11 +1,11 @@
 package com.androidtech.features.ui.screens.trash
 
+import android.content.IntentSender
 import com.androidtech.base.utils.UiText
 import com.androidtech.base.viewmodel.UIEffect
 import com.androidtech.base.viewmodel.UIEvent
 import com.androidtech.base.viewmodel.UIState
 import com.androidtech.domain.model.media.MediaItem
-import com.androidtech.features.ui.screens.similar.SimilarEvent
 
 data class TrashState(
     val isLoading: Boolean = false,
@@ -32,4 +32,5 @@ sealed class TrashEvent: UIEvent {
 sealed class TrashEffect: UIEffect {
     object NavigateBack: TrashEffect()
     data class ShowSnackbar(val message: UiText) : TrashEffect()
+    data class LaunchIntentSender(val intentSender: IntentSender) : TrashEffect()
 }

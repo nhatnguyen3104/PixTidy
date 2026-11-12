@@ -1,5 +1,8 @@
 package com.androidtech.features.ui.screens.trash
 
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.IntentSenderRequest
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -46,6 +49,7 @@ import com.androidtech.base.R
 import com.androidtech.base.extension.AppDestination
 import com.androidtech.base.extension.LocalNavController
 import com.androidtech.base.theme.Title20Bold
+import com.androidtech.base.utils.UiText
 import com.androidtech.base.utils.formatSize
 import com.androidtech.features.ui.components.MediaPreviewScreen
 import com.androidtech.features.ui.components.RestoreDeleteBottomBar
@@ -79,6 +83,14 @@ fun TrashScreen(
         }
     }
 
+    val intentSenderLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.StartIntentSenderForResult()
+    ) { activityResult ->
+        if (activityResult.resultCode == android.app.Activity.RESULT_OK) {
+            showSnackbar(UiText.StringResource(R.string.text_success_clean).asString(context))
+        }
+    }
+
     LaunchedEffect(viewModel.uiEffect, lifecycleOwner) {
         viewModel.uiEffect.flowWithLifecycle(lifecycleOwner.lifecycle).collect { effect ->
             when (effect) {
@@ -88,6 +100,11 @@ fun TrashScreen(
                 is TrashEffect.ShowSnackbar -> {
                     val message = effect.message.asString(context)
                     showSnackbar(message)
+                }
+                is TrashEffect.LaunchIntentSender -> {
+                    intentSenderLauncher.launch(
+                        IntentSenderRequest.Builder(effect.intentSender).build()
+                    )
                 }
             }
         }

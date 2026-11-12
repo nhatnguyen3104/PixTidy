@@ -1,5 +1,7 @@
 package com.androidtech.features.ui.screens.screenshot
 
+import android.app.PendingIntent
+import android.content.IntentSender
 import android.os.Build
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
@@ -10,10 +12,9 @@ import com.androidtech.base.viewmodel.BaseViewModel
 import com.androidtech.data.repository.RequiresUserConfirmationException
 import com.androidtech.domain.extensions.UiState
 import com.androidtech.domain.model.media.MediaItem
+import com.androidtech.domain.model.media.RequiresUserConsentException
 import com.androidtech.domain.usecase.media.GetLatestScreenshotGroupsUseCase
 import com.androidtech.domain.usecase.media.PerformSafeCleanupUseCase
-import com.androidtech.features.ui.screens.duplicate.DuplicateEffect
-import com.androidtech.features.ui.screens.duplicate.DuplicateEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -121,8 +122,16 @@ class ScreenshotViewModel @Inject constructor(
                 }
                 .onFailure { error ->
                     setState { copy(isLoading = false) }
-                    if (error is RequiresUserConfirmationException) {
-                        setEffect { ScreenshotEffect.LaunchIntentSender(error.intentSender) }
+                    val intentSender = when (error) {
+                        is RequiresUserConfirmationException -> error.intentSender
+                        is RequiresUserConsentException -> {
+                            (error.actionSender as? PendingIntent)?.intentSender
+                                ?: (error.actionSender as? IntentSender)
+                        }
+                        else -> null
+                    }
+                    if (intentSender != null) {
+                        setEffect { ScreenshotEffect.LaunchIntentSender(intentSender) }
                     } else {
                         setEffect { ScreenshotEffect.ShowSnackbar(UiText.StringResource(R.string.text_error_clean)) }
                     }

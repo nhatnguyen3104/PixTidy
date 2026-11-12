@@ -1,5 +1,7 @@
 package com.androidtech.features.ui.screens.similar
 
+import android.app.PendingIntent
+import android.content.IntentSender
 import android.os.Build
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
@@ -10,6 +12,7 @@ import com.androidtech.base.viewmodel.BaseViewModel
 import com.androidtech.data.repository.RequiresUserConfirmationException
 import com.androidtech.domain.extensions.UiState
 import com.androidtech.domain.model.media.MediaItem
+import com.androidtech.domain.model.media.RequiresUserConsentException
 import com.androidtech.domain.usecase.media.GetLatestSimilarGroupsUseCase
 import com.androidtech.domain.usecase.media.PerformSafeCleanupUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -126,8 +129,16 @@ class SimilarViewModel @Inject constructor(
                 }
                 .onFailure { error ->
                     setState { copy(isLoading = false) }
-                    if (error is RequiresUserConfirmationException) {
-                        setEffect { SimilarEffect.LaunchIntentSender(error.intentSender) }
+                    val intentSender = when (error) {
+                        is RequiresUserConfirmationException -> error.intentSender
+                        is RequiresUserConsentException -> {
+                            (error.actionSender as? PendingIntent)?.intentSender
+                                ?: (error.actionSender as? IntentSender)
+                        }
+                        else -> null
+                    }
+                    if (intentSender != null) {
+                        setEffect { SimilarEffect.LaunchIntentSender(intentSender) }
                     } else {
                         setEffect { SimilarEffect.ShowSnackbar(UiText.StringResource(R.string.text_error_clean)) }
                     }
