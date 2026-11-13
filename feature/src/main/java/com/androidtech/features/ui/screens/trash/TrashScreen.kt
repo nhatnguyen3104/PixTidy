@@ -13,6 +13,8 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenu
@@ -25,6 +27,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -53,6 +56,7 @@ import com.androidtech.base.utils.UiText
 import com.androidtech.base.utils.formatSize
 import com.androidtech.features.ui.components.MediaPreviewScreen
 import com.androidtech.features.ui.components.RestoreDeleteBottomBar
+import com.androidtech.features.ui.screens.similar.SimilarEvent
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
@@ -222,20 +226,43 @@ fun TrashContent(
         snackbarHost = { SnackbarHost(snackbarHostState) },
         containerColor = MaterialTheme.colorScheme.background
     ) { padding ->
-        Box(
-            modifier = modifier
-                .fillMaxSize()
-                .padding(padding),
-            contentAlignment = Alignment.Center
-        ) {
-            when {
-                mediaItems.isNotEmpty() -> TrashGrid(
-                    items = mediaItems,
-                    onMediaClick = { onEvent(TrashEvent.OnItemClick(it))},
-                    onMediaToggle = { onEvent(TrashEvent.ToggleItem(it)) }
+        Box(modifier = Modifier.fillMaxSize()) {
+            if (uiState.showBackConfirmationDialog) {
+                AlertDialog(
+                    onDismissRequest = { onEvent(TrashEvent.DismissBackConfirmation) },
+                    title = { Text(text = stringResource(R.string.text_dialog_back_title)) },
+                    text = { Text(text = stringResource(R.string.text_dialog_back_desc)) },
+                    confirmButton = {
+                        Button(onClick = { onEvent(TrashEvent.ConfirmBackClicked) }) {
+                            Text(stringResource(R.string.text_dialog_exit))
+                        }
+                    },
+                    dismissButton = {
+                        TextButton(onClick = { onEvent(TrashEvent.DismissBackConfirmation) }) {
+                            Text(stringResource(R.string.text_dialog_cancel))
+                        }
+                    }
                 )
-                isLoading -> CircularProgressIndicator()
-                else -> Text(stringResource(R.string.text_no_media_trash), style = MaterialTheme.typography.bodyLarge)
+            }
+            Box(
+                modifier = modifier
+                    .fillMaxSize()
+                    .padding(padding),
+                contentAlignment = Alignment.Center
+            ) {
+                when {
+                    mediaItems.isNotEmpty() -> TrashGrid(
+                        items = mediaItems,
+                        onMediaClick = { onEvent(TrashEvent.OnItemClick(it)) },
+                        onMediaToggle = { onEvent(TrashEvent.ToggleItem(it)) }
+                    )
+
+                    isLoading -> CircularProgressIndicator()
+                    else -> Text(
+                        stringResource(R.string.text_no_media_trash),
+                        style = MaterialTheme.typography.bodyLarge
+                    )
+                }
             }
         }
     }

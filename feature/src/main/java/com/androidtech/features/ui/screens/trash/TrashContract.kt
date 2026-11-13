@@ -27,6 +27,8 @@ sealed class TrashEvent: UIEvent {
     data class DeleteClick(val selectedIds: List<Long>): TrashEvent()
     object NavigateBackClick: TrashEvent()
     object ClosePreview : TrashEvent()
+    object DismissBackConfirmation : TrashEvent()
+    object ConfirmBackClicked : TrashEvent()
 }
 
 sealed class TrashEffect: UIEffect {
