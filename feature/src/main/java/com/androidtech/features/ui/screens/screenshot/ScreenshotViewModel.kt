@@ -67,6 +67,12 @@ class ScreenshotViewModel @Inject constructor(
                     deletePhotos(event.selectedPhotoIds)
                 }
             }
+            is ScreenshotEvent.PhotoClicked -> {
+                previewPhoto(event.photoId)
+            }
+            is ScreenshotEvent.ClosePreview -> {
+                closePreview()
+            }
             is ScreenshotEvent.PhotoToggleSelection -> {
                 togglePhotoSelection(event.photoId)
             }
@@ -154,6 +160,25 @@ class ScreenshotViewModel @Inject constructor(
             }
         }
         setState { copy(screenshotGroups = updatedGroups) }
+    }
+
+    private fun previewPhoto(photoId: Long) {
+        val group = uiState.value.screenshotGroups.find { group -> group.screenshotItems.any { it.id == photoId } }
+        if (group != null) {
+            val index = group.screenshotItems.indexOfFirst { it.id == photoId }
+            if (index != -1) {
+                setState {
+                    copy(
+                        previewMediaList = group.screenshotItems,
+                        previewInitialIndex = index
+                    )
+                }
+            }
+        }
+    }
+
+    private fun closePreview() {
+        setState { copy(previewMediaList = null) }
     }
 
     private fun toggleGroupSelection(groupId: String, isSelected: Boolean) {

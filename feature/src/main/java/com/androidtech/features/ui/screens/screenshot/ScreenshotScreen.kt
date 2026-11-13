@@ -63,6 +63,7 @@ import com.androidtech.base.theme.Title20Bold
 import com.androidtech.base.utils.UiText
 import com.androidtech.base.utils.formatSize
 import com.androidtech.features.ui.components.DeleteBottomBar
+import com.androidtech.features.ui.components.MediaPreviewScreen
 import com.androidtech.features.ui.screens.duplicate.DuplicateEffect
 import com.androidtech.features.ui.screens.duplicate.DuplicateEvent
 import com.androidtech.features.ui.screens.duplicate.DuplicateScreen
@@ -144,11 +145,19 @@ fun ScreenshotScreen(
         }
     }
 
-    ScreenshotContent(
-        uiState = uiState.value,
-        onEvent = { viewModel.handleEvent(it) },
-        snackbarHostState = snackbarHostState
-    )
+    if (uiState.value.previewMediaList != null) {
+        MediaPreviewScreen(
+            mediaList = uiState.value.previewMediaList!!,
+            initialIndex = uiState.value.previewInitialIndex,
+            onBackClick = { viewModel.handleEvent(ScreenshotEvent.ClosePreview) }
+        )
+    } else {
+        ScreenshotContent(
+            uiState = uiState.value,
+            onEvent = { viewModel.handleEvent(it) },
+            snackbarHostState = snackbarHostState
+        )
+    }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -317,11 +326,12 @@ fun ScreenshotContent(
                     items(screenshotGroups, key = { it.groupId }) { group ->
                         ScreenshotTimeGroupSection(
                             group = group,
+                            onPhotoClick =  { photoId ->
+                                onEvent(ScreenshotEvent.PhotoClicked(photoId))
+                            },
                             onPhotoToggle = { photoId ->
                                 onEvent(
-                                    ScreenshotEvent.PhotoToggleSelection(
-                                        photoId
-                                    )
+                                    ScreenshotEvent.PhotoToggleSelection(photoId)
                                 )
                             },
                             onGroupToggle = { isSelected ->

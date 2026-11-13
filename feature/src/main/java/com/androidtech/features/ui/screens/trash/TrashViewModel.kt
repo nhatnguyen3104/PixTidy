@@ -12,6 +12,8 @@ import com.androidtech.domain.model.media.TrashActionResult
 import com.androidtech.domain.usecase.media.DeletePermanentlyUseCase
 import com.androidtech.domain.usecase.media.GetTrashedMediaUseCase
 import com.androidtech.domain.usecase.media.RestoreItemsUseCase
+import com.androidtech.features.ui.screens.similar.SimilarEffect
+import com.androidtech.features.ui.screens.similar.SimilarEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -72,6 +74,13 @@ class TrashViewModel @Inject constructor(
             }
             is TrashEvent.ClosePreview -> {
                 closePreview()
+            }
+            is TrashEvent.DismissBackConfirmation -> {
+                setState { copy(showBackConfirmationDialog = false) }
+            }
+            is TrashEvent.ConfirmBackClicked -> {
+                setState { copy(showBackConfirmationDialog = false) }
+                setEffect { TrashEffect.NavigateBack }
             }
         }
     }

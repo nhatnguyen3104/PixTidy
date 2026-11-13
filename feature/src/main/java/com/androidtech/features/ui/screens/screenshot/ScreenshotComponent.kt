@@ -40,6 +40,7 @@ import kotlin.collections.forEach
 @Composable
 fun ScreenshotTimeGroupSection(
     group: ScreenshotGroup,
+    onPhotoClick: (Long) -> Unit,
     onPhotoToggle: (Long) -> Unit,
     onGroupToggle: (Boolean) -> Unit
 ) {
@@ -134,6 +135,7 @@ fun ScreenshotTimeGroupSection(
                             Box(modifier = Modifier.weight(1f)) {
                                 ScreenshotCard(
                                     photo = item,
+                                    onItemClick = { onPhotoClick(item.id) },
                                     onToggle = { onPhotoToggle(item.id) }
                                 )
                             }
@@ -151,6 +153,7 @@ fun ScreenshotTimeGroupSection(
 @Composable
 fun ScreenshotCard(
     photo: MediaItem,
+    onItemClick: () -> Unit,
     onToggle: () -> Unit
 ) {
     val borderColor = if (photo.isSelected) MaterialTheme.colorScheme.primary else Color.Transparent
@@ -161,7 +164,7 @@ fun ScreenshotCard(
             .aspectRatio(1f)
             .clip(RoundedCornerShape(16.dp))
             .border(borderWidth, borderColor, RoundedCornerShape(16.dp))
-            .clickable { onToggle() }
+            .clickable { onItemClick() }
     ) {
         AsyncImage(
             model = photo.uri,
@@ -184,13 +187,27 @@ fun ScreenshotCard(
                 ),
             contentAlignment = Alignment.Center
         ) {
-            if (photo.isSelected) {
-                Icon(
-                    imageVector = Icons.Outlined.Check,
-                    contentDescription = "Selected",
-                    tint = MaterialTheme.colorScheme.onPrimary,
-                    modifier = Modifier.size(16.dp)
-                )
+            // Selection Circle Checkbox (Bottom-Right)
+            Box(
+                modifier = Modifier
+                    .align(Alignment.BottomEnd)
+                    .padding(8.dp)
+                    .size(24.dp)
+                    .clip(CircleShape)
+                    .background(
+                        if (photo.isSelected) MaterialTheme.colorScheme.primary else Color.White.copy(alpha = 0.75f)
+                    )
+                    .clickable { onToggle() },
+                contentAlignment = Alignment.Center
+            ) {
+                if (photo.isSelected) {
+                    Icon(
+                        imageVector = Icons.Outlined.Check,
+                        contentDescription = "Selected",
+                        tint = MaterialTheme.colorScheme.onPrimary,
+                        modifier = Modifier.size(16.dp)
+                    )
+                }
             }
         }
     }
