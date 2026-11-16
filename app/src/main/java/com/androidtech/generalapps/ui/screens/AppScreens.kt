@@ -12,6 +12,7 @@ import com.androidtech.base.extension.LocalNavController
 import com.androidtech.features.ui.screens.duplicate.duplicateScreen
 import com.androidtech.features.ui.screens.home.homeScreen
 import com.androidtech.features.ui.screens.language.languageScreen
+import com.androidtech.features.ui.screens.largevideo.largeVideoScreen
 import com.androidtech.features.ui.screens.onboarding.onboardingScreen
 import com.androidtech.features.ui.screens.scan.scanScreen
 import com.androidtech.features.ui.screens.screenshot.screenshotScreen
@@ -45,6 +46,7 @@ fun AppScreens(
                 duplicateScreen()
                 similarScreen()
                 screenshotScreen()
+                largeVideoScreen()
                 settingsScreen(onCheckForUpdates = onCheckForUpdates)
             }
         }

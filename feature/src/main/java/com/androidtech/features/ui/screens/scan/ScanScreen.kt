@@ -79,6 +79,9 @@ fun ScanScreen(
                 is ScanEffect.NavigareToScreenshot -> {
                     navController.navigate(AppDestination.ScreenshotScreen.route)
                 }
+                is ScanEffect.NavigateToLargeVideo -> {
+                    navController.navigate(AppDestination.LargeVideoScreen.route)
+                }
             }
         }
     }
@@ -194,7 +197,11 @@ fun ScanContent(
                         val screenshotSize = process.summary.screenshotBytes
                         val screenshotCount = process.summary.screenshotCount
 
-                        val videosSize = process.summary.videosSizeBytes
+                        val largeVideoInsight = remember(process.insights) {
+                            process.insights.firstOrNull { it.type == SmartInsightType.LARGE_VIDEOS }
+                        }
+                        val largeVideoSize = largeVideoInsight?.reclaimableBytes ?: process.summary.largeVideoBytes ?: 0L
+                        val largeVideoCount = largeVideoInsight?.affectedItemsCount ?: process.summary.largeVideoCount
 
                         Column(
                             modifier = Modifier.fillMaxWidth(),
@@ -264,15 +271,16 @@ fun ScanContent(
 
                             Spacer(modifier = Modifier.height(12.dp))
 
-                            // 4. Large Videos (Disabled / Coming Soon)
+                            // 4. Large Videos
                             ScanCategoryCard(
                                 title = stringResource(R.string.text_large_videos),
-                                sizeText = videosSize.formatSize(),
+                                sizeText = "$largeVideoCount items • ${largeVideoSize.formatSize()}",
                                 icon = Icons.Outlined.VideoLibrary,
                                 badgeColor = VideoBadge,
-                                isEnabled = false,
-                                comingSoonText = "Soon",
-                                onClick = {}
+                                isEnabled = true,
+                                onClick = {
+                                    onEvent(ScanEvent.SmartInsightTypeClick(SmartInsightType.LARGE_VIDEOS))
+                                }
                             )
                         }
                     }

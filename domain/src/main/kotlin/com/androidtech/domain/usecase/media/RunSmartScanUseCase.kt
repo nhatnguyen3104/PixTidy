@@ -29,6 +29,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Semaphore
 import kotlinx.coroutines.sync.withPermit
 import java.util.UUID
+import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicInteger
 import javax.inject.Inject
 
@@ -93,8 +94,17 @@ class RunSmartScanUseCase @Inject constructor(
         val screenshotIds = screenshots.mapTo(HashSet()) { it.id }
         val nonScreenshotImages = images.filterNot { it.id in screenshotIds }
 
-        // Stage e (video variant): large videos, independent of the image pipeline below
-        val largeVideos = videos.filter { it.size >= LARGE_VIDEO_THRESHOLD_BYTES }
+        // Stage e (video variant): relevant videos for categorization (screen recordings, old & long, massive >= 100MB)
+        val now = System.currentTimeMillis()
+        val largeVideos = videos.filter { item ->
+            val pathLower = item.path.lowercase()
+            val nameLower = item.name.lowercase()
+            val isScreen = pathLower.contains("screen") || nameLower.contains("screen") ||
+                    pathLower.contains("record") || nameLower.contains("record")
+            val isOldAndLong = (now - item.dateAdded >= TimeUnit.DAYS.toMillis(30)) && ((item.duration ?: 0L) >= TimeUnit.MINUTES.toMillis(2))
+            val isMassive = item.size >= LARGE_VIDEO_THRESHOLD_BYTES
+            isScreen || isOldAndLong || isMassive
+        }
 
         val globalTotal = allCandidates.size
 

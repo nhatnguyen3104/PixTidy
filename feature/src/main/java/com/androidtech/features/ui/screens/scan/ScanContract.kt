@@ -22,9 +22,8 @@ sealed class ScanEvent : UIEvent {
 
 sealed class ScanEffect : UIEffect {
     data object NavigateBack : ScanEffect()
-    // You could add NavigateToResults(groups) here if you want to move to another screen
     object NavigateToDuplicate : ScanEffect()
     object NavigateToSimilar : ScanEffect()
     object NavigareToScreenshot : ScanEffect()
-
+    object NavigateToLargeVideo : ScanEffect()
 }

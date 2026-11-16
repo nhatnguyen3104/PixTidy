@@ -187,22 +187,64 @@ class RecommendationEngineImpl @Inject constructor() : RecommendationEngine {
         )
     }
 
-    // ---- Large videos (informational, not "junk") -------------------------------------------------
+    // ---- Large videos (categorized into groups) -------------------------------------------------
 
     private fun buildLargeVideoInsight(largeVideos: List<MediaItem>): SmartInsight? {
         if (largeVideos.isEmpty()) return null
 
+        val now = System.currentTimeMillis()
+        val thirtyDaysMillis = TimeUnit.DAYS.toMillis(30)
+        val twoMinutesMillis = TimeUnit.MINUTES.toMillis(2)
+        val hundredMbBytes = 100L * 1024 * 1024
+
+        // 1. Screen Recordings
+        val screenRecordings = largeVideos.filter { item ->
+            val pathLower = item.path.lowercase()
+            val nameLower = item.name.lowercase()
+            pathLower.contains("screen") || nameLower.contains("screen") ||
+                    pathLower.contains("record") || nameLower.contains("record")
+        }
+        val screenRecordingIds = screenRecordings.mapTo(HashSet()) { it.id }
+
+        // 2. Old & Long Videos (>= 30 days old AND duration >= 2 mins)
+        val remainingAfterScreenshots = largeVideos.filterNot { it.id in screenRecordingIds }
+        val oldAndLongVideos = remainingAfterScreenshots.filter { item ->
+            val age = now - item.dateAdded
+            val duration = item.duration ?: 0L
+            age >= thirtyDaysMillis && duration >= twoMinutesMillis
+        }
+        val oldAndLongIds = oldAndLongVideos.mapTo(HashSet()) { it.id }
+
+        // 3. Massive Videos / Video dung lượng cực lớn (>= 100 MB)
+        val remainingAfterOldAndLong = remainingAfterScreenshots.filterNot { it.id in oldAndLongIds }
+        val massiveVideos = remainingAfterOldAndLong.filter { item ->
+            item.size >= hundredMbBytes
+        }
+
+        val groups = listOf(
+            Triple("large_video_screen_recordings", "Screen Recordings", screenRecordings),
+            Triple("large_video_old_and_long", "Old & Long Videos", oldAndLongVideos),
+            Triple("large_video_massive", "Video dung lượng cực lớn (>100MB)", massiveVideos)
+        ).filter { (_, _, items) -> items.isNotEmpty() }
+
+        if (groups.isEmpty()) return null
+
+        val allItems = groups.flatMap { (groupId, _, items) ->
+            items.map { item -> item.copy(groupId = groupId) }
+        }
+        val totalCount = groups.sumOf { it.third.size }
+        val totalBytes = groups.sumOf { group -> group.third.sumOf { it.size } }
+
         return SmartInsight(
             id = UUID.randomUUID().toString(),
             title = "Large videos",
-            description = "${largeVideos.size} video(s) are taking up a large share of your storage.",
+            description = "$totalCount video(s) across ${groups.size} category(ies) taking up storage.",
             type = SmartInsightType.LARGE_VIDEOS,
-            reclaimableBytes = largeVideos.sumOf { it.size },
-            affectedItemsCount = largeVideos.size,
-            items = largeVideos,
+            reclaimableBytes = totalBytes,
+            affectedItemsCount = totalCount,
+            items = allItems,
             confidenceScore = LARGE_VIDEO_CONFIDENCE,
-            explanation = "These are simply your biggest video files by size — nothing here is flagged " +
-                    "as unwanted. Consider backing up before deleting anything you'd want to keep."
+            explanation = "These are categorized video files (Screen Recordings, Old & Long Videos, and Massive Videos). Consider backing up before deleting anything."
         )
     }
 
