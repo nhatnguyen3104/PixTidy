@@ -24,7 +24,7 @@ data class MediaItem(
     val similarityPercentage: Int? = null,
     val isTrashed: Boolean = false
 ) {
-    val isVideo: Boolean get() = mimeType.startsWith("video/")
+    val isVideo: Boolean get() = mimeType.startsWith("video/") || (duration ?: 0L) > 0
     val isImage: Boolean get() = mimeType.startsWith("image/")
 
     /** Aspect ratio guard: MediaStore occasionally reports 0x0 for corrupt/pending entries. */

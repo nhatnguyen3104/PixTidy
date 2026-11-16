@@ -75,6 +75,7 @@ dependencies {
 
     // Coil
     implementation(libs.io.coil.kt.compose)
+    implementation(libs.io.coil.kt.video)
 
     // Exo player
     implementation(libs.androidx.media3.exoplayer)

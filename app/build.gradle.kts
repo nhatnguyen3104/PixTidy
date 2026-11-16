@@ -156,6 +156,7 @@ dependencies {
     implementation(libs.com.jakewharton.timber)
     // Coil
     implementation(libs.io.coil.kt.compose)
+    implementation(libs.io.coil.kt.video)
     // Work manager
 //    implementation(libs.androidx.runtime.worker)
     // Exo player
@@ -206,8 +207,6 @@ dependencies {
 //    implementation(libs.camera.camera2)
     // Admob
     implementation(libs.ads.mobile.sdk)
-    // Admob_GMA
-    //implementation(libs.com.android.libraries.ads.mobile)
     // Firebase
     implementation(platform(libs.com.google.firebase.bom))
     implementation(libs.com.google.firebase.analytics)

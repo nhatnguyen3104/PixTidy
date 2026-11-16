@@ -16,6 +16,7 @@ import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.outlined.Check
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -25,8 +26,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
+import coil.request.ImageRequest
+import coil.request.videoFrameMillis
 import com.androidtech.domain.model.media.MediaItem
 
 @Composable
@@ -58,6 +62,9 @@ fun TrashGridItem(
     onItemClick: () -> Unit,
     onToggle: () -> Unit
 ) {
+    val context = LocalContext.current
+    val isVideo = item.isVideo
+
     val borderColor = if (item.isSelected) MaterialTheme.colorScheme.primary else Color.Transparent
     val borderWidth = if (item.isSelected) 3.dp else 0.dp
     Box(
@@ -68,12 +75,36 @@ fun TrashGridItem(
             .clickable { onItemClick() }
     ) {
         AsyncImage(
-            model = item.uri,
+            model = ImageRequest.Builder(context)
+                .data(item.uri)
+                .apply {
+                    if (isVideo) videoFrameMillis(0)
+                }
+                .crossfade(true)
+                .build(),
             contentDescription = item.name,
             contentScale = ContentScale.Crop,
             modifier = Modifier.fillMaxSize()
 
         )
+        if (isVideo) {
+            Box(
+                modifier = Modifier
+                    .align(Alignment.Center)
+                    .size(40.dp)
+                    .clip(CircleShape)
+                    .background(Color.Black.copy(alpha = 0.5f)),
+                contentAlignment = Alignment.Center
+            ) {
+                Icon(
+                    imageVector = Icons.Filled.PlayArrow,
+                    contentDescription = "Video",
+                    tint = Color.White,
+                    modifier = Modifier.size(24.dp)
+                )
+            }
+        }
+
         // Selection Circle Checkbox (Bottom-Right)
         Box(
             modifier = Modifier

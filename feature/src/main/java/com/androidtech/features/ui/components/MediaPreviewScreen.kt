@@ -66,8 +66,7 @@ fun MediaPreviewScreen(
             pageSpacing = pageSpacing
         ) { page ->
             val mediaItem = mediaList[page]
-            val isVideo = mediaItem.mimeType.startsWith("video") ||
-                    (mediaItem.duration ?: 0L) > 0
+            val isVideo = mediaItem.isVideo
 
             // --- Carousel animation ---
             // offsetFraction: 0f when centred, ±1f when one full page away.
