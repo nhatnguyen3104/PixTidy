@@ -145,13 +145,15 @@ fun LargeVideoContent(
                 title = {
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
                         Text(
-                            text = "Large Videos",
+                            text = stringResource(R.string.text_large_videos),
                             style = Title20Bold,
                             color = MaterialTheme.colorScheme.onBackground
                         )
 
                         Text(
-                            text = "${groups.sumOf { it.videoItems.size }} videos • ${totalSize.formatSize()}",
+                            text = stringResource(
+                                R.string.text_large_videos_description,
+                                uiState.largeVideoGroups.size, totalSize.formatSize() ),
                             style = Body16Medium
                         )
                     }
@@ -262,14 +264,14 @@ fun LargeVideoContent(
                     )
                     Spacer(modifier = Modifier.height(16.dp))
                     Text(
-                        text = "No large videos found",
+                        text = stringResource(R.string.text_no_large_video_found),
                         style = Title20Bold,
                         color = MaterialTheme.colorScheme.onBackground,
                         textAlign = TextAlign.Center
                     )
                     Spacer(modifier = Modifier.height(8.dp))
                     Text(
-                        text = "Videos meeting your storage criteria will appear here.",
+                        text = stringResource(R.string.text_no_large_video_description),
                         style = Body16Medium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         textAlign = TextAlign.Center

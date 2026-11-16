@@ -86,7 +86,6 @@
     <string name="text_no_similar_photos_found">No similar photos found</string>
     <string name="text_no_similar_photos_description">Your photo gallery has no similar items.</string>
 
-    <string name="text_large_videos">Large videos</string>
 
     <!-- Screenshot -->
     <string name="text_screenshots_old">Old Screenshots</string>
@@ -94,6 +93,13 @@
     <string name="text_screenshot_time">%1$s</string>
     <string name="text_no_screenshots_found">No old screenshots found</string>
     <string name="text_no_screenshots_description">Your screenshot library is clean and organized.</string>
+
+    <!-- LargeVideo -->
+    <string name="text_large_videos">Large Videos</string>
+    <string name="text_large_videos_description">%1$d groups • %2$s</string>
+    <string name="text_large_video_classify">%1$s</string>
+    <string name="text_no_large_video_found">No large videos found</string>
+    <string name="text_no_large_video_description">Videos meeting your storage criteria will appear here.</string>
 
     <!-- Settings -->
     <string name="text_settings_title">Settings</string>
