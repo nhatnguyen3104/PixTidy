@@ -10,7 +10,7 @@
         <key>config_format_ad_id</key>
         <value>
             {
-            "inter": {
+            "interstitial": {
             "adUnitId": "ca-app-pub-3940256099942544/1033173712"
             },
             "app_open": {
@@ -22,7 +22,10 @@
             "banner": {
             "adUnitId": "ca-app-pub-3940256099942544/6300978111"
             },
-            "native": {
+            "native_small": {
+            "adUnitId": "ca-app-pub-3940256099942544/2247696110"
+            },
+            "native_medium": {
             "adUnitId": "ca-app-pub-3940256099942544/2247696110"
             },
             "language_native": {
@@ -36,53 +39,372 @@
     </entry>
 
     <entry>
-        <key>country_disable_ads</key>
+        <key>ad_places_app_open</key>
+        <value>
+            [
+            {
+            "name": "open_app_first",
+            "ad_id_v1": "",
+            "ad_type": "app_open",
+            "app_open_delay_before_show_millis": 200
+            },
+            {
+            "name": "open_app",
+            "ad_id_v1": "",
+            "ad_type": "app_open",
+            "app_open_delay_before_show_millis": 200
+            },
+            {
+            "name": "reopen_app",
+            "ad_id_v1": "",
+            "ad_type": "app_open",
+            "app_open_delay_before_show_millis": 200
+            }
+            ]
+        </value>
+    </entry>
+    <entry>
+        <key>ad_places_banner</key>
+        <value>
+            [
+            {
+            "name": "splash_bottom",
+            "level": "0|2",
+            "ad_type": "banner"
+            },
+            {
+            "name": "home_bottom",
+            "level": "1|3",
+            "ad_type": "banner"
+            },
+            {
+            "name": "ai_smart_bottom",
+            "level": "0|2",
+            "ad_type": "banner"
+            },
+            {
+            "name": "success_bottom",
+            "level": "success",
+            "ad_type": "banner"
+            },
+            {
+            "name": "preview_bottom",
+            "level": "1|3",
+            "ad_type": "banner"
+            }
+            ]
+        </value>
+    </entry>
+    <entry>
+        <key>ad_places_native</key>
+        <value>
+            [
+            {
+            "name": "open_native_first",
+            "level": "open_native",
+            "ad_id_v1": "",
+            "ad_type": "native",
+            "native_template_type": "full",
+            "native_inter_enable": true,
+            "native_inter_media_margin_top": 0,
+            "native_inter_countdown_sec": 6,
+            "native_inter_delay_after_countdown_sec": 0,
+            "native_inter_countdown_style": "text_short",
+            "native_inter_ad_refresh_count": 1
+            },
+            {
+            "name": "open_native",
+            "level": "open_native",
+            "ad_id_v1": "",
+            "ad_type": "native",
+            "native_template_type": "full",
+            "native_inter_enable": true,
+            "native_inter_media_margin_top": 0,
+            "native_inter_countdown_sec": 6,
+            "native_inter_delay_after_countdown_sec": 0,
+            "native_inter_countdown_style": "text_short",
+            "native_inter_ad_refresh_count": 1
+            },
+            {
+            "name": "native_after_inter",
+            "level": "native_after_inter",
+            "ad_type": "native",
+            "native_template_type": "full",
+            "native_inter_enable": true,
+            "native_inter_media_margin_top": 0,
+            "native_inter_countdown_sec": 6,
+            "native_inter_delay_after_countdown_sec": 0,
+            "native_inter_countdown_style": "text_short",
+            "native_inter_ad_refresh_count": 0,
+            "native_inter_icon_size": 40,
+            "is_enable_ogn": false
+            },
+            {
+            "name": "language_bottom",
+            "ad_id_v1": "",
+            "level": "2",
+            "ad_type": "native",
+            "is_can_reuse_ads": true,
+            "native_template_type": "medium_media_left_cta_bottom"
+            },
+            {
+            "name": "language_2_bottom",
+            "ad_id_v1": "",
+            "level": "2.2",
+            "ad_type": "native",
+            "is_can_reuse_ads": true,
+            "native_template_type": "medium_media_left_cta_bottom"
+            },
+            {
+            "name": "intro_bottom",
+            "ad_id_v1": "",
+            "level": "intro",
+            "ad_type": "native",
+            "is_can_reuse_ads": true,
+            "native_template_type": "medium_media_left_cta_bottom"
+            },
+            {
+            "name": "intro_v2_bottom",
+            "ad_id_v1": "",
+            "level": "intro",
+            "ad_type": "native",
+            "native_template_type": "medium_media_left_cta_bottom",
+            "is_can_reuse_ads": true,
+            "native_stroke_width": 1,
+            "native_bg_radius": 12,
+            "margin_top": 8,
+            "margin_bottom": 8,
+            "margin_left": 8,
+            "margin_right": 8
+            },
+            {
+            "name": "intro_item_v2_full",
+            "ad_id_v1": "",
+            "level": "intro_full",
+            "ad_type": "native",
+            "native_template_type": "full",
+            "is_can_reuse_ads": true,
+            "native_stroke_width": 0
+            },
+            {
+            "name": "exit_app_bottom",
+            "level": "2",
+            "native_template_type": "medium_media_left_cta_bottom",
+            "ad_type": "native"
+            },
+            {
+            "name": "swipe_trash_bottom",
+            "level": "2",
+            "native_template_type": "medium_media_left",
+            "ad_type": "native"
+            },
+            {
+            "name": "trash_bottom",
+            "level": "2",
+            "native_template_type": "medium_media_left",
+            "ad_type": "native"
+            },
+            {
+            "name": "easy_clean_bottom",
+            "level": "2",
+            "native_template_type": "medium_media_left",
+            "ad_type": "native"
+            },
+            {
+            "name": "clean_bottom",
+            "level": "2",
+            "native_template_type": "medium_media_left",
+            "ad_type": "native"
+            },
+            {
+            "name": "delete_in_progress_inline",
+            "level": "2",
+            "native_template_type": "medium_media_left_cta_bottom",
+            "ad_type": "native"
+            },
+            {
+            "name": "setting_bottom",
+            "level": "2",
+            "native_template_type": "medium_media_left_cta_bottom",
+            "ad_type": "native"
+            }
+            ]
+        </value>
+    </entry>
+    <entry>
+        <key>ad_places_fullscreen</key>
+        <value>
+            [
+            {
+            "name": "open_first",
+            "ad_type": "interstitial",
+            "is_auto_load_after_dismiss": false,
+            "is_ignore_interval": true
+            },
+            {
+            "name": "open",
+            "ad_type": "interstitial",
+            "is_auto_load_after_dismiss": false,
+            "is_ignore_interval": true
+            },
+            {
+            "name": "pass_intro",
+            "ad_type": "interstitial",
+            "is_auto_load_after_dismiss": false,
+            "is_ignore_interval": true,
+            "native_full_after_inter_name": "native_after_inter"
+            },
+            {
+            "name": "open_item",
+            "ad_type": "interstitial",
+            "native_full_after_inter_name": "native_after_inter"
+            },
+            {
+            "name": "back_home",
+            "ad_type": "interstitial",
+            "native_full_after_inter_name": "native_after_inter"
+            },
+            {
+            "name": "trash_delete",
+            "ad_type": "interstitial",
+            "native_full_after_inter_name": "native_after_inter"
+            },
+            {
+            "name": "ai_smart_delete",
+            "ad_type": "interstitial",
+            "native_full_after_inter_name": "native_after_inter"
+            },
+            {
+            "name": "photo_clean_delete",
+            "ad_type": "interstitial",
+            "native_full_after_inter_name": "native_after_inter"
+            },
+            {
+            "name": "video_clean_delete",
+            "ad_type": "interstitial",
+            "native_full_after_inter_name": "native_after_inter"
+            },
+            {
+            "name":"ai_smart_clean",
+            "ad_type":"rewarded",
+            "is_ignore_interval": true
+            }
+            ]
+        </value>
+    </entry>
+
+    <entry>
+        <key>config_countries_disable_ads</key>
         <value>[]</value>
     </entry>
 
     <entry>
-        <key>config_ads_banner</key>
+        <key>config_prevent_ad_click</key>
         <value>
             {
-
+            "max_ad_click_per_session": 10,
+            "time_per_session": 300,
+            "time_disable_ads_when_reached_max_ad_click": 1800
             }
         </value>
     </entry>
 
+    <entry>
+        <key>config_ads_app_open</key>
+        <value>
+            {
+            "is_wait_load_to_show":false,
+            "time_interval":5,
+            "time_millis_delay_before_show":200,
+            "max_retry_count":3,
+            "delay_times_d":[2],
+            "delay_times_s":[2],
+            "time_disable_v3":200,
+            "time_disable_v2":100
+            }
+        </value>
+    </entry>
     <entry>
         <key>config_ads_native</key>
         <value>
             {
-
+            "max_retry_count":3,
+            "delay_times_d":[3],
+            "delay_times_s":[3],
+            "time_disable_v3":600,
+            "time_disable_v2":300
             }
         </value>
     </entry>
-
-    <entry>
-        <key>config_ads_app_open_ad</key>
-        <value>
-            {
-
-            }
-        </value>
-    </entry>
-
-    <entry>
-        <key>config_ads_rewarded</key>
-        <value>
-            {
-
-            }
-        </value>
-    </entry>
-
     <entry>
         <key>config_ads_interstitial</key>
         <value>
             {
-
+            "is_wait_load_to_show": false,
+            "max_show_per_session": 20,
+            "time_per_session": 600,
+            "time_interval": 30,
+            "time_interval_after_show_open_ad": 5,
+            "": 3,
+            "delay_times_d": [
+            3
+            ],
+            "delay_times_s": [
+            3
+            ],
+            "time_disable_v3": 300,
+            "time_disable_v2": 150
+            }
+        </value>
+    </entry>
+    <entry>
+        <key>config_ads_banner</key>
+        <value>
+            {
+            "banner_refresh_enable": true,
+            "banner_refresh_default_rate_s": 30,
+            "banner_refresh_buffer_size": 1,
+            "banner_refresh_rates_s": {
+            "admob": 30,
+            "meta": 20,
+            "iron_source": 20,
+            "liftoff": 20,
+            "pangle": 20,
+            "mintegral": 20,
+            "moloco": 20,
+            "unity": 20
+            },
+            "max_retry_count": 5,
+            "time_millis_delay_before_show": 0
+            }
+        </value>
+    </entry>
+    <entry>
+        <key>config_ads_rewarded</key>
+        <value>
+            {
+            "is_wait_load_to_show": true,
+            "max_retry_count": 3,
+            "delay_times_d": [ 3 ],
+            "delay_times_s": [ 3 ],
+            "time_disable_v3": 300,
+            "time_disable_v2": 150
             }
         </value>
     </entry>
 
+    <entry>
+        <key>config_ads_rewarded_interstitial</key>
+        <value>
+            {
+            "is_wait_load_to_show": true,
+            "max_retry_count": 3,
+            "delay_times_d": [ 3 ],
+            "delay_times_s": [ 3 ],
+            "time_disable_v3": 300,
+            "time_disable_v2": 150,
+            "time_interval": 30
+            }
+        </value>
+    </entry>
 </defaults>

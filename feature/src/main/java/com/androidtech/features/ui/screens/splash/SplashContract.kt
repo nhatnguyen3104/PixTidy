@@ -12,6 +12,7 @@ data class SplashState(
     val progress: Float = 0f,
     val isOnboardingCompleted: Boolean = false,
     val nativeHolder: NativeAdHolder? = null,
+    val adLoadTrigger: Int = 0
 ): UIState
 
 sealed class SplashEvent: UIEvent {

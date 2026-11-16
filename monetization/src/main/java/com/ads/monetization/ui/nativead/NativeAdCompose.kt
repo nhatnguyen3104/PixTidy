@@ -8,6 +8,7 @@ import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.TextView
 import androidx.appcompat.widget.AppCompatButton
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -32,8 +33,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -47,6 +50,10 @@ import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.ComposeView
+import androidx.lifecycle.compose.LocalLifecycleOwner
+import androidx.lifecycle.setViewTreeLifecycleOwner
+import androidx.savedstate.compose.LocalSavedStateRegistryOwner
+import androidx.savedstate.setViewTreeSavedStateRegistryOwner
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
@@ -60,6 +67,7 @@ import com.androidtech.base.theme.NativeAdBodyColor
 import com.androidtech.base.theme.NativeAdTitleColor
 import com.androidtech.base.theme.PrimaryBlue
 import com.androidtech.base.theme.SurfaceWhite
+import com.ads.monetization.R
 import com.ads.monetization.adholder.NativeAdHolder
 import com.google.android.libraries.ads.mobile.sdk.common.AdChoicesView
 import com.google.android.libraries.ads.mobile.sdk.nativead.MediaView
@@ -89,65 +97,20 @@ val MEDIUM_NATIVE_AD_HEIGHT = 260.dp
 
 @Composable
 fun SmallNativeAdView(adHolder: NativeAdHolder?, modifier: Modifier = Modifier) {
-    val ad = adHolder?.nativeAd
-    if (ad != null) {
-        SmallNativeAdView(ad = ad, modifier = modifier)
-    } else {
-        NativeAdPlaceholder(height = SMALL_NATIVE_AD_HEIGHT, modifier = modifier)
-    }
+    val ad = adHolder?.nativeAd ?: return
+    SmallNativeAdView(ad = ad, modifier = modifier)
 }
 
 @Composable
 fun MediumNativeAdView(adHolder: NativeAdHolder?, modifier: Modifier = Modifier) {
-    val ad = adHolder?.nativeAd
-    if (ad != null) {
-        MediumNativeAdView(ad = ad, modifier = modifier)
-    } else {
-        NativeAdPlaceholder(height = MEDIUM_NATIVE_AD_HEIGHT, modifier = modifier)
-    }
+    val ad = adHolder?.nativeAd ?: return
+    MediumNativeAdView(ad = ad, modifier = modifier)
 }
 
 @Composable
 fun FullNativeAdView(adHolder: NativeAdHolder?, modifier: Modifier = Modifier) {
-    val ad = adHolder?.nativeAd
-    if (ad != null) {
-        FullNativeAdView(ad = ad, modifier = modifier)
-    } else {
-        NativeAdPlaceholder(height = 300.dp, modifier = modifier)
-    }
-}
-
-@Composable
-fun NativeAdPlaceholder(
-    height: androidx.compose.ui.unit.Dp,
-    modifier: Modifier = Modifier
-) {
-    Box(
-        modifier = modifier
-            .fillMaxWidth()
-            .height(height)
-            .background(
-                color = SurfaceWhite,
-                shape = RoundedCornerShape(16.dp)
-            ),
-        contentAlignment = Alignment.Center
-    ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
-            CircularProgressIndicator(
-                modifier = Modifier.size(24.dp),
-                strokeWidth = 2.dp,
-                color = PrimaryBlue
-            )
-            Text(
-                text = "Loading Ad...",
-                style = Body14Regular,
-                color = NativeAdBodyColor
-            )
-        }
-    }
+    val ad = adHolder?.nativeAd ?: return
+    FullNativeAdView(ad = ad, modifier = modifier)
 }
 
 @Composable

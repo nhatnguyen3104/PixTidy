@@ -40,8 +40,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
+import com.ads.monetization.ui.nativead.DisplayNativeAdView
 import com.ads.monetization.ui.nativead.MediumNativeAdView
-import com.ads.monetization.ui.nativead.SmallNativeAdView
 import com.androidtech.base.R
 import com.androidtech.base.extension.AppDestination
 import com.androidtech.base.extension.LocalNavController
@@ -148,57 +148,68 @@ private fun LanguageScreenContent(
     uiState: LanguageState,
     onActionEvent: (LanguageEvent) -> Unit
 ) {
-    Column(
-        modifier = modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.spacedBy(12.dp)
-    ) {
-        // 1. Header (title + save button)
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 16.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text(
-                text = stringResource(R.string.text_select_language),
-                style = Title20Bold,
-                color = Color.Black,
-                textAlign = TextAlign.Center,
-                modifier = Modifier.weight(1f)
-            )
-
-            Button(
-                onClick = { onActionEvent(LanguageEvent.ClickToSaveLanguage) },
-                contentPadding = PaddingValues(2.dp),
-                shape = RoundedCornerShape(100.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = Color.Blue),
-                modifier = Modifier.padding(end = 16.dp)
+    androidx.compose.material3.Scaffold(
+        modifier = modifier,
+        topBar = {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 16.dp),
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                Image(
-                    painter = painterResource(R.drawable.ic_save_language),
-                    contentDescription = "Save icon",
-                    colorFilter = ColorFilter.tint(Color.White)
+                Text(
+                    text = stringResource(R.string.text_select_language),
+                    style = Title20Bold,
+                    color = Color.Black,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.weight(1f)
                 )
+
+                Button(
+                    onClick = { onActionEvent(LanguageEvent.ClickToSaveLanguage) },
+                    contentPadding = PaddingValues(2.dp),
+                    shape = RoundedCornerShape(100.dp),
+                    colors = ButtonDefaults.buttonColors(containerColor = Color.Blue),
+                    modifier = Modifier.padding(end = 16.dp)
+                ) {
+                    Image(
+                        painter = painterResource(R.drawable.ic_save_language),
+                        contentDescription = "Save icon",
+                        colorFilter = ColorFilter.tint(Color.White)
+                    )
+                }
             }
+        },
+        bottomBar = {
+            DisplayNativeAdView(
+                adHolder = uiState.nativeHolder,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(Color.White)
+                    .padding(16.dp)
+            )
+        },
+        containerColor = Color.White
+    ) { paddingValues ->
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(paddingValues)
+                .padding(horizontal = 16.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+            // 1. Header (title + save button)
+
+
+            // 2. Language list — weight(1f)
+            LanguageList(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(1f),
+                allLanguages = uiState.allLanguages,
+                onActionEvent = onActionEvent
+            )
         }
-
-        // 2. Language list — weight(1f)
-        LanguageList(
-            modifier = Modifier
-                .padding(horizontal = 16.dp)
-                .fillMaxWidth()
-                .weight(1f),
-            allLanguages = uiState.allLanguages,
-            onActionEvent = onActionEvent
-        )
-
-        // 3. Ad view
-        MediumNativeAdView(
-            adHolder = uiState.nativeHolder,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp)
-        )
     }
 }
 

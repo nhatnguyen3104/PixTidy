@@ -2,7 +2,10 @@ package com.androidtech.features.ui.screens.home
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
+import com.ads.monetization.AdManager
+import com.ads.monetization.adplacename.AdPlaceName
 import com.androidtech.base.viewmodel.BaseViewModel
+import com.androidtech.data.model.aduiresource.getAdPlaceName
 import com.androidtech.domain.extensions.UiState
 import com.androidtech.domain.model.media.ScanLayer
 import com.androidtech.domain.model.media.ScanSummary
@@ -22,7 +25,8 @@ import javax.inject.Inject
 class HomeViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val runFastScanUseCase: RunFastScanUseCase,
-    private val getLatestScanResultsUseCase: GetLatestScanResultsUseCase
+    private val getLatestScanResultsUseCase: GetLatestScanResultsUseCase,
+    private val adManager: AdManager
 ) : BaseViewModel<HomeEvent, HomeState, HomeEffect>(savedStateHandle) {
     override fun createInitializeState(): HomeState = HomeState()
 
@@ -30,6 +34,8 @@ class HomeViewModel @Inject constructor(
 
     init {
         observeScanResults()
+        loadBannerAd()
+        observeBannerAd()
     }
 
     private fun observeScanResults() {
@@ -133,4 +139,27 @@ class HomeViewModel @Inject constructor(
             }
         }
     }
+
+    private fun loadBannerAd() {
+        viewModelScope.launch {
+            adManager.preloadBannerNativeAd(
+                placeName = AdPlaceName.HOME_BOTTOM,
+                subPlaceLevel = 0
+            )
+            val bannerHolder = adManager.getBannerAdHolder(AdPlaceName.HOME_BOTTOM)
+            setState { copy(bannerAdHolder = bannerHolder) }
+        }
+    }
+
+    private fun observeBannerAd() {
+        viewModelScope.launch {
+            adManager.adBannerNativeFlow.collect { resource ->
+                if (resource.getAdPlaceName() == AdPlaceName.HOME_BOTTOM) {
+                    val bannerHolder = adManager.getBannerAdHolder(AdPlaceName.HOME_BOTTOM)
+                    setState { copy(bannerAdHolder = bannerHolder) }
+                }
+            }
+        }
+    }
+
 }

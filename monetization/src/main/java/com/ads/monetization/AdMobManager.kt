@@ -164,6 +164,21 @@ class AdMobManager @Inject constructor(
     private val adHolderMap = mutableMapOf<String, AdHolder>()
     private val adHolderFullScreenMap = mutableMapOf<String, AdHolder>()
 
+    private data class PendingBannerNativePreload(
+        val placeName: String,
+        val subPlaceLevel: Int,
+        val isCanShowBannerCollapsibleIfNeed: Boolean,
+        val isPreloadForTheSameActivity: Boolean
+    )
+
+    private data class PendingFullScreenPreload(
+        val activity: Activity,
+        val placeName: String
+    )
+
+    private val pendingBannerNativePreloads = mutableSetOf<PendingBannerNativePreload>()
+    private val pendingFullScreenPreloads = mutableSetOf<PendingFullScreenPreload>()
+
     private val countryCode by lazy { context.getCountryCode() }
 
     private var fullScreenAdWaitLoadJob: Job? = null
@@ -193,11 +208,36 @@ class AdMobManager @Inject constructor(
 
                     applicationScope.launch {
                         _requestConsentFlow.emit(ConsentFromUiResource.Complete)
+                        processPendingPreloads()
                     }
                 }
             } catch (exception: Throwable) {
                 DataLogger.e("initializeMobileAdsSdk failed", exception)
                 _requestConsentFlow.emit(ConsentFromUiResource.Complete)
+            }
+        }
+    }
+
+    private fun processPendingPreloads() {
+        applicationScope.launch(Dispatchers.Main) {
+            val pendingNative = pendingBannerNativePreloads.toList()
+            pendingBannerNativePreloads.clear()
+            pendingNative.forEach { pending ->
+                preloadBannerNativeAd(
+                    placeName = pending.placeName,
+                    subPlaceLevel = pending.subPlaceLevel,
+                    isCanShowBannerCollapsibleIfNeed = pending.isCanShowBannerCollapsibleIfNeed,
+                    isPreloadForTheSameActivity = pending.isPreloadForTheSameActivity
+                )
+            }
+
+            val pendingFull = pendingFullScreenPreloads.toList()
+            pendingFullScreenPreloads.clear()
+            pendingFull.forEach { pending ->
+                preloadFullScreenAd(
+                    activity = pending.activity,
+                    placeName = pending.placeName
+                )
             }
         }
     }
@@ -286,8 +326,8 @@ class AdMobManager @Inject constructor(
     override fun preloadFullScreenAd(activity: Activity, placeName: String) {
         DataLogger.d("→ preloadFullScreenAd $placeName")
         if (!MobileAds.isInitialized) {
-            DataLogger.d("preloadFullScreenAd $placeName")
-            notifyAdFullScreenNotValidOrLoadFailed(getAdPlaceBy(placeName))
+            DataLogger.d("preloadFullScreenAd $placeName queued: SDK not initialized yet")
+            pendingFullScreenPreloads.add(PendingFullScreenPreload(activity, placeName))
             return
         }
         if (!remoteConfigService.getRemoteConfigAdsActive()) {
@@ -359,8 +399,15 @@ class AdMobManager @Inject constructor(
     ) {
         DataLogger.d("→ preloadBannerNative $placeName subPlace=$subPlaceLevel sameActivity=$isPreloadForTheSameActivity")
         if (!MobileAds.isInitialized) {
-            DataLogger.d("← preloadBannerNative $placeName skipped: SDK not initialized")
-            notifyAdFullScreenNotValidOrLoadFailed(getAdPlaceBy(placeName))
+            DataLogger.d("← preloadBannerNative $placeName queued: SDK not initialized yet")
+            pendingBannerNativePreloads.add(
+                PendingBannerNativePreload(
+                    placeName = placeName,
+                    subPlaceLevel = subPlaceLevel,
+                    isCanShowBannerCollapsibleIfNeed = isCanShowBannerCollapsibleIfNeed,
+                    isPreloadForTheSameActivity = isPreloadForTheSameActivity
+                )
+            )
             return
         }
         if (!remoteConfigService.getRemoteConfigAdsActive()) {
@@ -1057,9 +1104,13 @@ class AdMobManager @Inject constructor(
     private fun loadNativeAdIfNeed(
         adHolder: NativeAdHolder
     ) {
+        if (adHolder.isLoading) {
+            DataLogger.d("loadNativeAdIfNeed skipped: already loading ${adHolder.adPlace.placeName}")
+            return
+        }
         val adPlace = getAdPlaceBy(adHolder.adPlace.placeName)
 
-        applicationScope.launch {
+        applicationScope.launch(Dispatchers.Main) {
             val videoOptions = VideoOptions.Builder()
                 .setStartMuted(true)
                 .setCustomControlsRequested(false)
@@ -1098,6 +1149,8 @@ class AdMobManager @Inject constructor(
                 override fun onAdFailedToLoad(adError: LoadAdError) {
                     super.onAdFailedToLoad(adError)
                     DataLogger.e("loadNativeAdIfNeed onAdFailedToLoad: ${adError.message}")
+                    adHolder.isLoading = false
+                    notifyBannerNativeFailedToLoad(adHolder.adPlace.placeName, adHolder.subPlaceLevel)
                 }
             }
             adHolder.isLoading = true

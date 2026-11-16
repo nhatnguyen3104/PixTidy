@@ -34,7 +34,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.flowWithLifecycle
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
-import com.ads.monetization.ui.nativead.SmallNativeAdView
+import com.ads.monetization.ui.nativead.DisplayNativeAdView
 import com.androidtech.base.R
 import com.androidtech.base.extension.AppDestination
 import com.androidtech.base.extension.LocalNavController
@@ -86,9 +86,10 @@ fun SplashScreen(
                     }
                 }
                 is SplashEffect.ShowFullScreenAd -> {
-                    activity?.let {
+                    // Commented out interstitial show for now
+                    /* activity?.let {
                         viewModel.handleEvent(SplashEvent.ShowInterAd(activity))
-                    }
+                    } */
                 }
             }
         }
@@ -189,7 +190,7 @@ fun SplashContent(
             }
 
             // Native Ad
-            SmallNativeAdView(
+            DisplayNativeAdView(
                 adHolder = uiState.nativeHolder,
                 modifier = Modifier.padding(16.dp)
             )

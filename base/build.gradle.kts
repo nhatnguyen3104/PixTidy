@@ -26,7 +26,7 @@ android {
         minSdk = 28
         consumerProguardFiles("consumer-rules.pro")
 
-        buildConfigField("String", "admob_app_id", "\"${secrets.getProperty("ID_ADMOB_Prod") ?: "ca-app-pub-3940256099942544~3347511713"}\"")
+        buildConfigField("String", "admob_app_id", "\"${secrets.getProperty("ID_ADMOB_Dev") ?: "ca-app-pub-3940256099942544~3347511713"}\"")
     }
 
     buildTypes {

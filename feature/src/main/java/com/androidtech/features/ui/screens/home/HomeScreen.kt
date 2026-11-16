@@ -30,6 +30,9 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.background
+import androidx.compose.ui.graphics.Color
+import com.ads.monetization.ui.bannerad.BannerAd
 import com.androidtech.base.R
 import com.androidtech.base.extension.AppDestination
 import com.androidtech.base.extension.LocalNavController
@@ -249,6 +252,14 @@ fun HomeContent(
                 windowInsets = WindowInsets(left = 0, top = 0, right = 0, bottom = 0)
             )
         },
+        bottomBar = {
+            BannerAd(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(Color.White),
+                adHolder = uiState.bannerAdHolder
+            )
+        },
         containerColor = MaterialTheme.colorScheme.background
     ) { paddingValues ->
         Column(
@@ -439,7 +450,6 @@ fun HomeContent(
                     )
                 )
             }
-
             Spacer(modifier = Modifier.height(16.dp))
         }
     }

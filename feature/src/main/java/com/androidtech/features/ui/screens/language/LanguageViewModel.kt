@@ -12,6 +12,7 @@ import com.androidtech.data.model.aduiresource.getAdPlaceName
 import com.androidtech.base.model.LanguageModel
 import com.androidtech.base.prefs.PreferenceHelper
 import com.androidtech.base.viewmodel.BaseViewModel
+import com.androidtech.domain.usecase.FetchAndActiveRemoteConfigsUseCase
 import com.androidtech.domain.usecase.settings.GetUserSettingsUseCase
 import com.androidtech.domain.usecase.settings.UpdateLanguageUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -29,6 +30,7 @@ class LanguageViewModel @Inject constructor(
     private val getUserSettingsUseCase: GetUserSettingsUseCase,
     private val updateLanguageUseCase: UpdateLanguageUseCase,
     private val adManager: AdManager,
+    private val fetchAndActiveConfigsUseCase: FetchAndActiveRemoteConfigsUseCase,
 ) : BaseViewModel<LanguageEvent, LanguageState, LanguageEffect>(savedStateHandle) {
     override fun createInitializeState(): LanguageState = LanguageState()
 
@@ -119,6 +121,7 @@ class LanguageViewModel @Inject constructor(
 
     private fun preloadAds() {
         viewModelScope.launch {
+            launch { fetchAndActiveConfigsUseCase() }
             adManager.preloadBannerNativeAd(placeName = AdPlaceName.LANGUAGE_BOTTOM)
             val nativeHolder = adManager.getNativeAdHolder(AdPlaceName.LANGUAGE_BOTTOM)
             setState { copy(nativeHolder = nativeHolder, adLoadTrigger = adLoadTrigger + 1) }

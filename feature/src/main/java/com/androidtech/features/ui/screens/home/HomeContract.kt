@@ -1,5 +1,6 @@
 package com.androidtech.features.ui.screens.home
 
+import com.ads.monetization.adholder.BannerAdHolder
 import com.androidtech.base.viewmodel.UIEffect
 import com.androidtech.base.viewmodel.UIEvent
 import com.androidtech.base.viewmodel.UIState
@@ -11,7 +12,8 @@ data class HomeState(
     val isLoading: Boolean = false,
     val isPermissionGranted: Boolean = false,
     //val storageSummary: StorageSummary = StorageSummary.UNKNOWN,
-    val scanSummary: ScanSummary = ScanSummary.EMPTY
+    val scanSummary: ScanSummary = ScanSummary.EMPTY,
+    val bannerAdHolder: BannerAdHolder? = null
 ): UIState
 
 sealed class HomeEvent : UIEvent {

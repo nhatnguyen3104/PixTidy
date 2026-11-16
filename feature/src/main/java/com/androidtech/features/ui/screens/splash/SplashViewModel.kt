@@ -45,7 +45,8 @@ class SplashViewModel @Inject constructor(
     }
 
     init {
-        listenAdFullScreenEvents()
+        // Comment out Interstitial Ad listening for now to focus on Native Ad
+        // listenAdFullScreenEvents()
         observeNativeAds()
     }
 
@@ -53,21 +54,19 @@ class SplashViewModel @Inject constructor(
         viewModelScope.launch {
             val totalSteps = 100
             for (i in 1..totalSteps) {
-                delay(15.milliseconds)
+                delay(25.milliseconds)
                 setState { copy(progress = i.toFloat() / totalSteps) }
             }
 
-            // Progress completed -> Check if Interstitial Ad was loaded and shown
-            if (!isInterAdLoaded && !isInterAdShowingOrCompleted) {
-                navigateToNextScreen()
-            }
+            navigateToNextScreen()
         }
     }
 
     private fun preloadAds(activity: Activity) {
         viewModelScope.launch {
-            fetchAndActiveConfigsUseCase()
-            adManager.preloadFullScreenAd(activity, AdPlaceName.OPEN_FIRST)
+            launch { fetchAndActiveConfigsUseCase() }
+            // Comment out Interstitial Ad preloading for now
+            // adManager.preloadFullScreenAd(activity, AdPlaceName.OPEN_FIRST)
             adManager.preloadBannerNativeAd(placeName = AdPlaceName.OPEN_NATIVE_FIRST)
             val nativeHolder = adManager.getNativeAdHolder(AdPlaceName.OPEN_NATIVE_FIRST)
             setState { copy(nativeHolder = nativeHolder) }
@@ -77,11 +76,13 @@ class SplashViewModel @Inject constructor(
     private fun showInterAd(activity: Activity) {
         viewModelScope.launch {
             isInterAdShowingOrCompleted = true
-            adManager.showFullScreenAd(activity, AdPlaceName.OPEN_FIRST)
+            // Comment out Interstitial Ad showing for now
+            // adManager.showFullScreenAd(activity, AdPlaceName.OPEN_FIRST)
         }
     }
 
     private fun listenAdFullScreenEvents() {
+        /*
         viewModelScope.launch {
             adManager.observeFullScreenAd(AdPlaceName.OPEN_FIRST).collect { uiResource ->
                 when(uiResource) {
@@ -98,13 +99,14 @@ class SplashViewModel @Inject constructor(
                 }
             }
         }
+        */
     }
 
     private fun observeNativeAds() {
         viewModelScope.launch {
             adManager.observeBannerNativeAd(AdPlaceName.OPEN_NATIVE_FIRST).collect {
                 val nativeHolder = adManager.getNativeAdHolder(AdPlaceName.OPEN_NATIVE_FIRST)
-                setState { copy(nativeHolder = nativeHolder) }
+                setState { copy(nativeHolder = nativeHolder, adLoadTrigger = adLoadTrigger + 1) }
             }
         }
     }
