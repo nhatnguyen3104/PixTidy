@@ -50,6 +50,7 @@ import com.androidtech.base.theme.Body16Regular
 import com.androidtech.base.theme.SurfaceBlack20
 import com.androidtech.base.theme.Title20Bold
 import com.androidtech.base.ui.animation.LoadingAnimation
+import com.androidtech.base.ui.animation.bounceClick
 
 fun NavGraphBuilder.languageScreen() {
     composable(AppDestination.LanguageScreen.route) {

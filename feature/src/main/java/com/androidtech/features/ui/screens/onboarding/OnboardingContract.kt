@@ -7,20 +7,16 @@ import com.androidtech.base.viewmodel.UIState
 
 @Immutable
 data class OnboardingState(
-    val currentPage: Int = 0,
-    val isPrivacyAccepted: Boolean = false
+    val totalPage: Int = 3,
+    val currentPage: Int = 0
 ): UIState
 
 sealed class OnboardingEvent : UIEvent {
-    data class PageChanged(val page: Int) : OnboardingEvent()
-    object NextClicked : OnboardingEvent()
-    data class TogglePrivacyAcceptance(val accepted: Boolean) : OnboardingEvent()
-    object TermsOfServiceClicked : OnboardingEvent()
-    object PrivacyPolicyClicked : OnboardingEvent()
+    object Initialize: OnboardingEvent()
+    data class ClickNext(val page: Int): OnboardingEvent()
 }
 
 sealed class OnboardingEffect : UIEffect {
     data class ScrollToPage(val page: Int) : OnboardingEffect()
     object NavigateToHome : OnboardingEffect()
-    data class OpenWebUrl(val url: String) : OnboardingEffect()
 }

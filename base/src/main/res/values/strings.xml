@@ -52,6 +52,14 @@
     <string name="text_dialog_exit">Yes, cancel</string>
     <string name="text_dialog_cancel">Keep going</string>
 
+    <!-- Onboarding -->
+    <string name="text_onboarding_title_1">Private &amp; Local Processing</string>
+    <string name="text_onboarding_title_2">Clean Similar &amp; Duplicate Photos</string>
+    <string name="text_onboarding_title_3">Manage Large Videos &amp; Screenshots</string>
+    <string name="text_started">Get Started</string>
+    <string name="text_next">Next</string>
+
+
     <!-- Trash -->
     <string name="text_trash">Trash Bin</string>
     <string name="text_restore">Restore</string>

@@ -26,7 +26,6 @@ import kotlin.time.Duration.Companion.milliseconds
 @HiltViewModel
 class LanguageViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
-    private val preferenceHelper: PreferenceHelper,
     private val getUserSettingsUseCase: GetUserSettingsUseCase,
     private val updateLanguageUseCase: UpdateLanguageUseCase,
     private val adManager: AdManager,
@@ -75,6 +74,7 @@ class LanguageViewModel @Inject constructor(
     private fun saveLanguageAndNavigateToHome() {
         viewModelScope.launch {
             val selectedCode = currentState.saveLanguageModel.languageCode
+            val isOnboardingCompleted = getUserSettingsUseCase().first().isOnboardingCompleted
             updateLanguageUseCase(selectedCode)
 
             delay(100.milliseconds)
@@ -82,7 +82,7 @@ class LanguageViewModel @Inject constructor(
             delay(2000.milliseconds)
             setState { copy(isShowLoading = false) }
             delay(100.milliseconds)
-            if (preferenceHelper.isFirstOpen) {
+            if (!isOnboardingCompleted) {
                 setEffect { LanguageEffect.NavigateToOnboarding }
             } else {
                 setEffect { LanguageEffect.NavigateToHome }

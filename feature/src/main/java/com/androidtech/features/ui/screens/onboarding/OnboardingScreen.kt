@@ -43,12 +43,33 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import com.androidtech.base.R
 import com.androidtech.base.extension.AppDestination
 import com.androidtech.base.extension.LocalNavController
 import com.androidtech.base.theme.Title20Bold
 import com.androidtech.features.ui.screens.home.HomeEvent
 import androidx.core.net.toUri
+import com.androidtech.base.theme.Body18SemiBold
+import com.androidtech.base.theme.PrimaryBlue
+import com.androidtech.base.theme.SurfaceVariantDark
+import com.androidtech.base.theme.SurfaceWhite
+import com.androidtech.domain.model.onboarding.OnboardingPage
 
 fun NavGraphBuilder.onboardingScreen() {
     composable(
@@ -64,23 +85,20 @@ fun NavGraphBuilder.onboardingScreen() {
 fun OnboardingScreen(
     viewModel: OnboardingViewModel = hiltViewModel()
 ) {
-    val uiState = viewModel.uiState.collectAsStateWithLifecycle()
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val lifecycleOwner = LocalLifecycleOwner.current
     val navController = LocalNavController.current
     val context = LocalContext.current
-    val pagerState = rememberPagerState(pageCount = { onboardingPages.size })
 
-    LaunchedEffect(pagerState.currentPage) {
-        if (uiState.value.currentPage != pagerState.currentPage) {
-            viewModel.handleEvent(OnboardingEvent.PageChanged(pagerState.currentPage))
-        }
+    LaunchedEffect(Unit) {
+        viewModel.handleEvent(OnboardingEvent.Initialize)
     }
 
     LaunchedEffect(viewModel.uiEffect, lifecycleOwner) {
         viewModel.uiEffect.flowWithLifecycle(lifecycleOwner.lifecycle).collect { effect ->
             when (effect) {
                 is OnboardingEffect.ScrollToPage -> {
-                    pagerState.animateScrollToPage(effect.page)
+
                 }
                 is OnboardingEffect.NavigateToHome -> {
                     navController.navigate(AppDestination.HomeScreen.route) {
@@ -89,102 +107,137 @@ fun OnboardingScreen(
                         }
                     }
                 }
-                is OnboardingEffect.OpenWebUrl -> {
-                    val intent = Intent(Intent.ACTION_VIEW, effect.url.toUri())
-                    context.startActivity(intent)
-                }
             }
         }
     }
-    OnboardingContent (
-        uiState = uiState.value,
-        onEvent = viewModel::handleEvent,
-        pagerState = pagerState,
+    OnboardingScreenContent (
+        uiState = uiState,
+        onActionEvent = { event ->
+            when (event) {
+                is OnboardingEvent.ClickNext -> {
+                    viewModel.handleEvent(OnboardingEvent.ClickNext(event.page))
+                }
+                else -> {
+                    viewModel.handleEvent(event)
+                }
+            }
+        }
     )
 }
 
-private val onboardingPages = listOf(
-    OnboardingPageData(
-        title = "Clean Similar & Duplicate Photos",
-        description = "PixTidy automatically detects duplicate photos, best shots, and similar burst images to free up space.",
-        icon = Icons.Outlined.Collections,
-        highlightBadgeText = "Smart AI Detection"
-    ),
-    OnboardingPageData(
-        title = "Manage Large Videos & Screenshots",
-        description = "Easily filter out heavy videos and old screenshots occupying valuable storage in just one tap.",
-        icon = Icons.Outlined.VideoLibrary,
-        highlightBadgeText = "Storage Saver"
-    ),
-    OnboardingPageData(
-        title = "Private & Local Processing",
-        description = "Your photos and videos are scanned completely on your device. Zero data ever leaves your phone.",
-        icon = Icons.Outlined.Shield,
-        highlightBadgeText = "Privacy Guarantee"
-    )
-)
 
-@OptIn( ExperimentalMaterial3Api::class)
 @Composable
-fun OnboardingContent(
-    uiState: OnboardingState,
-    onEvent: (OnboardingEvent) -> Unit,
-    pagerState: PagerState,
+private fun OnboardingScreenContent(
     modifier: Modifier = Modifier,
+    uiState: OnboardingState,
+    onActionEvent: ((OnboardingEvent) -> Unit)?
 ) {
-    Scaffold(
-        topBar = {
-            CenterAlignedTopAppBar(
-                title = {
-                    Text(
-                        text = stringResource(R.string.app_name),
-                        style = Title20Bold,
-                        color = MaterialTheme.colorScheme.onBackground
-                    )
-                },
-                navigationIcon = {
-                    IconButton(onClick = { /* do something */ }) {
-                        Icon(
-                            painter = painterResource(R.drawable.ic_app),
-                            contentDescription = "logo",
-                            tint = null,
-                            modifier = Modifier.size(24.dp)
-                        )
-                    }
-                },
-                colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.background),
-                windowInsets = WindowInsets(left = 0, top = 0, right = 0, bottom = 0)
+    val pagerState = rememberPagerState(
+        pageCount = { uiState.totalPage }
+    )
+
+    LaunchedEffect(uiState.currentPage) {
+        if (pagerState.currentPage != uiState.currentPage) {
+            pagerState.animateScrollToPage(
+                page = uiState.currentPage
             )
-        },
-        bottomBar = {
-            OnboardingBottomNavigation(
-                isLastPage = uiState.currentPage == onboardingPages.size - 1,
-                currentPage = uiState.currentPage,
-                pageCount = onboardingPages.size,
-                isPrivacyAccepted = uiState.isPrivacyAccepted,
-                onTogglePrivacy = { accepted -> onEvent(OnboardingEvent.TogglePrivacyAcceptance(accepted)) },
-                onTermsClick = { onEvent(OnboardingEvent.TermsOfServiceClicked) },
-                onPrivacyClick = { onEvent(OnboardingEvent.PrivacyPolicyClicked) },
-                onNextClick = {
-                    onEvent(OnboardingEvent.NextClicked)
-                }
-            )
-        },
-        containerColor = MaterialTheme.colorScheme.background
-    ) { paddingValues ->
-        Column(
-            modifier = modifier
-                .fillMaxSize()
-                .padding(paddingValues)
-        ) {
-            HorizontalPager(
-                state = pagerState,
-                modifier = Modifier
-                    .fillMaxSize()
-                    .weight(1f)
-            ) { pageIndex ->
-                OnboardingPageContent(pageData = onboardingPages[pageIndex])
+        }
+    }
+
+    // Đồng bộ từ Pager -> ViewModel (khi vuốt tay)
+    LaunchedEffect(pagerState.settledPage, uiState.currentPage) {
+        if (pagerState.settledPage > uiState.currentPage) {
+            onActionEvent?.invoke(OnboardingEvent.ClickNext(uiState.currentPage))
+        }
+    }
+
+    Column(
+        modifier = modifier
+    ) {
+        HorizontalPager(
+            state = pagerState,
+            modifier = Modifier.fillMaxWidth()
+                .weight(1f)
+        ) { page ->
+            when (page) {
+                OnboardingPage.FirstOnboarding.page -> FirstOnboarding(
+                    modifier = Modifier.fillMaxSize()
+                )
+                OnboardingPage.SecondOnboarding.page -> SecondOnboarding(
+                    modifier = Modifier.fillMaxSize()
+                )
+                OnboardingPage.ThirdOnboarding.page -> ThirdOnboarding(
+                    modifier = Modifier.fillMaxSize()
+                )
             }
+        }
+
+        PageIndicator(
+            modifier = Modifier.fillMaxWidth(),
+            totalPageCount = pagerState.pageCount,
+            currentPage = pagerState.currentPage,
+            onActionEvent = onActionEvent
+        )
+    }
+}
+
+@Composable
+private fun PageIndicator(
+    modifier: Modifier = Modifier,
+    totalPageCount: Int,
+    currentPage: Int,
+    onActionEvent: ((OnboardingEvent) -> Unit)? = null
+) {
+    val buttonNameRes = remember(currentPage) {
+        if (currentPage == (totalPageCount - 1)) {
+            R.string.text_started
+        } else {
+            R.string.text_next
+        }
+    }
+
+    Row(
+        modifier = modifier
+            .padding(vertical = 8.dp, horizontal = 16.dp),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Row(
+            modifier = Modifier.wrapContentHeight(),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            repeat(totalPageCount) { index ->
+                val indicatorColor = if (currentPage == index) {
+                    PrimaryBlue
+                } else {
+                    SurfaceVariantDark
+                }
+                Box(
+                    modifier = Modifier
+                        .padding(2.dp)
+                        .clip(CircleShape)
+                        .background(color = indicatorColor)
+                        .size(16.dp)
+                )
+            }
+        }
+
+        Button(
+            onClick = {
+                onActionEvent?.invoke(OnboardingEvent.ClickNext(currentPage))
+            },
+            colors = ButtonDefaults.buttonColors(
+                contentColor = Color.Transparent,
+                containerColor = PrimaryBlue
+            ),
+            contentPadding = PaddingValues(vertical = 12.dp, horizontal = 24.dp),
+            shape = RoundedCornerShape(48.dp)
+        ) {
+            Text(
+                text = stringResource(buttonNameRes),
+                style = Body18SemiBold,
+                color = SurfaceWhite
+            )
         }
     }
 }

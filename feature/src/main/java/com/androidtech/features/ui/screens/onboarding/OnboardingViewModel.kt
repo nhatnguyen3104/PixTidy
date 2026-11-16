@@ -18,27 +18,26 @@ class OnboardingViewModel @Inject constructor(
 
     override fun handleEvent(event: OnboardingEvent) {
         when(event) {
-            is OnboardingEvent.PageChanged -> {
-                setState { copy(currentPage = event.page) }
+            is OnboardingEvent.Initialize -> initialize()
+            is OnboardingEvent.ClickNext -> clickNext(event.page)
+        }
+    }
+
+    private fun initialize() {
+        viewModelScope.launch {
+            setOnboardingCompleted(false)
+        }
+    }
+
+    private fun clickNext(page: Int) {
+        viewModelScope.launch {
+            val nextPage = page + 1
+            setState {
+                copy(currentPage = nextPage)
             }
-            is OnboardingEvent.NextClicked -> {
-                val current = uiState.value.currentPage
-                if (current < 2) {
-                    viewModelScope.launch { setEffect{OnboardingEffect.ScrollToPage(current + 1)} }
-                } else if (uiState.value.isPrivacyAccepted) {
-                    completeOnboarding()
-                }
-            }
-            is OnboardingEvent.TogglePrivacyAcceptance -> {
-                setState {
-                    copy(isPrivacyAccepted = event.accepted)
-                }
-            }
-            is OnboardingEvent.TermsOfServiceClicked -> {
-                viewModelScope.launch { setEffect { OnboardingEffect.OpenWebUrl(BuildConfig.TERMS_URL) } }
-            }
-            is OnboardingEvent.PrivacyPolicyClicked -> {
-                viewModelScope.launch { setEffect { OnboardingEffect.OpenWebUrl(BuildConfig.PRIVACY_URL) } }
+            if (nextPage == currentState.totalPage) {
+                setOnboardingCompleted(true)
+                setEffect { OnboardingEffect.NavigateToHome }
             }
         }
     }
