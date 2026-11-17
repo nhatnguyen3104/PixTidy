@@ -296,7 +296,7 @@ fun SettingsContent(
 
                 // 5. App version footer
                 SettingsFooter(
-                    version = uiState.appVersion,
+                    version = stringResource(R.string.app_version),
                     tagline = stringResource(R.string.app_slogan)
                 )
 
