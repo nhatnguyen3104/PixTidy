@@ -21,4 +21,5 @@ object AdPlaceName {
     const val LARGE_VIDEO_BOTTOM = "large_video_bottom"
     const val SETTINGS_BOTTOM = "settings_bottom"
     const val SCAN_BOTTOM = "scan_bottom"
+    const val TRASH_BOTTOM = "trash_bottom"
 }

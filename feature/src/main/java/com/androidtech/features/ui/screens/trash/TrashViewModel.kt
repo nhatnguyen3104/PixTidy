@@ -4,9 +4,12 @@ import android.app.PendingIntent
 import android.content.IntentSender
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
+import com.ads.monetization.AdManager
+import com.ads.monetization.adplacename.AdPlaceName
 import com.androidtech.base.R
 import com.androidtech.base.utils.UiText
 import com.androidtech.base.viewmodel.BaseViewModel
+import com.androidtech.data.model.aduiresource.getAdPlaceName
 import com.androidtech.domain.extensions.UiState
 import com.androidtech.domain.model.media.TrashActionResult
 import com.androidtech.domain.usecase.media.DeletePermanentlyUseCase
@@ -25,12 +28,15 @@ class TrashViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val getTrashedMediaUseCase: GetTrashedMediaUseCase,
     private val restoreItemsUseCase: RestoreItemsUseCase,
-    private val deletePermanentlyUseCase: DeletePermanentlyUseCase
+    private val deletePermanentlyUseCase: DeletePermanentlyUseCase,
+    private val adManager: AdManager
 ): BaseViewModel<TrashEvent, TrashState, TrashEffect>(savedStateHandle) {
     override fun createInitializeState(): TrashState = TrashState()
 
     init {
         loadTrashMedia()
+        loadBannerAd()
+        observeBannerAd()
     }
 
     private fun loadTrashMedia() {
@@ -182,6 +188,28 @@ class TrashViewModel @Inject constructor(
             setState { copy(showBackConfirmationDialog = true) }
         } else {
             setEffect { TrashEffect.NavigateBack }
+        }
+    }
+
+    private fun loadBannerAd() {
+        viewModelScope.launch {
+            adManager.preloadBannerNativeAd(
+                placeName = AdPlaceName.TRASH_BOTTOM,
+                subPlaceLevel = 0
+            )
+            val bannerHolder = adManager.getBannerAdHolder(AdPlaceName.TRASH_BOTTOM)
+            setState { copy(bannerAdHolder = bannerHolder) }
+        }
+    }
+
+    private fun observeBannerAd() {
+        viewModelScope.launch {
+            adManager.adBannerNativeFlow.collect { resource ->
+                if (resource.getAdPlaceName() == AdPlaceName.TRASH_BOTTOM) {
+                    val bannerHolder = adManager.getBannerAdHolder(AdPlaceName.TRASH_BOTTOM)
+                    setState { copy(bannerAdHolder = bannerHolder) }
+                }
+            }
         }
     }
 }
