@@ -1,6 +1,7 @@
 package com.androidtech.features.ui.screens.largevideo
 
 import android.content.IntentSender
+import com.ads.monetization.adholder.BannerAdHolder
 import com.androidtech.base.utils.UiText
 import com.androidtech.base.viewmodel.UIEffect
 import com.androidtech.base.viewmodel.UIEvent
@@ -13,7 +14,8 @@ data class LargeVideoState(
     val showBackConfirmationDialog: Boolean = false,
     val largeVideoGroups: List<LargeVideoGroup> = emptyList(),
     val previewMediaList: List<MediaItem>? = null,
-    val previewInitialIndex: Int = 0
+    val previewInitialIndex: Int = 0,
+    val bannerAdHolder: BannerAdHolder? = null
 ): UIState {
     val isSelectionActive: Boolean
         get() = largeVideoGroups.any { group ->
