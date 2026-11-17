@@ -31,9 +31,10 @@ sealed class HomeEffect : UIEffect {
     object NavigateToDeepScan : HomeEffect()
     object NavigateToSmartScan : HomeEffect()
     object NavigateToSettings : HomeEffect()
-    object NaviagteToTrash : HomeEffect()
+    object NavigateToTrash : HomeEffect()
     object NavigateToDuplicate : HomeEffect()
     object NavigateToSimilar : HomeEffect()
     object NavigateToScreenshot : HomeEffect()
+    object NavigateToLargeVideo : HomeEffect()
     object RequestStoragePermissions : HomeEffect()
 }

@@ -92,7 +92,7 @@ class HomeViewModel @Inject constructor(
             }
 
             is HomeEvent.TrashClicked -> {
-                setEffect { HomeEffect.NaviagteToTrash }
+                setEffect { HomeEffect.NavigateToTrash }
             }
 
             is HomeEvent.FastScan -> {
@@ -125,7 +125,7 @@ class HomeViewModel @Inject constructor(
             }
 
             SmartInsightType.LARGE_VIDEOS -> {
-
+                setEffect { HomeEffect.NavigateToLargeVideo }
             }
 
             SmartInsightType.BLURRY_PHOTOS -> {

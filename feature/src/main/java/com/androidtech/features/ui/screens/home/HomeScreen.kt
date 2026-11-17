@@ -143,7 +143,7 @@ fun HomeScreen(
                     navController.navigate(AppDestination.SettingsScreen.route)
                 }
 
-                is HomeEffect.NaviagteToTrash -> {
+                is HomeEffect.NavigateToTrash -> {
                     navController.navigate(AppDestination.TrashScreen.route)
                 }
 
@@ -157,6 +157,10 @@ fun HomeScreen(
 
                 is HomeEffect.NavigateToScreenshot -> {
                     navController.navigate(AppDestination.ScreenshotScreen.route)
+                }
+
+                is HomeEffect.NavigateToLargeVideo -> {
+                    navController.navigate(AppDestination.LargeVideoScreen.route)
                 }
             }
         }
@@ -420,8 +424,6 @@ fun HomeContent(
                     icon = Icons.Outlined.VideoLibrary,
                     badgeColor = VideoBadge,
                     modifier = Modifier.weight(1f),
-                    isEnabled = false,
-                    comingSoonText = "Soon",
                     onClick = { onEvent(HomeEvent.SmartInsightTypeClick(SmartInsightType.LARGE_VIDEOS)) }
                 )
             }
@@ -442,7 +444,7 @@ fun HomeContent(
                 )
                 Spacer(modifier = Modifier.width(6.dp))
                 Text(
-                    text = "YOUR FILES STAY ON YOUR DEVICE",
+                    text = stringResource(R.string.app_slogan),
                     style = MaterialTheme.typography.labelSmall.copy(
                         fontWeight = FontWeight.Medium,
                         letterSpacing = 0.8.sp,
