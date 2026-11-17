@@ -224,7 +224,7 @@ class RecommendationEngineImpl @Inject constructor() : RecommendationEngine {
         val groups = listOf(
             Triple("large_video_screen_recordings", "Screen Recordings", screenRecordings),
             Triple("large_video_old_and_long", "Old & Long Videos", oldAndLongVideos),
-            Triple("large_video_massive", "Video dung lượng cực lớn (>100MB)", massiveVideos)
+            Triple("large_video_massive", "Large Video (>100MB)", massiveVideos)
         ).filter { (_, _, items) -> items.isNotEmpty() }
 
         if (groups.isEmpty()) return null
