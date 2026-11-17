@@ -12,4 +12,129 @@
     <string name="app_tagline">Tidy your gallery. Free up storage.</string>
     <string name="text_partial_access">Partial access (tap to upgrade)</string>
     <string name="text_permanently_denied">Blocked (tap to open Settings)</string>
+
+    <string name="app_name">PixTidy</string>
+    <string name="app_version">PixTidy v0.0.3</string>
+    <string name="text_select_language">Select Language</string>
+    <string name="text_hour">Hours</string>
+    <string name="text_minute">Minutes</string>
+    <string name="text_second">Seconds</string>
+    <string name="text_create">Create</string>
+    <string name="text_save">Save</string>
+    <string name="text_notification_content">Tap to open the app</string>
+
+    <!-- Common -->
+    <string name="text_capacity"> GB</string>
+    <string name="text_smart_scan_storage">Smart Scan Storage</string>
+    <string name="text_intelligent_scan_storage">Intelligent Scan Storage</string>
+    <string name="text_scanning">Scanning…</string>
+    <string name="text_scanning_subtitle_1">Can potentially be cleaned</string>
+    <string name="text_scanning_subtitle_2">We found files you may no longer need.</string>
+    <string name="text_complete">Complete ✓</string>
+    <string name="text_notification_clean">Cleaned up %1$d items, reclaimed %2$s</string>
+    <string name="text_success_clean">Successfully cleaned up</string>
+    <string name="text_error_clean">Error cleaning up, please try again</string>
+    <string name="text_items_selected">%1$d selected</string>
+    <string name="text_delete_items_selected">Delete %1$d photos</string>
+    <string name="text_delete_items_selected_description">Are you sure you want to delete %1$d photos?</string>
+    <string name="text_smart_insights">Smart insights</string>
+    <string name="text_available_after_access">Available after access</string>
+    <string name="text_permission_grant_title">Grant access to start cleaning</string>
+    <string name="text_permission_grant_description">%1$s needs photo &amp; file access to detect duplicates, blurry photos, and junk files. Your files remain private on this device.</string>
+    <string name="text_allow_storage_access">Allow storage access</string>
+    <string name="text_learn_privacy">Learn about our on-device privacy guarantee</string>
+    <string name="text_permission_required">Permission needed</string>
+    <string name="text_unknow_error">Unknown error</string>
+    <string name="text_dialog_back_title">Confirm back</string>
+    <string name="text_dialog_back_desc">If you go back now, your current progress and selections will be lost.</string>
+    <string name="text_dialog_exit">Yes, cancel</string>
+    <string name="text_dialog_cancel">Keep going</string>
+
+    <!-- Onboarding -->
+    <string name="text_onboarding_title_1">Private &amp; Local Processing</string>
+    <string name="text_onboarding_title_2">Clean Similar &amp; Duplicate Photos</string>
+    <string name="text_onboarding_title_3">Manage Large Videos &amp; Screenshots</string>
+    <string name="text_started">Get Started</string>
+    <string name="text_next">Next</string>
+
+    <!-- Home -->
+
+
+    <!-- Trash -->
+    <string name="text_restore">Restore</string>
+    <string name="text_delete">Delete</string>
+
+    <!-- Scan -->
+    <string name="text_scan_failed">Scan failed</string>
+    <string name="text_canning_storage">Scanning Storage…</string>
+    <string name="text_item_found">Items found: %1$d</string>
+    <string name="text_scan_insights">Scan Insights</string>
+    <string name="text_groups">%1$d Groups</string>
+    <string name="text_cancel_scan">Cancel Scan</string>
+    <string name="text_go_back">Go Back</string>
+
+    <!-- Duplicate -->
+    <string name="text_duplicate_photos">Duplicate Media</string>
+    <string name="text_duplicate_group">Group: %1$s</string>
+    <string name="text_duplicate_photos_description">%1$d groups • %2$s</string>
+    <string name="text_original">Original</string>
+    <string name="text_select_all">Select all</string>
+    <string name="text_clear_selection">Clear selection</string>
+    <string name="text_no_duplicates_found">No duplicate photos found</string>
+
+
+    <!-- Similar -->
+    <string name="text_similar_photos">Similar Media</string>
+    <string name="text_similar_photos_description">%1$d groups • %2$s</string>
+    <string name="text_percent_similar">%1$d%% similar</string>
+    <string name="text_best_shot">Best Shot</string>
+    <string name="text_no_similar_photos_found">No similar photos found</string>
+    <string name="text_no_similar_photos_description">Your photo gallery has no similar items.</string>
+
+
+    <!-- Screenshot -->
+    <string name="text_screenshots_old">Old Screenshots</string>
+    <string name="text_screenshots_description">%1$d groups • %2$s</string>
+    <string name="text_screenshot_time">%1$s</string>
+    <string name="text_no_screenshots_found">No old screenshots found</string>
+
+    <!-- LargeVideo -->
+    <string name="text_large_videos">Large Videos</string>
+    <string name="text_large_videos_description">%1$d groups • %2$s</string>
+    <string name="text_large_video_classify">%1$s</string>
+    <string name="text_no_large_video_found">No large videos found</string>
+    <string name="text_no_large_video_description">Videos meeting your storage criteria will appear here.</string>
+
+    <!-- Settings -->
+    <string name="text_settings_title">Settings</string>
+    <string name="privacy_guarantee_title">Privacy Guarantee</string>
+    <string name="privacy_guarantee_desc">Your photos and videos are scanned locally and never leave your phone.</string>
+    <string name="text_scan_and_cleanup">SCAN &amp; CLEANUP</string>
+    <string name="title_manage_permissions">Manage Permissions</string>
+    <string name="desc_manage_permissions">Manage app access to photos and media</string>
+    <string name="title_dark_theme">Dark Theme</string>
+    <string name="desc_dark_theme">Reduce eye strain and battery usage</string>
+    <string name="title_language">Language</string>
+    <string name="text_search_language">Search language…</string>
+    <string name="text_no_suitable_language_found">No suitable language found.</string>
+    <string name="text_about_and_support">ABOUT &amp; SUPPORT</string>
+    <string name="title_feedback">Send Feedback &amp; Support</string>
+    <string name="desc_feedback">Report a bug or suggest improvements</string>
+    <string name="title_privacy_policy">Privacy Policy</string>
+    <string name="desc_privacy_policy">Read our local processing commitment</string>
+    <string name="title_terms_of_service">Terms of Service</string>
+    <string name="desc_terms_of_service">Read our terms of service</string>
+    <string name="text_full_access">Full Access Granted</string>
+    <string name="text_denied">Access Denied (Tap to grant)</string>
+
+
+    <!-- App Update -->
+    <string name="title_check_for_updates">Check for Updates</string>
+    <string name="desc_check_for_updates">Check if a new version is available</string>
+    <string name="update_dialog_title">Update Available</string>
+    <string name="update_dialog_message">A new version of the app is available. Please update to the latest version for better performance and new features.</string>
+    <string name="update_dialog_positive">Update</string>
+    <string name="update_dialog_negative">Skip</string>
+    <string name="update_uptodate_title">App is up to date</string>
+    <string name="update_uptodate_message">You are using the latest version of the App.</string>
 </resources>

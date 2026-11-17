@@ -9,7 +9,7 @@
     <string name="text_second">Secondi</string>
     <string name="text_create">Crea</string>
     <string name="text_save">Salva</string>
-    <string name="text_notification_content">Tocca per aprire l'app</string>
+    <string name="text_notification_content">Tocca per aprire l\'app</string>
     <string name="text_capacity"> GB</string>
     <string name="text_used_capacity">utilizzati su %1$d GB</string>
     <string name="text_available_capacity">%1$.2f GB disponibili</string>
@@ -26,10 +26,10 @@
     <string name="text_delete_items_selected">Elimina %1$d foto</string>
     <string name="text_delete_items_selected_description">Vuoi davvero eliminare %1$d foto?</string>
     <string name="text_smart_insights">Approfondimenti intelligenti</string>
-    <string name="text_available_after_access">Disponibile dopo aver concesso l'accesso"</string>
-    <string name="text_permission_grant_title">Concedi l'accesso per iniziare la pulizia</string>
+    <string name="text_available_after_access">Disponibile dopo aver concesso l\'accesso"</string>
+    <string name="text_permission_grant_title">Concedi l\'accesso per iniziare la pulizia</string>
     <string name="text_permission_grant_description">%1$s ha bisogno di accedere a foto e file per rilevare duplicati, foto sfocate e file inutili. I tuoi file restano privati su questo dispositivo.</string>
-    <string name="text_allow_storage_access">Consenti l'accesso allo spazio di archiviazione</string>
+    <string name="text_allow_storage_access">Consenti l\'accesso allo spazio di archiviazione</string>
     <string name="text_learn_privacy">Scopri la nostra garanzia di privacy e di elaborazione sul dispositivo</string>
     <string name="text_permission_required">Autorizzazione necessaria</string>
     <string name="text_unknow_error">Errore sconosciuto</string>
@@ -82,11 +82,11 @@
     <string name="privacy_guarantee_desc">Le tue foto e i tuoi video vengono analizzati localmente e non lasciano mai il telefono.</string>
     <string name="text_scan_and_cleanup">SCANSIONE E PULIZIA</string>
     <string name="title_manage_permissions">Gestisci autorizzazioni</string>
-    <string name="desc_manage_permissions">Gestisci l'accesso dell'app a foto e contenuti multimediali</string>
+    <string name="desc_manage_permissions">Gestisci l\'accesso dell\'app a foto e contenuti multimediali</string>
     <string name="text_include_downloads_folder">Includi la cartella Download</string>
     <string name="text_appearance">ASPETTO</string>
     <string name="title_dark_theme">Tema scuro</string>
-    <string name="desc_dark_theme">Riduce l'affaticamento degli occhi e il consumo della batteria</string>
+    <string name="desc_dark_theme">Riduce l\'affaticamento degli occhi e il consumo della batteria</string>
     <string name="title_language">Lingua</string>
     <string name="text_search_language">Cerca una lingua…</string>
     <string name="text_no_suitable_language_found">Nessuna lingua adatta trovata.</string>
@@ -94,7 +94,7 @@
     <string name="title_feedback">Invia feedback e richiedi supporto</string>
     <string name="desc_feedback">Segnala un bug o suggerisci miglioramenti</string>
     <string name="title_privacy_policy">Informativa sulla privacy</string>
-    <string name="desc_privacy_policy">Leggi il nostro impegno per l'elaborazione locale</string>
+    <string name="desc_privacy_policy">Leggi il nostro impegno per l\'elaborazione locale</string>
     <string name="title_terms_of_service">Termini di servizio</string>
     <string name="desc_terms_of_service">Leggi i termini di servizio</string>
     <string name="app_tagline">Pulisci la galleria. Libera spazio.</string>
@@ -105,9 +105,9 @@
     <string name="title_check_for_updates">Controlla aggiornamenti</string>
     <string name="desc_check_for_updates">Verifica se è disponibile una nuova versione</string>
     <string name="update_dialog_title">Aggiornamento disponibile</string>
-    <string name="update_dialog_message">È disponibile una nuova versione dell'app. Aggiorna all'ultima versione per prestazioni migliori e nuove funzionalità.</string>
+    <string name="update_dialog_message">È disponibile una nuova versione dell\'app. Aggiorna all\'ultima versione per prestazioni migliori e nuove funzionalità.</string>
     <string name="update_dialog_positive">Aggiorna</string>
     <string name="update_dialog_negative">Ignora</string>
-    <string name="update_uptodate_title">L'app è aggiornata</string>
-    <string name="update_uptodate_message">Stai usando l'ultima versione dell'app.</string>
+    <string name="update_uptodate_title">L\'app è aggiornata</string>
+    <string name="update_uptodate_message">Stai usando l\'ultima versione dell\'app.</string>
 </resources>
