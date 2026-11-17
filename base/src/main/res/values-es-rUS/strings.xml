@@ -1,3 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="text_capacity"> GB</string>
+    <string name="text_smart_scan_storage">Escaneo inteligente del almacenamiento</string>
+    <string name="text_intelligent_scan_storage">Escaneo avanzado del almacenamiento</string>
+    <string name="text_scanning">Escaneando…</string>
+    <string name="text_trash">Papelera</string>
+    <string name="text_canning_storage">Escaneando el almacenamiento…</string>
+    <string name="text_similar_photos">Contenido similar</string>
+    <string name="text_screenshots_old">Capturas de pantalla antiguas</string>
+    <string name="text_large_videos">Videos grandes</string>
+    <string name="text_settings_title">Configuración</string>
+    <string name="text_include_downloads_folder">Incluir la carpeta Descargas</string>
+    <string name="app_tagline">Limpia tu galería. Libera espacio de almacenamiento.</string>
 </resources>

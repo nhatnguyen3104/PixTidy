@@ -1,3 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="text_capacity"> Go</string>
+    <string name="text_smart_scan_storage">Analyse intelligente du stockage</string>
+    <string name="text_intelligent_scan_storage">Analyse avancée du stockage</string>
+    <string name="text_scanning">Analyse en cours…</string>
+    <string name="text_trash">Corbeille</string>
+    <string name="text_canning_storage">Analyse du stockage…</string>
+    <string name="text_screenshots_old">Anciennes captures d’écran</string>
+    <string name="text_include_downloads_folder">Inclure le dossier Téléchargements</string>
+    <string name="text_about_and_support">À PROPOS ET SOUTIEN</string>
+    <string name="title_feedback">Envoyer des commentaires et obtenir du soutien</string>
+    <string name="title_privacy_policy">Politique de confidentialité</string>
+    <string name="desc_privacy_policy">Lire notre engagement en matière de traitement local</string>
 </resources>

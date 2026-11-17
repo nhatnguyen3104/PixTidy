@@ -1,3 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="app_slogan">Less clutter. More memories.</string>
+    <string name="text_used_capacity">used of %1$d GB</string>
+    <string name="text_available_capacity">%1$.2f GB available</string>
+    <string name="text_trash">Bin</string>
+    <string name="text_no_media_trash">Bin is empty</string>
+    <string name="text_no_duplicates_description">Your media library is clean and organised.</string>
+    <string name="text_no_screenshots_description">Your screenshot library is clean and organised.</string>
+    <string name="text_appearance">APPEARANCE</string>
+    <string name="text_include_downloads_folder">Include the Downloads folder</string>
+    <string name="app_tagline">Tidy your gallery. Free up storage.</string>
+    <string name="text_partial_access">Partial access (tap to upgrade)</string>
+    <string name="text_permanently_denied">Blocked (tap to open Settings)</string>
 </resources>
