@@ -31,6 +31,7 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import coil.request.videoFrameMillis
+import coil.request.videoFramePercent
 import com.androidtech.domain.model.media.MediaItem
 
 @Composable
@@ -78,7 +79,7 @@ fun TrashGridItem(
             model = ImageRequest.Builder(context)
                 .data(item.uri)
                 .apply {
-                    if (isVideo) videoFrameMillis(0)
+                    if (isVideo) videoFramePercent(0.1)
                 }
                 .crossfade(true)
                 .build(),

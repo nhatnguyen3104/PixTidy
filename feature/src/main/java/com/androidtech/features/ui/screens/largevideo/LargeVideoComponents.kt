@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.outlined.Check
 import androidx.compose.material.icons.outlined.Videocam
 import androidx.compose.material3.*
@@ -17,10 +18,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
+import coil.request.ImageRequest
+import coil.request.videoFrameMillis
+import coil.request.videoFramePercent
 import com.androidtech.base.utils.formatSize
 import com.androidtech.domain.model.media.LargeVideoGroup
 import com.androidtech.domain.model.media.MediaItem
@@ -137,6 +142,8 @@ fun LargeVideoCard(
     onItemClick: () -> Unit,
     onToggle: () -> Unit
 ) {
+    val context = LocalContext.current
+
     val borderColor = if (video.isSelected) MaterialTheme.colorScheme.primary else Color.Transparent
     val borderWidth = if (video.isSelected) 3.dp else 0.dp
 
@@ -148,12 +155,33 @@ fun LargeVideoCard(
             .clickable { onItemClick() }
     ) {
         AsyncImage(
-            model = video.uri,
+            model = ImageRequest.Builder(context)
+                .data(video.uri)
+                .videoFramePercent(0.1)
+                .crossfade(true)
+                .build(),
             contentDescription = null,
             contentScale = ContentScale.Crop,
             modifier = Modifier.fillMaxSize()
         )
 
+        Box(
+            modifier = Modifier
+                .align(Alignment.Center)
+                .size(40.dp)
+                .clip(CircleShape)
+                .background(Color.Black.copy(alpha = 0.5f)),
+            contentAlignment = Alignment.Center
+        ) {
+            Icon(
+                imageVector = Icons.Filled.PlayArrow,
+                contentDescription = "Video",
+                tint = Color.White,
+                modifier = Modifier.size(24.dp)
+            )
+        }
+
+        // Selection Circle Checkbox (Bottom-Right)
         Box(
             modifier = Modifier
                 .align(Alignment.BottomEnd)

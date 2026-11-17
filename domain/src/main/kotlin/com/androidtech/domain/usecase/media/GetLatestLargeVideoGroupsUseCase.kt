@@ -31,7 +31,7 @@ class GetLatestLargeVideoGroupsUseCase @Inject constructor(
                             val label = when (groupId) {
                                 "large_video_screen_recordings" -> "Screen Recordings"
                                 "large_video_old_and_long" -> "Old & Long Videos"
-                                "large_video_massive" -> "Video dung lượng cực lớn (>100MB)"
+                                "large_video_massive" -> "large capacity (>100MB)"
                                 else -> "Large Videos"
                             }
 
