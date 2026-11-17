@@ -2,9 +2,14 @@ package com.androidtech.features.ui.screens.settings
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
+import com.ads.monetization.AdManager
+import com.ads.monetization.adplacename.AdPlaceName
+import com.androidtech.base.R
 import com.androidtech.base.model.LanguageModel
 import com.androidtech.base.permission.MediaPermissionStatus
+import com.androidtech.base.utils.UiText
 import com.androidtech.base.viewmodel.BaseViewModel
+import com.androidtech.data.model.aduiresource.getAdPlaceName
 import com.androidtech.domain.model.settings.AppTheme
 import com.androidtech.domain.model.settings.UserSettings
 import com.androidtech.domain.usecase.settings.GetUserSettingsUseCase
@@ -24,12 +29,15 @@ class SettingsViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val getUserSettingsUseCase: GetUserSettingsUseCase,
     private val updateThemeUseCase: UpdateThemeUseCase,
-    private val updateLanguageUseCase: UpdateLanguageUseCase
+    private val updateLanguageUseCase: UpdateLanguageUseCase,
+    private val adManager: AdManager
 ): BaseViewModel<SettingsEvent, SettingsState, SettingsEffect>(savedStateHandle) {
     override fun createInitializeState(): SettingsState = SettingsState()
 
     init {
         observeUserSettings()
+        loadBannerAd()
+        observeBannerAd()
     }
 
     private fun observeUserSettings() {
@@ -54,6 +62,7 @@ class SettingsViewModel @Inject constructor(
             is SettingsEvent.ManagePermissionsClick -> {
                 when (uiState.value.permissionStatus) {
                     MediaPermissionStatus.FULL_ACCESS -> {
+                        setEffect { SettingsEffect.ShowSnackbar(UiText.StringResource(R.string.text_full_access)) }
                     }
                     MediaPermissionStatus.PARTIAL_ACCESS, MediaPermissionStatus.DENIED -> {
                         setState { copy(showRationaleDialog = true) }
@@ -92,6 +101,9 @@ class SettingsViewModel @Inject constructor(
             is SettingsEvent.CheckForUpdatesClicked -> {
                 setEffect { SettingsEffect.CheckForUpdates }
             }
+            is SettingsEvent.ShowUpToDateSnackbar -> {
+                setEffect { SettingsEffect.ShowSnackbar(UiText.StringResource(R.string.update_uptodate_message)) }
+            }
         }
     }
 
@@ -106,5 +118,31 @@ class SettingsViewModel @Inject constructor(
 
     fun onLanguageSelected(languageModel: LanguageModel) {
         viewModelScope.launch { updateLanguageUseCase(languageModel.languageCode) }
+    }
+
+    private fun handleCheckForUpdates() {
+        setEffect { SettingsEffect.CheckForUpdates }
+    }
+
+    private fun loadBannerAd() {
+        viewModelScope.launch {
+            adManager.preloadBannerNativeAd(
+                placeName = AdPlaceName.SETTINGS_BOTTOM,
+                subPlaceLevel = 0
+            )
+            val bannerHolder = adManager.getBannerAdHolder(AdPlaceName.SETTINGS_BOTTOM)
+            setState { copy(bannerAdHolder = bannerHolder) }
+        }
+    }
+
+    private fun observeBannerAd() {
+        viewModelScope.launch {
+            adManager.adBannerNativeFlow.collect { resource ->
+                if (resource.getAdPlaceName() == AdPlaceName.SETTINGS_BOTTOM) {
+                    val bannerHolder = adManager.getBannerAdHolder(AdPlaceName.SETTINGS_BOTTOM)
+                    setState { copy(bannerAdHolder = bannerHolder) }
+                }
+            }
+        }
     }
 }

@@ -24,7 +24,7 @@ import com.androidtech.features.ui.screens.trash.trashScreen
 @Composable
 fun AppScreens(
     modifier: Modifier = Modifier,
-    onCheckForUpdates: () -> Unit = {}
+    onCheckForUpdates: (onUpToDate: () -> Unit) -> Unit = {}
 ) {
     val navController = rememberNavController()
 

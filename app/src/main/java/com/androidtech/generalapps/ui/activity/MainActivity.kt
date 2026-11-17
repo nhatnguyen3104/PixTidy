@@ -68,7 +68,9 @@ class MainActivity : ComponentActivity() {
                     AppScreens(
                         modifier = Modifier.fillMaxSize()
                             .padding(innerPadding),
-                        onCheckForUpdates = { appUpdateChecker.check(isManualCheck = true) }
+                        onCheckForUpdates = { onUpToDate ->
+                            appUpdateChecker.check(isManualCheck = true, onUpToDate = onUpToDate)
+                        }
                     )
                 }
             }

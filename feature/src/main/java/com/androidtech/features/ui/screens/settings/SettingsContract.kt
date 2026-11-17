@@ -1,5 +1,6 @@
 package com.androidtech.features.ui.screens.settings
 
+import com.ads.monetization.adholder.BannerAdHolder
 import com.androidtech.base.model.LanguageModel
 import com.androidtech.base.permission.MediaPermissionStatus
 import com.androidtech.base.utils.UiText
@@ -16,7 +17,8 @@ data class SettingsState(
     val appVersion: String = "0.0.1",
     val permissionStatus: MediaPermissionStatus = MediaPermissionStatus.DENIED,
     val showRationaleDialog: Boolean = false,
-    val showSettingsRedirectDialog: Boolean = false
+    val showSettingsRedirectDialog: Boolean = false,
+    val bannerAdHolder: BannerAdHolder? = null
 ) : UIState
 
 sealed class SettingsEvent : UIEvent {
@@ -33,6 +35,7 @@ sealed class SettingsEvent : UIEvent {
     data class ToggleDarkMode(val enabled: Boolean) : SettingsEvent()
     data class LanguageSelected(val languageModel: LanguageModel) : SettingsEvent()
     object CheckForUpdatesClicked : SettingsEvent()
+    object ShowUpToDateSnackbar : SettingsEvent()
 }
 
 sealed class SettingsEffect : UIEffect {

@@ -133,6 +133,11 @@
     <string name="title_terms_of_service">Terms of Service</string>
     <string name="desc_terms_of_service">Read our terms of service</string>
     <string name="app_tagline">Clean your gallery. Free your storage.</string>
+    <string name="text_full_access">Full Access Granted</string>
+    <string name="text_partial_access">Partial Access (Tap to upgrade)</string>
+    <string name="text_denied">Access Denied (Tap to grant)</string>
+    <string name="text_permanently_denied">Blocked (Tap to open Settings)</string>
+
 
     <!-- App Update -->
     <string name="title_check_for_updates">Check for Updates</string>

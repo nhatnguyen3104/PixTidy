@@ -3,6 +3,7 @@ package com.androidtech.base.helper
 import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.appcompat.app.AlertDialog
 import androidx.core.net.toUri
@@ -41,7 +42,7 @@ class AppUpdateChecker(
     }
 
     /** Queries Play for update availability and shows the dialog if needed. */
-    fun check(isManualCheck: Boolean = false) {
+    fun check(isManualCheck: Boolean = false, onUpToDate: (() -> Unit)? = null) {
         activity.lifecycleScope.launch {
             try {
                 val info = appUpdateManager.requestAppUpdateInfo()
@@ -58,8 +59,12 @@ class AppUpdateChecker(
                         showUpdateDialog(info)
                     }
                 } else if (isManualCheck) {
-                    // Nếu người dùng chủ động bấm trong Settings mà app chưa có bản mới -> Báo cáo nhẹ nhàng
-                    showUpToDateDialog()
+                    // Nếu người dùng chủ động bấm trong Settings mà app chưa có bản mới
+                    if (onUpToDate != null) {
+                        onUpToDate()
+                    } else {
+                        showUpToDateDialog()
+                    }
                 }
             } catch (e: CancellationException) {
                 throw e // never swallow coroutine cancellation
@@ -67,6 +72,9 @@ class AppUpdateChecker(
                 // Not installed from Play, Play Store missing/outdated, no network, etc.
                 // An update check must never crash or block the app.
                 Logger.e(e, "AppUpdateChecker: Update check failed with exception")
+                if (isManualCheck) {
+                    onUpToDate?.invoke()
+                }
             }
         }
     }

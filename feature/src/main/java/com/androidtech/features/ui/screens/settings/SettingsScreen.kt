@@ -1,6 +1,7 @@
 package com.androidtech.features.ui.screens.settings
 
 import android.content.Intent
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -17,6 +18,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
@@ -29,6 +31,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -40,6 +43,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.flowWithLifecycle
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
+import com.ads.monetization.ui.bannerad.BannerAd
 import com.androidtech.base.R
 import com.androidtech.base.extension.AppDestination
 import com.androidtech.base.extension.LocalNavController
@@ -54,7 +58,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
 fun NavGraphBuilder.settingsScreen(
-    onCheckForUpdates: () -> Unit = {}
+    onCheckForUpdates: (onUpToDate: () -> Unit) -> Unit = {}
 ) {
     composable(
         route = AppDestination.SettingsScreen.route,
@@ -65,7 +69,7 @@ fun NavGraphBuilder.settingsScreen(
 
 @Composable
 fun SettingsScreen(
-    onCheckForUpdates: () -> Unit = {},
+    onCheckForUpdates: (onUpToDate: () -> Unit) -> Unit = {},
     viewModel: SettingsViewModel = hiltViewModel()
 ) {
     val uiState = viewModel.uiState.collectAsStateWithLifecycle()
@@ -107,6 +111,7 @@ fun SettingsScreen(
                     navController.popBackStack()
                 }
                 is SettingsEffect.ShowSnackbar -> {
+                    showSnackbar(effect.message.asString(context))
                 }
                 is SettingsEffect.OpenWebUrl -> {
                     val intent = Intent(Intent.ACTION_VIEW, effect.url.toUri())
@@ -124,7 +129,9 @@ fun SettingsScreen(
                     permissionState.requestAll()
                 }
                 is SettingsEffect.CheckForUpdates -> {
-                    onCheckForUpdates()
+                    onCheckForUpdates {
+                        viewModel.handleEvent(SettingsEvent.ShowUpToDateSnackbar)
+                    }
                 }
             }
         }
@@ -186,7 +193,16 @@ fun SettingsContent(
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = MaterialTheme.colorScheme.background
                 ),
-                windowInsets = WindowInsets(0.dp)
+                windowInsets = WindowInsets(left = 0, top = 0, right = 0, bottom = 0)
+            )
+        },
+        snackbarHost = { SnackbarHost(snackbarHostState) },
+        bottomBar = {
+            BannerAd(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(Color.White),
+                adHolder = uiState.bannerAdHolder
             )
         },
         containerColor = MaterialTheme.colorScheme.background
@@ -219,10 +235,10 @@ fun SettingsContent(
                         icon = Icons.Outlined.Security,
                         title = stringResource(R.string.title_manage_permissions),
                         subtitle = when (uiState.permissionStatus) {
-                            MediaPermissionStatus.FULL_ACCESS -> "Full Access Granted"
-                            MediaPermissionStatus.PARTIAL_ACCESS -> "Partial Access (Tap to upgrade)"
-                            MediaPermissionStatus.DENIED -> "Access Denied (Tap to grant)"
-                            MediaPermissionStatus.PERMANENTLY_DENIED -> "Blocked (Tap to open Settings)"
+                            MediaPermissionStatus.FULL_ACCESS -> stringResource(R.string.text_full_access)
+                            MediaPermissionStatus.PARTIAL_ACCESS -> stringResource(R.string.text_partial_access)
+                            MediaPermissionStatus.DENIED -> stringResource(R.string.text_denied)
+                            MediaPermissionStatus.PERMANENTLY_DENIED -> stringResource(R.string.text_permanently_denied)
                         },
                         onClick = { onEvent(SettingsEvent.ManagePermissionsClick) }
                     )
