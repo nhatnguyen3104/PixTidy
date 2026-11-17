@@ -2,6 +2,7 @@ package com.androidtech.features.ui.screens.scan
 
 import androidx.compose.animation.*
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -32,6 +33,7 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import com.ads.monetization.ui.bannerad.BannerAd
 import com.androidtech.base.R
 import com.androidtech.base.extension.AppDestination
 import com.androidtech.base.extension.LocalNavController
@@ -124,6 +126,14 @@ fun ScanContent(
                 },
                 colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.background),
                 windowInsets = WindowInsets(left = 0, top = 0, right = 0, bottom = 0)
+            )
+        },
+        bottomBar = {
+            BannerAd(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(Color.White),
+                adHolder = uiState.bannerAdHolder
             )
         },
         containerColor = MaterialTheme.colorScheme.background

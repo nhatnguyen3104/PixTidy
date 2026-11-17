@@ -20,4 +20,5 @@ object AdPlaceName {
     const val SCREENSHOT_BOTTOM = "screenshot_bottom"
     const val LARGE_VIDEO_BOTTOM = "large_video_bottom"
     const val SETTINGS_BOTTOM = "settings_bottom"
+    const val SCAN_BOTTOM = "scan_bottom"
 }

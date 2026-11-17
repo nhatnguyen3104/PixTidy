@@ -2,7 +2,10 @@ package com.androidtech.features.ui.screens.scan
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
+import com.ads.monetization.AdManager
+import com.ads.monetization.adplacename.AdPlaceName
 import com.androidtech.base.viewmodel.BaseViewModel
+import com.androidtech.data.model.aduiresource.getAdPlaceName
 import com.androidtech.domain.extensions.UiState
 import com.androidtech.domain.model.media.ScanLayer
 import com.androidtech.domain.model.media.ScanProgress
@@ -29,10 +32,16 @@ class ScanViewModel @Inject constructor(
     private val runSmartScanUseCase: RunSmartScanUseCase,
     private val runDeepScanUseCase: RunDeepScanUseCase,
     private val getLatestScanResultsUseCase: GetLatestScanResultsUseCase,
-    private val saveScanResultsUseCase: SaveScanResultsUseCase
+    private val saveScanResultsUseCase: SaveScanResultsUseCase,
+    private val adManager: AdManager
 ): BaseViewModel<ScanEvent, ScanState, ScanEffect> (savedStateHandle) {
 
     private var scanJob: Job? = null
+
+    init {
+        loadBannerAd()
+        observeBannerAd()
+    }
 
     private fun getScanMode(): ScanLayer {
         return savedStateHandle.get<String>("mode")?.let {
@@ -199,4 +208,27 @@ class ScanViewModel @Inject constructor(
             }
         }
     }
+
+    private fun loadBannerAd() {
+        viewModelScope.launch {
+            adManager.preloadBannerNativeAd(
+                placeName = AdPlaceName.SCAN_BOTTOM,
+                subPlaceLevel = 0
+            )
+            val bannerHolder = adManager.getBannerAdHolder(AdPlaceName.SCAN_BOTTOM)
+            setState { copy(bannerAdHolder = bannerHolder) }
+        }
+    }
+
+    private fun observeBannerAd() {
+        viewModelScope.launch {
+            adManager.adBannerNativeFlow.collect { resource ->
+                if (resource.getAdPlaceName() == AdPlaceName.SCAN_BOTTOM) {
+                    val bannerHolder = adManager.getBannerAdHolder(AdPlaceName.SCAN_BOTTOM)
+                    setState { copy(bannerAdHolder = bannerHolder) }
+                }
+            }
+        }
+    }
+
 }

@@ -1,5 +1,6 @@
 package com.androidtech.features.ui.screens.scan
 
+import com.ads.monetization.adholder.BannerAdHolder
 import com.androidtech.base.viewmodel.UIEffect
 import com.androidtech.base.viewmodel.UIEvent
 import com.androidtech.base.viewmodel.UIState
@@ -10,7 +11,8 @@ import com.androidtech.features.ui.screens.home.HomeEffect
 
 data class ScanState(
     val scanLayer: ScanLayer = ScanLayer.NONE,
-    val scanProcess: ScanProcess = ScanProcess.Idle
+    val scanProcess: ScanProcess = ScanProcess.Idle,
+    val bannerAdHolder: BannerAdHolder? = null
 ) : UIState
 
 sealed class ScanEvent : UIEvent {
