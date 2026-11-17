@@ -45,4 +45,5 @@ sealed class SettingsEffect : UIEffect {
     object OpenAppPermissions : SettingsEffect()
     object RequestPermissions : SettingsEffect()
     object CheckForUpdates : SettingsEffect()
+    object RecreateActivity : SettingsEffect()
 }

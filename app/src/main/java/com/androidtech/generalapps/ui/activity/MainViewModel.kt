@@ -29,6 +29,9 @@ class MainViewModel @Inject constructor(
     private fun observeSettings() {
         getUserSettingsUseCase()
             .onEach { settings ->
+                if (settings.languageCode.isNotEmpty()) {
+                    com.androidtech.data.utils.LocaleUtils.applyLocale(settings.languageCode)
+                }
                 setState { copy(theme = settings.theme, languageCode = settings.languageCode, isOnboardingCompleted = settings.isOnboardingCompleted, isSettingsReady = true) }
             }
             .launchIn(viewModelScope)

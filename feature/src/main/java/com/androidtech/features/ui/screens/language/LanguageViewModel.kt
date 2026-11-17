@@ -75,11 +75,10 @@ class LanguageViewModel @Inject constructor(
         viewModelScope.launch {
             val selectedCode = currentState.saveLanguageModel.languageCode
             val isOnboardingCompleted = getUserSettingsUseCase().first().isOnboardingCompleted
+            setState { copy(isShowLoading = true) }
             updateLanguageUseCase(selectedCode)
 
-            delay(100.milliseconds)
-            setState { copy(isShowLoading = true) }
-            delay(2000.milliseconds)
+            delay(1500.milliseconds)
             setState { copy(isShowLoading = false) }
             delay(100.milliseconds)
             if (!isOnboardingCompleted) {

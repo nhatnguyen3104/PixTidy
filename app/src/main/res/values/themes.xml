@@ -5,11 +5,11 @@
         <item name="android:windowDisablePreview">true</item>
         <item name="android:windowNoTitle">true</item>
         <item name="android:windowActionBar">false</item>
-        <!--<item name="android:windowIsTranslucent">true</item>-->
+        <item name="android:windowBackground">@color/white</item>
     </style>
 
     <!-- Theme for Splash Screen system -->
-    <style name="Theme.App.Starting" parent="Theme.SplashScreen">
+    <style name="Theme.App.Starting" parent="Theme.Material3.DayNight.NoActionBar">
         <item name="windowSplashScreenBackground">#F8F9FF</item>
 
         <!-- Use transparent icon so the system splash is just a background color.

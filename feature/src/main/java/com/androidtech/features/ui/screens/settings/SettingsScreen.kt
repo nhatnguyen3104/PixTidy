@@ -1,5 +1,6 @@
 package com.androidtech.features.ui.screens.settings
 
+import android.app.Activity
 import android.content.Intent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -48,6 +49,8 @@ import com.androidtech.base.R
 import com.androidtech.base.extension.AppDestination
 import com.androidtech.base.extension.LocalNavController
 import com.androidtech.base.model.LanguageModel
+import com.androidtech.base.theme.SurfaceBlack20
+import com.androidtech.base.ui.animation.LoadingAnimation
 import com.androidtech.base.permission.MediaPermissionHelper
 import com.androidtech.base.permission.MediaPermissionStatus
 import com.androidtech.base.permission.rememberMultiplePermissions
@@ -133,6 +136,9 @@ fun SettingsScreen(
                         viewModel.handleEvent(SettingsEvent.ShowUpToDateSnackbar)
                     }
                 }
+                is SettingsEffect.RecreateActivity -> {
+                    (context as? Activity)?.recreate()
+                }
             }
         }
     }
@@ -155,6 +161,13 @@ fun SettingsScreen(
         uiState = uiState.value,
         onEvent = { viewModel.handleEvent(it) },
         snackbarHostState = snackbarHostState
+    )
+
+    LoadingAnimation(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(SurfaceBlack20),
+        isLoading = uiState.value.isLoading
     )
 }
 

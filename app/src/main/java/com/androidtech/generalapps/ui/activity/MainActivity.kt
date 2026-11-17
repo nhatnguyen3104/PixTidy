@@ -1,10 +1,10 @@
 package com.androidtech.generalapps.ui.activity
 
 import android.os.Bundle
-import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
+import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
@@ -43,7 +43,7 @@ import javax.inject.Inject
  * platform's own mechanism on API 33+ and via appcompat's activity-recreation hook below it.
  */
 @AndroidEntryPoint
-class MainActivity : ComponentActivity() {
+class MainActivity : AppCompatActivity() {
 
     private val mainViewModel by viewModels<MainViewModel>()
 

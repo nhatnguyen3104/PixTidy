@@ -17,6 +17,7 @@ import com.androidtech.domain.usecase.settings.UpdateLanguageUseCase
 import com.androidtech.domain.usecase.settings.UpdateThemeUseCase
 import com.androidtech.features.BuildConfig
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -117,7 +118,14 @@ class SettingsViewModel @Inject constructor(
     }
 
     fun onLanguageSelected(languageModel: LanguageModel) {
-        viewModelScope.launch { updateLanguageUseCase(languageModel.languageCode) }
+        if (uiState.value.languageCode.equals(languageModel.languageCode, ignoreCase = true)) return
+        viewModelScope.launch {
+            setState { copy(isLoading = true) }
+            updateLanguageUseCase(languageModel.languageCode)
+            delay(500)
+            setState { copy(isLoading = false) }
+            setEffect { SettingsEffect.RecreateActivity }
+        }
     }
 
     private fun handleCheckForUpdates() {
