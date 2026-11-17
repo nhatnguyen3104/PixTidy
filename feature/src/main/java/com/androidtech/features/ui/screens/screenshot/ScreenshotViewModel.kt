@@ -5,10 +5,13 @@ import android.content.IntentSender
 import android.os.Build
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
+import com.ads.monetization.AdManager
+import com.ads.monetization.adplacename.AdPlaceName
 import com.androidtech.base.R
 import com.androidtech.base.utils.UiText
 import com.androidtech.base.utils.formatSize
 import com.androidtech.base.viewmodel.BaseViewModel
+import com.androidtech.data.model.aduiresource.getAdPlaceName
 import com.androidtech.data.repository.RequiresUserConfirmationException
 import com.androidtech.domain.extensions.UiState
 import com.androidtech.domain.model.media.MediaItem
@@ -25,12 +28,15 @@ import javax.inject.Inject
 class ScreenshotViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val getLatestScreenshotGroupsUseCase: GetLatestScreenshotGroupsUseCase,
-    private val performSafeCleanupUseCase: PerformSafeCleanupUseCase
+    private val performSafeCleanupUseCase: PerformSafeCleanupUseCase,
+    private val adManager: AdManager
 ): BaseViewModel<ScreenshotEvent, ScreenshotState, ScreenshotEffect>(savedStateHandle) {
     override fun createInitializeState(): ScreenshotState = ScreenshotState()
 
     init {
         loadScreenshot()
+        loadBannerAd()
+        observeBannerAd()
     }
 
     private fun loadScreenshot() {
@@ -213,6 +219,28 @@ class ScreenshotViewModel @Inject constructor(
             setState { copy(showBackConfirmationDialog = true) }
         } else {
             setEffect { ScreenshotEffect.NavigateBack }
+        }
+    }
+
+    private fun loadBannerAd() {
+        viewModelScope.launch {
+            adManager.preloadBannerNativeAd(
+                placeName = AdPlaceName.SCREENSHOT_BOTTOM,
+                subPlaceLevel = 0
+            )
+            val bannerHolder = adManager.getBannerAdHolder(AdPlaceName.SCREENSHOT_BOTTOM)
+            setState { copy(bannerAdHolder = bannerHolder) }
+        }
+    }
+
+    private fun observeBannerAd() {
+        viewModelScope.launch {
+            adManager.adBannerNativeFlow.collect { resource ->
+                if (resource.getAdPlaceName() == AdPlaceName.SCREENSHOT_BOTTOM) {
+                    val bannerHolder = adManager.getBannerAdHolder(AdPlaceName.SCREENSHOT_BOTTOM)
+                    setState { copy(bannerAdHolder = bannerHolder) }
+                }
+            }
         }
     }
 }
