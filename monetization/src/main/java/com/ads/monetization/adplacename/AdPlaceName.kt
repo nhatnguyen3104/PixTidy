@@ -14,4 +14,5 @@ object AdPlaceName {
 
     // Banner
     const val HOME_BOTTOM = "home_bottom"
+    const val SPLASH_BOTTOM = "splash_bottom"
 }

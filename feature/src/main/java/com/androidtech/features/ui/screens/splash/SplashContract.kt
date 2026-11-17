@@ -2,6 +2,7 @@ package com.androidtech.features.ui.screens.splash
 
 import android.app.Activity
 import androidx.compose.runtime.Immutable
+import com.ads.monetization.adholder.BannerAdHolder
 import com.ads.monetization.adholder.NativeAdHolder
 import com.androidtech.base.viewmodel.UIEffect
 import com.androidtech.base.viewmodel.UIEvent
@@ -12,7 +13,8 @@ data class SplashState(
     val progress: Float = 0f,
     val isOnboardingCompleted: Boolean = false,
     val nativeHolder: NativeAdHolder? = null,
-    val adLoadTrigger: Int = 0
+    val adLoadTrigger: Int = 0,
+    val bannerAdHolder: BannerAdHolder? = null
 ): UIState
 
 sealed class SplashEvent: UIEvent {

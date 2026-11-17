@@ -36,10 +36,10 @@ class SplashViewModel @Inject constructor(
                 startInitialization()
             }
             is SplashEvent.PreloadAds -> {
-                preloadAds(event.activity)
+                //preloadAds(event.activity)
             }
             is SplashEvent.ShowInterAd -> {
-                showInterAd(event.activity)
+                //showInterAd(event.activity)
             }
         }
     }
@@ -47,14 +47,28 @@ class SplashViewModel @Inject constructor(
     init {
         // Comment out Interstitial Ad listening for now to focus on Native Ad
         // listenAdFullScreenEvents()
-        observeNativeAds()
+        // observeNativeAds()
+        loadBannerAd()
+        observeBannerAd()
     }
 
     private fun startInitialization() {
         viewModelScope.launch {
+            // Fetch and activate remote config so ad configs are ready
+            launch {
+                try {
+                    fetchAndActiveConfigsUseCase()
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
+            }
+
+            // Load banner ad
+            loadBannerAd()
+
             val totalSteps = 100
             for (i in 1..totalSteps) {
-                delay(25.milliseconds)
+                delay(30.milliseconds)
                 setState { copy(progress = i.toFloat() / totalSteps) }
             }
 
@@ -69,7 +83,7 @@ class SplashViewModel @Inject constructor(
             // adManager.preloadFullScreenAd(activity, AdPlaceName.OPEN_FIRST)
             adManager.preloadBannerNativeAd(placeName = AdPlaceName.OPEN_NATIVE_FIRST)
             val nativeHolder = adManager.getNativeAdHolder(AdPlaceName.OPEN_NATIVE_FIRST)
-            setState { copy(nativeHolder = nativeHolder) }
+            //setState { copy(nativeHolder = nativeHolder) }
         }
     }
 
@@ -107,6 +121,28 @@ class SplashViewModel @Inject constructor(
             adManager.observeBannerNativeAd(AdPlaceName.OPEN_NATIVE_FIRST).collect {
                 val nativeHolder = adManager.getNativeAdHolder(AdPlaceName.OPEN_NATIVE_FIRST)
                 setState { copy(nativeHolder = nativeHolder, adLoadTrigger = adLoadTrigger + 1) }
+            }
+        }
+    }
+
+    private fun loadBannerAd() {
+        viewModelScope.launch {
+            adManager.preloadBannerNativeAd(
+                placeName = AdPlaceName.SPLASH_BOTTOM,
+                subPlaceLevel = 0
+            )
+            val bannerHolder = adManager.getBannerAdHolder(AdPlaceName.SPLASH_BOTTOM)
+            setState { copy(bannerAdHolder = bannerHolder) }
+        }
+    }
+
+    private fun observeBannerAd() {
+        viewModelScope.launch {
+            adManager.adBannerNativeFlow.collect { resource ->
+                if (resource.getAdPlaceName() == AdPlaceName.SPLASH_BOTTOM) {
+                    val bannerHolder = adManager.getBannerAdHolder(AdPlaceName.SPLASH_BOTTOM)
+                    setState { copy(bannerAdHolder = bannerHolder) }
+                }
             }
         }
     }
