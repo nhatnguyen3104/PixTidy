@@ -1,6 +1,7 @@
 package com.androidtech.features.ui.screens.duplicate
 
 import android.content.IntentSender
+import com.ads.monetization.adholder.BannerAdHolder
 import com.androidtech.base.utils.UiText
 import com.androidtech.base.viewmodel.UIEffect
 import com.androidtech.base.viewmodel.UIEvent
@@ -10,7 +11,8 @@ import com.androidtech.domain.model.media.DuplicateGroup
 data class DuplicateState(
     val isLoading: Boolean = false,
     val showBackConfirmationDialog: Boolean = false,
-    val duplicateGroups: List<DuplicateGroup> = emptyList()
+    val duplicateGroups: List<DuplicateGroup> = emptyList(),
+    val bannerAdHolder: BannerAdHolder? = null
 ): UIState {
     val isSelectionActive: Boolean
         get() = duplicateGroups.any { group ->

@@ -5,10 +5,13 @@ import android.content.IntentSender
 import android.os.Build
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
+import com.ads.monetization.AdManager
+import com.ads.monetization.adplacename.AdPlaceName
 import com.androidtech.base.R
 import com.androidtech.base.utils.UiText
 import com.androidtech.base.utils.formatSize
 import com.androidtech.base.viewmodel.BaseViewModel
+import com.androidtech.data.model.aduiresource.getAdPlaceName
 import com.androidtech.data.repository.RequiresUserConfirmationException
 import com.androidtech.domain.extensions.UiState
 import com.androidtech.domain.model.media.MediaItem
@@ -25,12 +28,15 @@ import javax.inject.Inject
 class DuplicateViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val getLatestDuplicateGroupsUseCase: GetLatestDuplicateGroupsUseCase,
-    private val performSafeCleanupUseCase: PerformSafeCleanupUseCase
+    private val performSafeCleanupUseCase: PerformSafeCleanupUseCase,
+    private val adManager: AdManager
 ): BaseViewModel<DuplicateEvent, DuplicateState, DuplicateEffect>(savedStateHandle) {
     override fun createInitializeState(): DuplicateState = DuplicateState()
 
     init {
         loadDuplicates()
+        loadBannerAd()
+        observeBannerAd()
     }
 
     private fun loadDuplicates() {
@@ -197,6 +203,28 @@ class DuplicateViewModel @Inject constructor(
             setState { copy(showBackConfirmationDialog = true) }
         } else {
             setEffect { DuplicateEffect.NavigateBack }
+        }
+    }
+
+    private fun loadBannerAd() {
+        viewModelScope.launch {
+            adManager.preloadBannerNativeAd(
+                placeName = AdPlaceName.DUPLICATE_BOTTOM,
+                subPlaceLevel = 0
+            )
+            val bannerHolder = adManager.getBannerAdHolder(AdPlaceName.DUPLICATE_BOTTOM)
+            setState { copy(bannerAdHolder = bannerHolder) }
+        }
+    }
+
+    private fun observeBannerAd() {
+        viewModelScope.launch {
+            adManager.adBannerNativeFlow.collect { resource ->
+                if (resource.getAdPlaceName() == AdPlaceName.DUPLICATE_BOTTOM) {
+                    val bannerHolder = adManager.getBannerAdHolder(AdPlaceName.DUPLICATE_BOTTOM)
+                    setState { copy(bannerAdHolder = bannerHolder) }
+                }
+            }
         }
     }
 }

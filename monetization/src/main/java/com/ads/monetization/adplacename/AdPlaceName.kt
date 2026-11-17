@@ -15,4 +15,9 @@ object AdPlaceName {
     // Banner
     const val HOME_BOTTOM = "home_bottom"
     const val SPLASH_BOTTOM = "splash_bottom"
+    const val DUPLICATE_BOTTOM = "duplicate_bottom"
+    const val SIMILAR_BOTTOM = "similar_bottom"
+    const val SCREENSHOT_BOTTOM = "screenshot_bottom"
+    const val LARGE_VIDEO_BOTTOM = "large_video_bottom"
+    const val SETTINGS_BOTTOM = "settings_bottom"
 }
