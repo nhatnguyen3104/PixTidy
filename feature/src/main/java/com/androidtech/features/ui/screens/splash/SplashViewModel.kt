@@ -115,7 +115,7 @@ class SplashViewModel @Inject constructor(
         viewModelScope.launch {
             val settings = getUserSettingsUseCase().first()
             setState { copy(isOnboardingCompleted = settings.isOnboardingCompleted) }
-            if (settings.languageCode.isNotBlank()) {
+            if (uiState.value.isOnboardingCompleted) {
                 setEffect { SplashEffect.NavigateToHome }
             } else {
                 setEffect { SplashEffect.NavigateToLanguage }

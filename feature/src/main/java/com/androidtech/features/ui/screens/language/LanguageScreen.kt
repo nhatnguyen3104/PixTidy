@@ -199,10 +199,8 @@ private fun LanguageScreenContent(
                 .padding(horizontal = 16.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            // 1. Header (title + save button)
 
-
-            // 2. Language list — weight(1f)
+            // Language list — weight(1f)
             LanguageList(
                 modifier = Modifier
                     .fillMaxWidth()
