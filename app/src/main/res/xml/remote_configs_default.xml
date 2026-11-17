@@ -11,28 +11,28 @@
         <value>
             {
             "interstitial": {
-            "adUnitId": "ca-app-pub-3940256099942544/1033173712"
+            "adUnitId": "ca-app-pub-3421520566270137/3206356952"
             },
             "app_open": {
-            "adUnitId": "ca-app-pub-3940256099942544/9257395921"
+            "adUnitId": "ca-app-pub-3421520566270137/8742588815"
             },
             "rewarded": {
-            "adUnitId": "ca-app-pub-3940256099942544/5224354917"
+            "adUnitId": "ca-app-pub-3421520566270137/2385723169"
             },
             "banner": {
-            "adUnitId": "ca-app-pub-3940256099942544/6300978111"
+            "adUnitId": "ca-app-pub-3421520566270137/1649410939"
             },
             "native_small": {
-            "adUnitId": "ca-app-pub-3940256099942544/2247696110"
+            "adUnitId": "ca-app-pub-3421520566270137/4228628730"
             },
             "native_medium": {
-            "adUnitId": "ca-app-pub-3940256099942544/2247696110"
+            "adUnitId": "ca-app-pub-3421520566270137/2718116843"
             },
             "language_native": {
-            "adUnitId": "ca-app-pub-3940256099942544/2247696110"
+            "adUnitId": "ca-app-pub-3421520566270137/5112799172"
             },
             "splash_banner": {
-            "adUnitId": "ca-app-pub-3940256099942544/6300978111"
+            "adUnitId": "ca-app-pub-3421520566270137/7663321767"
             }
             }
         </value>
@@ -78,7 +78,37 @@
             "ad_type": "banner"
             },
             {
+            "name": "trash_bottom",
+            "level": "1|3",
+            "ad_type": "banner"
+            },
+            {
+            "name": "duplicate_bottom",
+            "level": "1|3",
+            "ad_type": "banner"
+            },
+            {
+            "name": "similar_bottom",
+            "level": "1|3",
+            "ad_type": "banner"
+            },
+            {
+            "name": "screenshot_bottom",
+            "level": "1|3",
+            "ad_type": "banner"
+            },
+            {
+            "name": "large_video_bottom",
+            "level": "1|3",
+            "ad_type": "banner"
+            },
+            {
             "name": "ai_smart_bottom",
+            "level": "0|2",
+            "ad_type": "banner"
+            },
+            {
+            "name": "scan_bottom",
             "level": "0|2",
             "ad_type": "banner"
             },
@@ -89,6 +119,11 @@
             },
             {
             "name": "preview_bottom",
+            "level": "1|3",
+            "ad_type": "banner"
+            },
+            {
+            "name": "settings_bottom",
             "level": "1|3",
             "ad_type": "banner"
             }
