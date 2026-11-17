@@ -3,6 +3,7 @@ package com.androidtech.features.ui.screens.similar
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.IntentSenderRequest
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -12,6 +13,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -23,6 +25,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.flowWithLifecycle
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
+import com.ads.monetization.ui.bannerad.BannerAd
 import com.androidtech.base.R
 import com.androidtech.base.extension.AppDestination
 import com.androidtech.base.extension.LocalNavController
@@ -209,16 +212,24 @@ fun SimilarContent(
             val selectedPhotos = similarGroups.flatMap { it.selectedSimilarItems }
             val selectedCount = similarGroups.sumOf { it.selectedSimilarItemsCount }
             val selectedSize = similarGroups.sumOf { it.totalSelectedSize }
-            
-            if (selectedCount > 0) {
-                DeleteBottomBar(
-                    selectedCount = selectedCount,
-                    sizeText = selectedSize.formatSize(),
-                    onDeleteClick = {
-                        onEvent(SimilarEvent.DeleteClick(selectedPhotos.map { it.id }))
-                    }
+
+            Column {
+                if (selectedCount > 0) {
+                    DeleteBottomBar(
+                        selectedCount = selectedCount,
+                        sizeText = selectedSize.formatSize(),
+                        onDeleteClick = {
+                            onEvent(SimilarEvent.DeleteClick(selectedPhotos.map { it.id }))
+                        }
+                    )
+                }
+                Spacer(modifier = Modifier.height(8.dp))
+                BannerAd(
+                    adHolder = uiState.bannerAdHolder,
+                    modifier = modifier.fillMaxWidth().background(Color.White)
                 )
             }
+
         },
         snackbarHost = { SnackbarHost(snackbarHostState) },
         containerColor = MaterialTheme.colorScheme.background

@@ -1,6 +1,7 @@
 package com.androidtech.features.ui.screens.similar
 
 import android.content.IntentSender
+import com.ads.monetization.adholder.BannerAdHolder
 import com.androidtech.base.utils.UiText
 import com.androidtech.base.viewmodel.UIEffect
 import com.androidtech.base.viewmodel.UIEvent
@@ -14,7 +15,8 @@ data class SimilarState(
     val showBackConfirmationDialog: Boolean = false,
     val similarGroups: List<SimilarGroup> = emptyList(),
     val previewMediaList: List<MediaItem>? = null,
-    val previewInitialIndex: Int = 0
+    val previewInitialIndex: Int = 0,
+    val bannerAdHolder: BannerAdHolder? = null
 ): UIState {
     val isSelectionActive: Boolean
         get() = similarGroups.any { group ->
