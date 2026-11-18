@@ -23,10 +23,12 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -123,8 +125,12 @@ fun OnboardingScreen(
                     viewModel.handleEvent(OnboardingEvent.ClickNext(event.page))
                 }
 
+                is OnboardingEvent.PreloadAds -> {
+                    viewModel.setEvent(event)
+                }
+
                 else -> {
-                    viewModel.handleEvent(event)
+                    viewModel.setEvent(event)
                 }
             }
         }
@@ -189,6 +195,7 @@ private fun OnboardingScreenContent(
             onActionEvent = onActionEvent
         )
     }
+
 }
 
 @Composable
@@ -253,11 +260,15 @@ private fun PageIndicator(
             }
         }
 
-        if (currentPage == totalPageCount) {
-            MediumNativeAdView(
-                adHolder = uiState.nativeHolder,
-                modifier = Modifier.padding(16.dp)
-            )
+        if (uiState.currentPage == uiState.totalPage - 1) {
+            key(uiState.adLoadTrigger) {
+                MediumNativeAdView(
+                    adHolder = uiState.nativeHolder,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .background(Color.White)
+                )
+            }
         }
     }
 }

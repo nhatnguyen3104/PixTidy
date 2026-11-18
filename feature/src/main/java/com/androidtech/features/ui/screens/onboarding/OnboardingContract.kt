@@ -7,11 +7,11 @@ import com.androidtech.base.viewmodel.UIEffect
 import com.androidtech.base.viewmodel.UIEvent
 import com.androidtech.base.viewmodel.UIState
 
-@Immutable
 data class OnboardingState(
     val totalPage: Int = 3,
     val currentPage: Int = 0,
     val nativeHolder: NativeAdHolder? = null,
+    val adLoadTrigger: Int = 0
 ): UIState
 
 sealed class OnboardingEvent : UIEvent {

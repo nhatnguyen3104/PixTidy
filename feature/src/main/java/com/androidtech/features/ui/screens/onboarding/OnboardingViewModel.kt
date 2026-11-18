@@ -61,11 +61,11 @@ class OnboardingViewModel @Inject constructor(
 
     private fun preLoadAds(activity: Activity) {
         viewModelScope.launch {
-            launch { fetchAndActiveConfigsUseCase() }
+            //launch { fetchAndActiveConfigsUseCase() }
             adManager.preloadFullScreenAd(activity, AdPlaceName.PASS_INTRO)
             adManager.preloadBannerNativeAd(AdPlaceName.INTRO_V2_BOTTOM)
             val nativeHolder = adManager.getNativeAdHolder(AdPlaceName.INTRO_V2_BOTTOM)
-            setState { copy(nativeHolder = nativeHolder) }
+            setState { copy(nativeHolder = nativeHolder, adLoadTrigger = adLoadTrigger + 1 ) }
         }
     }
 
@@ -73,7 +73,7 @@ class OnboardingViewModel @Inject constructor(
         viewModelScope.launch {
             adManager.observeBannerNativeAd(AdPlaceName.INTRO_V2_BOTTOM).collect {
                 val nativeHolder = adManager.getNativeAdHolder(AdPlaceName.INTRO_V2_BOTTOM)
-                setState { copy(nativeHolder = nativeHolder) }
+                setState { copy(nativeHolder = nativeHolder, adLoadTrigger = adLoadTrigger + 1 ) }
             }
         }
     }
