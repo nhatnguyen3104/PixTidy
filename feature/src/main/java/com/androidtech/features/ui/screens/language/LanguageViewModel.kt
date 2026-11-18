@@ -10,7 +10,6 @@ import com.ads.monetization.adholder.NativeAdHolder
 import com.androidtech.data.model.aduiresource.AdLoadBannerNativeUiResource
 import com.androidtech.data.model.aduiresource.getAdPlaceName
 import com.androidtech.base.model.LanguageModel
-import com.androidtech.base.prefs.PreferenceHelper
 import com.androidtech.base.viewmodel.BaseViewModel
 import com.androidtech.domain.usecase.FetchAndActiveRemoteConfigsUseCase
 import com.androidtech.domain.usecase.settings.GetUserSettingsUseCase
@@ -45,15 +44,6 @@ class LanguageViewModel @Inject constructor(
         initializeCurrentLanguage()
         preloadAds()
         observeAds()
-    }
-
-    private fun observeAds() {
-        viewModelScope.launch {
-            adManager.observeBannerNativeAd(AdPlaceName.LANGUAGE_BOTTOM).collect {
-                val nativeHolder = adManager.getNativeAdHolder(AdPlaceName.LANGUAGE_BOTTOM)
-                setState { copy(nativeHolder = nativeHolder, adLoadTrigger = adLoadTrigger + 1) }
-            }
-        }
     }
 
     private fun clickLanguage(selectedLanguageModel: LanguageModel) {
@@ -124,6 +114,15 @@ class LanguageViewModel @Inject constructor(
             adManager.preloadBannerNativeAd(placeName = AdPlaceName.LANGUAGE_BOTTOM)
             val nativeHolder = adManager.getNativeAdHolder(AdPlaceName.LANGUAGE_BOTTOM)
             setState { copy(nativeHolder = nativeHolder, adLoadTrigger = adLoadTrigger + 1) }
+        }
+    }
+
+    private fun observeAds() {
+        viewModelScope.launch {
+            adManager.observeBannerNativeAd(AdPlaceName.LANGUAGE_BOTTOM).collect {
+                val nativeHolder = adManager.getNativeAdHolder(AdPlaceName.LANGUAGE_BOTTOM)
+                setState { copy(nativeHolder = nativeHolder, adLoadTrigger = adLoadTrigger + 1) }
+            }
         }
     }
 }

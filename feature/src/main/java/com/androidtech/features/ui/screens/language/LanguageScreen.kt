@@ -24,6 +24,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -40,7 +41,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
-import com.ads.monetization.ui.nativead.DisplayNativeAdView
 import com.ads.monetization.ui.nativead.MediumNativeAdView
 import com.androidtech.base.R
 import com.androidtech.base.extension.AppDestination
@@ -182,13 +182,14 @@ private fun LanguageScreenContent(
             }
         },
         bottomBar = {
-            DisplayNativeAdView(
-                adHolder = uiState.nativeHolder,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .background(Color.White)
-                    .padding(16.dp)
-            )
+            key(uiState.adLoadTrigger) {
+                MediumNativeAdView(
+                    adHolder = uiState.nativeHolder,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .background(Color.White)
+                )
+            }
         },
         containerColor = Color.White
     ) { paddingValues ->
