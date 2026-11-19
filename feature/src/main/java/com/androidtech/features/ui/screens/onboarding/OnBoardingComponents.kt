@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -35,7 +36,8 @@ fun FirstOnboarding(
 ) {
     Column(
         modifier = modifier
-            .background(MaterialTheme.colorScheme.background),
+            .background(MaterialTheme.colorScheme.background)
+            .padding(start = 8.dp, end = 8.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
@@ -49,7 +51,7 @@ fun FirstOnboarding(
         Text(
             text = stringResource(R.string.text_onboarding_title_1),
             style = Body24Bold,
-            color = Color.Black
+            color = Color.Black,
         )
     }
 }
@@ -61,7 +63,8 @@ fun SecondOnboarding(
 ) {
     Column(
         modifier = modifier
-            .background(MaterialTheme.colorScheme.background),
+            .background(MaterialTheme.colorScheme.background)
+            .padding(start = 8.dp, end = 8.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
@@ -87,7 +90,8 @@ fun ThirdOnboarding(
 ) {
     Column(
         modifier = modifier
-            .background(MaterialTheme.colorScheme.background),
+            .background(MaterialTheme.colorScheme.background)
+            .padding(start = 8.dp, end = 8.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
