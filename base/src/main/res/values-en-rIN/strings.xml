@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_slogan">Less clutter. More memories.</string>
     <string name="text_used_capacity">used out of %1$d GB</string>
     <string name="text_available_capacity">%1$.2f GB available</string>
     <string name="text_scanning">Scanning…</string>
@@ -13,8 +12,6 @@
     <string name="text_denied">Access denied (tap to grant)</string>
     <string name="text_permanently_denied">Blocked (tap to open Settings)</string>
 
-    <string name="app_name">PixTidy</string>
-    <string name="app_version">PixTidy v0.0.3</string>
     <string name="text_select_language">Select Language</string>
     <string name="text_hour">Hours</string>
     <string name="text_minute">Minutes</string>

@@ -13,8 +13,6 @@
     <string name="text_include_downloads_folder">Incluir la carpeta Descargas</string>
     <string name="app_tagline">Limpia tu galería. Libera espacio de almacenamiento.</string>
 
-    <string name="app_name">PixTidy</string>
-    <string name="app_version">PixTidy v0.0.3</string>
     <string name="text_select_language">Select Language</string>
     <string name="text_hour">Hours</string>
     <string name="text_minute">Minutes</string>

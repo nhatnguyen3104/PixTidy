@@ -1,8 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">PixTidy</string>
-    <string name="app_slogan">Kurang semak. Lebih banyak kenangan.</string>
-    <string name="app_version">PixTidy v0.0.3</string>
     <string name="text_select_language">Pilih bahasa</string>
     <string name="text_hour">Jam</string>
     <string name="text_minute">Minit</string>

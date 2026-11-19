@@ -1,8 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">PixTidy</string>
-    <string name="app_slogan">복잡함은 줄이고, 추억은 더 많이.</string>
-    <string name="app_version">PixTidy v0.0.3</string>
     <string name="text_select_language">언어 선택</string>
     <string name="text_hour">시간</string>
     <string name="text_minute">분</string>

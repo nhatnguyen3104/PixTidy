@@ -1,8 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">PixTidy</string>
-    <string name="app_slogan">Minna drasl. Fleiri minningar.</string>
-    <string name="app_version">PixTidy v0.0.3</string>
     <string name="text_select_language">Veldu tungumál</string>
     <string name="text_hour">Klukkustundir</string>
     <string name="text_minute">Mínútur</string>

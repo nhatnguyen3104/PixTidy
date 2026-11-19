@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_slogan">少些杂乱，多些回忆。</string>
     <string name="text_capacity"> GB</string>
     <string name="text_used_capacity">已用（共 %1$d GB）</string>
     <string name="text_available_capacity">剩余 %1$.2f GB</string>

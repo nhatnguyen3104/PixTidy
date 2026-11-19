@@ -1,8 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">PixTidy</string>
-    <string name="app_slogan">写真を整理して、思い出をもっと楽しもう。</string>
-    <string name="app_version">PixTidy v0.0.3</string>
     <string name="text_select_language">言語を選択</string>
     <string name="text_hour">時間</string>
     <string name="text_minute">分</string>

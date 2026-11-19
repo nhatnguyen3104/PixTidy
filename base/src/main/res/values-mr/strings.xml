@@ -1,8 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">PixTidy</string>
-    <string name="app_slogan">कमी पसारा. अधिक आठवणी.</string>
-    <string name="app_version">PixTidy v0.0.3</string>
     <string name="text_select_language">भाषा निवडा</string>
     <string name="text_hour">तास</string>
     <string name="text_minute">मिनिटे</string>

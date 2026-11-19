@@ -1,8 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">PixTidy</string>
-    <string name="app_slogan">少些杂乱，多些回忆。</string>
-    <string name="app_version">PixTidy v0.0.3</string>
     <string name="text_select_language">选择语言</string>
     <string name="text_hour">小时</string>
     <string name="text_minute">分钟</string>

@@ -1,8 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_slogan">Less clutter. More memories.</string>
-    <string name="text_used_capacity">used of %1$d GB</string>
-    <string name="text_available_capacity">%1$.2f GB available</string>
     <string name="text_trash">Trash</string>
     <string name="text_no_media_trash">Trash is empty</string>
     <string name="text_no_duplicates_description">Your media library is clean and organized.</string>

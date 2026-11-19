@@ -13,9 +13,6 @@
     <string name="title_privacy_policy">Politique de confidentialité</string>
     <string name="desc_privacy_policy">Lire notre engagement en matière de traitement local</string>
 
-    <string name="app_name">PixTidy</string>
-    <string name="app_slogan">Less Clutter. More Memories.</string>
-    <string name="app_version">PixTidy v0.0.3</string>
     <string name="text_select_language">Select Language</string>
     <string name="text_hour">Hours</string>
     <string name="text_minute">Minutes</string>

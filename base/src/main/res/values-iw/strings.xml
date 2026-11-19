@@ -1,8 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">PixTidy</string>
-    <string name="app_slogan">פחות עומס. יותר זיכרונות.</string>
-    <string name="app_version">PixTidy v0.0.3</string>
     <string name="text_select_language">בחירת שפה</string>
     <string name="text_hour">שעות</string>
     <string name="text_minute">דקות</string>

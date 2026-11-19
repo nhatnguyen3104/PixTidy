@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">PixTidy</string>
-    <string name="app_slogan">Less Clutter. More Memories.</string>
-    <string name="app_version">PixTidy v0.0.3</string>
+    <string name="app_name" translatable="false">PixTidy</string>
+    <string name="app_slogan" translatable="false">Less Clutter. More Memories.</string>
+    <string name="app_version" translatable="false">PixTidy v0.0.3</string>
     <string name="text_select_language">Select Language</string>
     <string name="text_hour">Hours</string>
     <string name="text_minute">Minutes</string>

@@ -1,8 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">PixTidy</string>
-    <string name="app_slogan">Mindre rod. Flere minder.</string>
-    <string name="app_version">PixTidy v0.0.3</string>
     <string name="text_select_language">Vælg sprog</string>
     <string name="text_hour">Timer</string>
     <string name="text_minute">Minutter</string>
