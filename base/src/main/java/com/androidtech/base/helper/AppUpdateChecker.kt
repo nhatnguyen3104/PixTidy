@@ -11,6 +11,7 @@ import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.lifecycleScope
 import com.androidtech.base.R
+import com.androidtech.base.BuildConfig
 import com.androidtech.base.logger.Logger
 import com.google.android.play.core.appupdate.AppUpdateManager
 import com.google.android.play.core.appupdate.AppUpdateManagerFactory
@@ -34,6 +35,7 @@ class AppUpdateChecker(
     private val appUpdateManager: AppUpdateManager = AppUpdateManagerFactory.create(activity)
 ) : DefaultLifecycleObserver {
 
+    private val updateHelper = InAppUpdateHelper(appUpdateManager)
     private var dialog: AlertDialog? = null
     private val sharedPreferences = activity.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
 
@@ -44,38 +46,54 @@ class AppUpdateChecker(
     /** Queries Play for update availability and shows the dialog if needed. */
     fun check(isManualCheck: Boolean = false, onUpToDate: (() -> Unit)? = null) {
         activity.lifecycleScope.launch {
-            try {
-                val info = appUpdateManager.requestAppUpdateInfo()
-                Logger.d("AppUpdateChecker: updateAvailability = ${info.updateAvailability()}, availableVersionCode = ${info.availableVersionCode()}, installStatus = ${info.installStatus()}")
-                val updateAvailability =
-                    info.updateAvailability() == UpdateAvailability.UPDATE_AVAILABLE
+            val result = updateHelper.getUpdateResult()
+            if (activity.isFinishing || activity.isDestroyed) return@launch
 
-                if (activity.isFinishing || activity.isDestroyed) return@launch
-
-                // Check update available
-                if (updateAvailability) {
-                    // Nếu là manual check hoặc vượt qua được điều kiện 3 ngày -> Hiện Dialog cập nhật
-                    if (isManualCheck || shouldShowUpdateDialog(info)) {
-                        showUpdateDialog(info)
-                    }
-                } else if (isManualCheck) {
-                    // Nếu người dùng chủ động bấm trong Settings mà app chưa có bản mới
-                    if (onUpToDate != null) {
-                        onUpToDate()
+            result.fold(
+                onSuccess = { info ->
+                    val packageInfo = if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
+                        activity.packageManager.getPackageInfo(activity.packageName, android.content.pm.PackageManager.PackageInfoFlags.of(0))
                     } else {
-                        showUpToDateDialog()
+                        @Suppress("DEPRECATION")
+                        activity.packageManager.getPackageInfo(activity.packageName, 0)
+                    }
+                    val installedVersionCode = packageInfo.longVersionCode
+
+                    Logger.d("AppUpdateChecker: installedVersionCode = $installedVersionCode, availableVersionCode = ${info.availableVersionCode()}, updateAvailability = ${info.updateAvailability()}, installStatus = ${info.installStatus()}")
+
+                    val updateAvailability =
+                        info.updateAvailability() == UpdateAvailability.UPDATE_AVAILABLE
+
+                    if (updateAvailability) {
+                        val shouldShow = isManualCheck || shouldShowUpdateDialog(info)
+                        Logger.d("AppUpdateChecker: update is available. isManualCheck = $isManualCheck, shouldShow = $shouldShow")
+                        if (shouldShow) {
+                            showUpdateDialog(info)
+                        }
+                    } else {
+                        Logger.d("AppUpdateChecker: updateAvailability is NOT UPDATE_AVAILABLE (value = ${info.updateAvailability()}). Installed version ($installedVersionCode) vs Play version (${info.availableVersionCode()})")
+                        if (isManualCheck) {
+                            if (BuildConfig.DEBUG) {
+                                showUpdateDialogForTesting()
+                            } else if (onUpToDate != null) {
+                                onUpToDate()
+                            } else {
+                                showUpToDateDialog()
+                            }
+                        }
+                    }
+                },
+                onFailure = { e ->
+                    Logger.e(e, "AppUpdateChecker: Update check failed")
+                    if (isManualCheck) {
+                        if (BuildConfig.DEBUG) {
+                            showUpdateDialogForTesting()
+                        } else {
+                            onUpToDate?.invoke()
+                        }
                     }
                 }
-            } catch (e: CancellationException) {
-                throw e // never swallow coroutine cancellation
-            } catch (e: Exception) {
-                // Not installed from Play, Play Store missing/outdated, no network, etc.
-                // An update check must never crash or block the app.
-                Logger.e(e, "AppUpdateChecker: Update check failed with exception")
-                if (isManualCheck) {
-                    onUpToDate?.invoke()
-                }
-            }
+            )
         }
     }
 
@@ -89,16 +107,18 @@ class AppUpdateChecker(
         val lastSkippedTime = sharedPreferences.getLong(KEY_SKIPPED_TIMESTAMP, 0L)
         val currentAvailableVersion = info.availableVersionCode()
 
+        val currentTime = System.currentTimeMillis()
+        val timeDifference = currentTime - lastSkippedTime
+        val daysPassed = TimeUnit.MILLISECONDS.toDays(timeDifference)
+
+        Logger.d("AppUpdateChecker: shouldShowUpdateDialog -> currentAvailableVersion = $currentAvailableVersion, lastSkippedVersion = $lastSkippedVersion, daysPassed = $daysPassed (cooldown = $COOLDOWN_DAYS)")
+
         // Nếu là một version mới hơn hẳn version từng bấm Skip -> Hiện lại ngay không cần đợi
         if (currentAvailableVersion > lastSkippedVersion) {
             return true
         }
 
         // Nếu cùng version -> Kiểm tra khoảng cách thời gian từ lần Skip cuối
-        val currentTime = System.currentTimeMillis()
-        val timeDifference = currentTime - lastSkippedTime
-        val daysPassed = TimeUnit.MILLISECONDS.toDays(timeDifference)
-
         return daysPassed >= COOLDOWN_DAYS
     }
 
@@ -116,6 +136,23 @@ class AppUpdateChecker(
             .setNegativeButton(R.string.update_dialog_negative) { d, _ ->
                 saveSkipState(info.availableVersionCode())
                 d.dismiss() // user continues using the app normally
+            }
+            .show()
+    }
+
+    private fun showUpdateDialogForTesting() {
+        if (dialog?.isShowing == true) return
+
+        dialog = AlertDialog.Builder(activity)
+            .setTitle(R.string.update_dialog_title)
+            .setMessage("${activity.getString(R.string.update_dialog_message)}\n\n(Debug Mode: Simulated Update)")
+            .setCancelable(true)
+            .setPositiveButton(R.string.update_dialog_positive) { d, _ ->
+                openPlayStore()
+                d.dismiss()
+            }
+            .setNegativeButton(R.string.update_dialog_negative) { d, _ ->
+                d.dismiss()
             }
             .show()
     }

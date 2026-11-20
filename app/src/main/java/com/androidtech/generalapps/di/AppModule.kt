@@ -10,6 +10,8 @@ import androidx.datastore.preferences.preferencesDataStoreFile
 import com.ads.monetization.AdMobManager
 import com.ads.monetization.AdManager
 import com.androidtech.data.local.data_store.SettingsDataStore
+import com.google.android.play.core.appupdate.AppUpdateManager
+import com.google.android.play.core.appupdate.AppUpdateManagerFactory
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import dagger.Module
@@ -37,6 +39,11 @@ class AppModule {
     @Singleton
     @Provides
     fun provideAdManager(adMobManager: AdMobManager): AdManager = adMobManager
+
+    @Provides
+    @Singleton
+    fun provideAppUpdateManager(context: Context): AppUpdateManager =
+        AppUpdateManagerFactory.create(context)
 
     @Provides
     @Singleton
