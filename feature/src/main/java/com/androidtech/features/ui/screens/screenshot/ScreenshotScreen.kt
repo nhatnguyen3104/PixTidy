@@ -268,12 +268,12 @@ fun ScreenshotContent(
                         }
                     )
                 }
+                Spacer(modifier = Modifier.height(8.dp))
+                BannerAd(
+                    adHolder = uiState.bannerAdHolder,
+                    modifier = modifier.fillMaxWidth().background(Color.White)
+                )
             }
-            Spacer(modifier = Modifier.height(8.dp))
-            BannerAd(
-                adHolder = uiState.bannerAdHolder,
-                modifier = modifier.fillMaxWidth().background(Color.White)
-            )
         },
         snackbarHost = { SnackbarHost(snackbarHostState) },
         containerColor = MaterialTheme.colorScheme.background
