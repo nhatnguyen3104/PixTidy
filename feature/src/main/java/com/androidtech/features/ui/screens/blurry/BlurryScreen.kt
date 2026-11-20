@@ -173,7 +173,7 @@ fun BlurryContent(
                 title = {
                     Column {
                         Text(
-                            text = stringResource(R.string.text_trash),
+                            text = stringResource(R.string.text_blurry_photos),
                             style = Title20Bold,
                             color = MaterialTheme.colorScheme.onBackground
                         )
