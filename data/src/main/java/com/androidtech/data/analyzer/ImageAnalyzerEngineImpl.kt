@@ -197,8 +197,9 @@ class ImageAnalyzerEngineImpl @Inject constructor(
         val analyses = resolveAnalyses(candidates, onProgress)
         candidates.filter { item -> analyses[item.id]?.isBlurry == true }
             .map { item ->
-                val score = analyses[item.id]?.qualityScore
-                item.copy(blurScore = score)
+                val qualityScore = analyses[item.id]?.qualityScore ?: 50
+                val blurLevel = (100 - qualityScore).coerceIn(0, 100)
+                item.copy(blurScore = blurLevel)
             }
     }
 

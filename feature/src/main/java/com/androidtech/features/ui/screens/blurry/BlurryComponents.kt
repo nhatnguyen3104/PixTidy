@@ -47,7 +47,7 @@ fun BlurryGrid(
     onPhotoClick: (Long) -> Unit,
     onPhotoToggle: (Long) -> Unit,
     modifier: Modifier = Modifier,
-    contentPadding: PaddingValues = PaddingValues(16.dp)
+    contentPadding: PaddingValues = PaddingValues(8.dp)
 ) {
     LazyVerticalGrid(
         columns = GridCells.Fixed(2),
