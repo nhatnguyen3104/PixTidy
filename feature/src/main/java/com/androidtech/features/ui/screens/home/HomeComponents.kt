@@ -327,9 +327,8 @@ fun ScanRecommendationCard(
                         )
                     }
                 }
+                Spacer(modifier = Modifier.height(14.dp))
             }
-
-            Spacer(modifier = Modifier.height(14.dp))
 
             /*Hide Feature Intelligent Scan
                 Button(
