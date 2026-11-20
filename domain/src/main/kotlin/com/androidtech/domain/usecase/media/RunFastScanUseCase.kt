@@ -133,8 +133,10 @@ class RunFastScanUseCase @Inject constructor(
             totalStorageBytes = totalStorageBytes + addedBytes,
             screenshotCount = 0,
             screenshotBytes = 0L,
-            largeVideoCount = largeVideoCount + addedLargeVideos,
-            largeVideoBytes = largeVideoBytes + addedLargeVideoBytes,
+            /*largeVideoCount = largeVideoCount + addedLargeVideos,
+            largeVideoBytes = largeVideoBytes + addedLargeVideoBytes,*/
+            largeVideoCount = 0,
+            largeVideoBytes = 0L,
             photosSizeBytes = photosSizeBytes + addedPhotoBytes,
             videosSizeBytes = videosSizeBytes + addedVideoBytes
         )

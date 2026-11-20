@@ -34,6 +34,9 @@
     <string name="text_dialog_back_desc">Nếu quay lại ngay, tiến trình và lựa chọn hiện tại sẽ bị mất.</string>
     <string name="text_dialog_exit">Có, hủy</string>
     <string name="text_dialog_cancel">Tiếp tục</string>
+    <string name="text_scan_recommended_title">Đề xuất quét lại</string>
+    <string name="text_scan_recommended_desc">Thực hiện quét để cập nhật Thông tin thông minh với các tệp vừa khôi phục.</string>
+    <string name="text_scan_now">Quét ngay</string>
     <string name="text_onboarding_title_1">Riêng tư và xử lý cục bộ</string>
     <string name="text_onboarding_title_2">Dọn ảnh tương tự và trùng lặp</string>
     <string name="text_onboarding_title_3">Quản lý video lớn và ảnh chụp màn hình</string>

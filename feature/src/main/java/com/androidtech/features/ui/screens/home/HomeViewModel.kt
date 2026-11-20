@@ -12,6 +12,7 @@ import com.androidtech.domain.model.media.ScanSummary
 import com.androidtech.domain.model.media.SmartInsightType
 import com.androidtech.domain.usecase.media.GetLatestScanResultsUseCase
 import com.androidtech.domain.usecase.media.RunFastScanUseCase
+import com.androidtech.domain.usecase.settings.GetUserSettingsUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.collect
@@ -26,6 +27,7 @@ class HomeViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val runFastScanUseCase: RunFastScanUseCase,
     private val getLatestScanResultsUseCase: GetLatestScanResultsUseCase,
+    private val getUserSettingsUseCase: GetUserSettingsUseCase,
     private val adManager: AdManager
 ) : BaseViewModel<HomeEvent, HomeState, HomeEffect>(savedStateHandle) {
     override fun createInitializeState(): HomeState = HomeState()
@@ -34,8 +36,17 @@ class HomeViewModel @Inject constructor(
 
     init {
         observeScanResults()
+        observeUserSettings()
         loadBannerAd()
         observeBannerAd()
+    }
+
+    private fun observeUserSettings() {
+        getUserSettingsUseCase()
+            .onEach { settings ->
+                setState { copy(isScanRecommended = settings.isScanRecommended) }
+            }
+            .launchIn(viewModelScope)
     }
 
     private fun observeScanResults() {

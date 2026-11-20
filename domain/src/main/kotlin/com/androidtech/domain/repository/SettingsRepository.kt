@@ -27,4 +27,7 @@ interface SettingsRepository {
 
     /** Persists a change to whether onboarding has been completed. */
     suspend fun setOnboardingCompleted(completed: Boolean)
+
+    /** Persists a change to whether running a scan is recommended. */
+    suspend fun setScanRecommended(recommended: Boolean)
 }

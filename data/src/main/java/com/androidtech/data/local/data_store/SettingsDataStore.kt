@@ -27,7 +27,8 @@ class SettingsDataStore @Inject constructor(
             UserSettings(
                 theme = preferences[KEY_APP_THEME]?.toAppThemeOrNull() ?: UserSettings.DEFAULT.theme,
                 languageCode = preferences[KEY_APP_LANGUAGE] ?: UserSettings.DEFAULT.languageCode,
-                isOnboardingCompleted = preferences[KEY_ONBOARDING_COMPLETED]?.toOnboardingCompleted() ?: UserSettings.DEFAULT.isOnboardingCompleted
+                isOnboardingCompleted = preferences[KEY_ONBOARDING_COMPLETED]?.toOnboardingCompleted() ?: UserSettings.DEFAULT.isOnboardingCompleted,
+                isScanRecommended = preferences[KEY_IS_SCAN_RECOMMENDED] ?: UserSettings.DEFAULT.isScanRecommended
             )
         }
 
@@ -43,6 +44,10 @@ class SettingsDataStore @Inject constructor(
         dataStore.edit { preferences -> preferences[KEY_ONBOARDING_COMPLETED] = completed }
     }
 
+    suspend fun setScanRecommended(recommended: Boolean) {
+        dataStore.edit { preferences -> preferences[KEY_IS_SCAN_RECOMMENDED] = recommended }
+    }
+
     private fun String.toAppThemeOrNull(): AppTheme? = runCatching { AppTheme.valueOf(this) }.getOrNull()
 
     private fun Boolean.toOnboardingCompleted(): Boolean = this
@@ -52,5 +57,6 @@ class SettingsDataStore @Inject constructor(
         val KEY_APP_THEME = stringPreferencesKey("app_theme")
         val KEY_APP_LANGUAGE = stringPreferencesKey("app_language")
         val KEY_ONBOARDING_COMPLETED = booleanPreferencesKey("onboarding_completed")
+        val KEY_IS_SCAN_RECOMMENDED = booleanPreferencesKey("is_scan_recommended")
     }
 }

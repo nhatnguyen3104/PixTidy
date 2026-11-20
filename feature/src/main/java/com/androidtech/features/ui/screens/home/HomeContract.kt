@@ -11,7 +11,7 @@ import com.androidtech.domain.model.media.StorageSummary
 data class HomeState(
     val isLoading: Boolean = false,
     val isPermissionGranted: Boolean = false,
-    //val storageSummary: StorageSummary = StorageSummary.UNKNOWN,
+    val isScanRecommended: Boolean = true,
     val scanSummary: ScanSummary = ScanSummary.EMPTY,
     val bannerAdHolder: BannerAdHolder? = null
 ): UIState

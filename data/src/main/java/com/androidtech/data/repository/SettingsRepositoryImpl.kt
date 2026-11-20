@@ -27,4 +27,6 @@ class SettingsRepositoryImpl @Inject constructor(
     override suspend fun updateLanguage(languageCode: String) = settingsDataStore.updateLanguage(languageCode)
 
     override suspend fun setOnboardingCompleted(completed: Boolean) = settingsDataStore.setOnboardingCompleted(completed)
+
+    override suspend fun setScanRecommended(recommended: Boolean) = settingsDataStore.setScanRecommended(recommended)
 }

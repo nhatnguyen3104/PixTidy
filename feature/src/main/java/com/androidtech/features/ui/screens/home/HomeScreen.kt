@@ -32,6 +32,7 @@ import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.tooling.preview.Preview
 import com.ads.monetization.ui.bannerad.BannerAd
 import com.androidtech.base.R
 import com.androidtech.base.extension.AppDestination
@@ -198,6 +199,22 @@ fun HomeScreen(
     )
 }
 
+@Preview(showBackground = true)
+@Composable
+fun HomeContentPreview(
+) {
+    AppTheme(
+        theme = com.androidtech.domain.model.settings.AppTheme.LIGHT,
+        dynamicColor = false
+    ) {
+        HomeContent(
+            uiState = HomeState(),
+            onEvent = {},
+            snackbarHostState = remember { SnackbarHostState() }
+        )
+    }
+}
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeContent(
@@ -282,70 +299,21 @@ fun HomeContent(
                 availableGb = uiState.scanSummary.deviceFreeGb
             )
 
-            Spacer(modifier = Modifier.height(24.dp))
+            Spacer(modifier = Modifier.height(20.dp))
 
             if (uiState.isPermissionGranted) {
+                ScanRecommendationCard(
+                    onSmartScan = { onEvent(HomeEvent.SmartScanClicked) },
+                    onDeepScan = { onEvent(HomeEvent.DeepScanClicked) },
+                    isRecommended = uiState.isScanRecommended
+                )
 
-                /*Hide Feature Intelligent Scan
-                Button(
-                    onClick = { onEvent(HomeEvent.DeepScanClicked) },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(56.dp)
-                        .bounceClick(onClick = { onEvent(HomeEvent.DeepScanClicked) }),
-                    shape = RoundedCornerShape(28.dp),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = MaterialTheme.colorScheme.secondary
-                    )
-                ) {
-                    Icon(
-                        imageVector = Icons.Outlined.AutoAwesome,
-                        contentDescription = null,
-                        modifier = Modifier.size(22.dp)
-                    )
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Text(
-                        text = stringResource(R.string.text_intelligent_scan_storage),
-                        style = MaterialTheme.typography.titleMedium.copy(
-                            fontWeight = FontWeight.SemiBold
-                        )
-                    )
-                }
-
-                Spacer(modifier = Modifier.height(12.dp))*/
-
-                Button(
-                    onClick = { onEvent(HomeEvent.SmartScanClicked) },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(56.dp)
-                        .bounceClick(onClick = { onEvent(HomeEvent.SmartScanClicked) }),
-                    shape = RoundedCornerShape(28.dp),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = MaterialTheme.colorScheme.primary
-                    )
-                ) {
-                    Icon(
-                        imageVector = Icons.Outlined.Search,
-                        contentDescription = null,
-                        modifier = Modifier.size(22.dp)
-                    )
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Text(
-                        text = stringResource(R.string.text_smart_scan_storage),
-                        style = MaterialTheme.typography.titleMedium.copy(
-                            fontWeight = FontWeight.SemiBold
-                        )
-                    )
-                }
             } else {
                 PermissionRequestCard(
                     onRequestPermissionClick = { onEvent(HomeEvent.RequestPermissionClicked) },
                     onPrivacyPolicyClick = {}
                 )
             }
-
-
 
             Spacer(modifier = Modifier.height(28.dp))
 
@@ -419,7 +387,7 @@ fun HomeContent(
                 )
                 CategoryCard(
                     title = stringResource(R.string.text_large_videos),
-                    sizeText = uiState.scanSummary.videosSizeBytes.formatSize(),
+                    sizeText = uiState.scanSummary.largeVideoBytes.formatSize(),
                     isPermissionGranted = uiState.isPermissionGranted,
                     icon = Icons.Outlined.VideoLibrary,
                     badgeColor = VideoBadge,
