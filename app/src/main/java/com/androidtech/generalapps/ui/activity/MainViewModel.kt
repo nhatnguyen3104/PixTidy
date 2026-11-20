@@ -1,8 +1,10 @@
 package com.androidtech.generalapps.ui.activity
 
+import android.app.Activity
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.ads.monetization.AdManager
+import com.ads.monetization.adplacename.AdPlaceName
 import com.ads.monetization.appopenad.AppOpenAdManager
 import com.androidtech.base.viewmodel.BaseViewModel
 import com.androidtech.domain.usecase.FetchAndActiveRemoteConfigsUseCase
@@ -22,10 +24,20 @@ class MainViewModel @Inject constructor(
     private val appOpenAdManager: AppOpenAdManager,
 ): BaseViewModel<MainEvent, MainState, MainEffect>(savedStateHandle) {
 
+    val adOpenFlow = appOpenAdManager.adOpenAppFlow
+
     init {
         observeSettings()
         //fetchRemoteConfig()
         initializeMobileAdsSdk()
+    }
+
+    fun showColdStartOpenAppAd(activity: Activity) {
+        if (appOpenAdManager.isSessionStart) {
+            appOpenAdManager.fetchAd(activity, AdPlaceName.OPEN_APP)
+            appOpenAdManager.showAdIfAvailable(activity, AdPlaceName.OPEN_APP)
+            appOpenAdManager.isSessionStart = false
+        }
     }
 
     private fun observeSettings() {
