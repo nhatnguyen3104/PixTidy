@@ -715,6 +715,7 @@ class AdMobManager @Inject constructor(
                 super.onAdFailedToLoad(adError)
                 DataLogger.d("onAdFailedToLoad code=${adError.code} msg=${adError.message}")
                 // Need to handle failed to load Interstitial
+                notifyAdFullScreenNotValidOrLoadFailed(adPlaceHolder.adPlace)
             }
 
             override fun onAdLoaded(ad: InterstitialAd) {
@@ -924,6 +925,8 @@ class AdMobManager @Inject constructor(
                     fullScreenContentError: FullScreenContentError
                 ) {
                     // Interstitial ad failed to show.
+                    notifyAdFullScreenFailedToShow(adHolder.adPlace, true)
+                    notifyAdFullScreenCompleted(adHolder.adPlace, false, 0, AdErrorType.Other)
                 }
 
                 override fun onAdImpression() {
@@ -935,6 +938,8 @@ class AdMobManager @Inject constructor(
                 }
             }
             interstitialAd.show(activity)
+        } else {
+            notifyAdFullScreenNotValidOrLoadFailed(adHolder.adPlace)
         }
     }
 
