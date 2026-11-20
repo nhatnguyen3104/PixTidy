@@ -19,7 +19,8 @@ data class ScanSummary(
     val videosSizeBytes: Long,
     val duplicatesSizeBytes: Long?,
     val similaritySizeBytes: Long?,
-    //val blurrySizeBytes: Long? = null,
+    val blurryCount: Int,
+    val blurrySizeBytes: Long,
     val storageSummary: StorageSummary
 ) {
     companion object {
@@ -32,6 +33,8 @@ data class ScanSummary(
             screenshotBytes = 0L,
             largeVideoCount = 0,
             largeVideoBytes = 0L,
+            blurryCount = 0,
+            blurrySizeBytes = 0L,
             photosSizeBytes = 0L,
             videosSizeBytes = 0L,
             duplicatesSizeBytes = null,

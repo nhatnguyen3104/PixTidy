@@ -73,7 +73,9 @@ class HomeViewModel @Inject constructor(
                             screenshotCount = if (cached.screenshotCount > 0) cached.screenshotCount else fresh.screenshotCount,
                             screenshotBytes = if (cached.screenshotBytes > 0) cached.screenshotBytes else fresh.screenshotBytes,
                             largeVideoCount = if (cached.largeVideoCount > 0) cached.largeVideoCount else fresh.largeVideoCount,
-                            largeVideoBytes = if (cached.largeVideoBytes > 0) cached.largeVideoBytes else fresh.largeVideoBytes
+                            largeVideoBytes = if (cached.largeVideoBytes > 0) cached.largeVideoBytes else fresh.largeVideoBytes,
+                            blurryCount = if (cached.blurryCount > 0) cached.blurryCount else fresh.blurryCount,
+                            blurrySizeBytes = if (cached.blurrySizeBytes > 0) cached.blurrySizeBytes else fresh.blurrySizeBytes
                         )
                     } else {
                         cached.copy(storageSummary = fresh.storageSummary)
@@ -140,7 +142,7 @@ class HomeViewModel @Inject constructor(
             }
 
             SmartInsightType.BLURRY_PHOTOS -> {
-
+                setEffect { HomeEffect.NavigateToBlurry }
             }
             SmartInsightType.DEEP_OCR_DOCUMENTS -> {
 

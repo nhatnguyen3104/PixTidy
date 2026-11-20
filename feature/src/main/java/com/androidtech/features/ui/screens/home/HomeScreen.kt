@@ -163,6 +163,10 @@ fun HomeScreen(
                 is HomeEffect.NavigateToLargeVideo -> {
                     navController.navigate(AppDestination.LargeVideoScreen.route)
                 }
+
+                is HomeEffect.NavigateToBlurry -> {
+                    navController.navigate(AppDestination.BlurryScreen.route)
+                }
             }
         }
     }
@@ -393,6 +397,23 @@ fun HomeContent(
                     badgeColor = VideoBadge,
                     modifier = Modifier.weight(1f),
                     onClick = { onEvent(HomeEvent.SmartInsightTypeClick(SmartInsightType.LARGE_VIDEOS)) }
+                )
+            }
+
+            Spacer(modifier = Modifier.height(12.dp))
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                CategoryCard(
+                    title = stringResource(R.string.text_blurry_photos),
+                    sizeText = uiState.scanSummary.blurrySizeBytes.formatSize(),
+                    isPermissionGranted = uiState.isPermissionGranted,
+                    icon = Icons.Outlined.BlurOn,
+                    badgeColor = FolderBadge,
+                    modifier = Modifier.weight(1f),
+                    onClick = { onEvent(HomeEvent.SmartInsightTypeClick(SmartInsightType.BLURRY_PHOTOS)) }
                 )
             }
 

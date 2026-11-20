@@ -9,6 +9,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
 import com.androidtech.base.extension.AppDestination
 import com.androidtech.base.extension.LocalNavController
+import com.androidtech.features.ui.screens.blurry.blurryScreen
 import com.androidtech.features.ui.screens.duplicate.duplicateScreen
 import com.androidtech.features.ui.screens.home.homeScreen
 import com.androidtech.features.ui.screens.language.languageScreen
@@ -47,6 +48,7 @@ fun AppScreens(
                 similarScreen()
                 screenshotScreen()
                 largeVideoScreen()
+                blurryScreen()
                 settingsScreen(onCheckForUpdates = onCheckForUpdates)
             }
         }

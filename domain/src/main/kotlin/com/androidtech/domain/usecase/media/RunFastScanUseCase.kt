@@ -78,7 +78,9 @@ class RunFastScanUseCase @Inject constructor(
                                     screenshotCount = if (currentSummary.screenshotCount > 0) currentSummary.screenshotCount else final.screenshotCount,
                                     screenshotBytes = if (currentSummary.screenshotBytes > 0) currentSummary.screenshotBytes else final.screenshotBytes,
                                     largeVideoCount = if (currentSummary.largeVideoCount > 0) currentSummary.largeVideoCount else final.largeVideoCount,
-                                    largeVideoBytes = if (currentSummary.largeVideoBytes > 0) currentSummary.largeVideoBytes else final.largeVideoBytes
+                                    largeVideoBytes = if (currentSummary.largeVideoBytes > 0) currentSummary.largeVideoBytes else final.largeVideoBytes,
+                                    blurryCount = if (currentSummary.blurryCount > 0) currentSummary.blurryCount else final.blurryCount,
+                                    blurrySizeBytes = if (currentSummary.blurrySizeBytes > 0) currentSummary.blurrySizeBytes else final.blurrySizeBytes
                                 )
                             } else {
                                 final

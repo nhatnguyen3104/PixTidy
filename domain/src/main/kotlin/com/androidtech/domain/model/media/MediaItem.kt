@@ -22,7 +22,8 @@ data class MediaItem(
     val isBestKeep: Boolean = false,
     val isSelected: Boolean = false,
     val similarityPercentage: Int? = null,
-    val isTrashed: Boolean = false
+    val isTrashed: Boolean = false,
+    val blurScore: Int? = null
 ) {
     val isVideo: Boolean get() = mimeType.startsWith("video/") || (duration ?: 0L) > 0
     val isImage: Boolean get() = mimeType.startsWith("image/")

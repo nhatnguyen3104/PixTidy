@@ -118,19 +118,54 @@ class RunDeepScanUseCase @Inject constructor(
         val storageSummary = systemStorageRepository.fetchDeviceStorage()
         val totalMediaSize = candidates.sumOf { it.size }
 
+        var screenshotCount = 0
+        var screenshotBytes = 0L
+        var largeVideoCount = 0
+        var largeVideoBytes = 0L
+        var blurryCount = 0
+        var blurrySizeBytes = 0L
+        var duplicatesBytes = 0L
+        var similarityBytes = 0L
+
+        smartScanInsights.forEach { insight ->
+            when (insight.type) {
+                SmartInsightType.EXACT_DUPLICATES, SmartInsightType.DUPLICATE_VIDEOS -> {
+                    duplicatesBytes += insight.reclaimableBytes
+                }
+                SmartInsightType.SIMILAR_PHOTOS -> {
+                    similarityBytes += insight.reclaimableBytes
+                }
+                SmartInsightType.SCREENSHOTS -> {
+                    screenshotCount = insight.affectedItemsCount
+                    screenshotBytes = insight.reclaimableBytes
+                }
+                SmartInsightType.LARGE_VIDEOS -> {
+                    largeVideoCount = insight.affectedItemsCount
+                    largeVideoBytes = insight.reclaimableBytes
+                }
+                SmartInsightType.BLURRY_PHOTOS -> {
+                    blurryCount = insight.affectedItemsCount
+                    blurrySizeBytes = insight.reclaimableBytes
+                }
+                else -> {}
+            }
+        }
+
         val summary = ScanSummary(
             lastScanLevel = ScanLayer.DEEP,
             newItemsCount = 0, // Not tracked in this use case yet
             totalMediaCount = candidates.size,
             totalStorageBytes = totalMediaSize,
-            screenshotCount = 0,
-            screenshotBytes = 0L,
-            largeVideoCount = 0,
-            largeVideoBytes = 0L,
+            screenshotCount = screenshotCount,
+            screenshotBytes = screenshotBytes,
+            largeVideoCount = largeVideoCount,
+            largeVideoBytes = largeVideoBytes,
+            blurryCount = blurryCount,
+            blurrySizeBytes = blurrySizeBytes,
             photosSizeBytes = 0L,
             videosSizeBytes = 0L,
-            duplicatesSizeBytes = 0L,
-            similaritySizeBytes = 0L,
+            duplicatesSizeBytes = duplicatesBytes,
+            similaritySizeBytes = similarityBytes,
             storageSummary = storageSummary.copy(mediaUsedBytes = totalMediaSize)
         )
 

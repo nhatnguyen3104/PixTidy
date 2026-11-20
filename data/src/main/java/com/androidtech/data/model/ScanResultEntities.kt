@@ -17,6 +17,8 @@ data class ScanSummaryEntity(
     @ColumnInfo(name = "screenshot_bytes") val screenshotBytes: Long,
     @ColumnInfo(name = "large_video_count") val largeVideoCount: Int,
     @ColumnInfo(name = "large_video_bytes") val largeVideoBytes: Long,
+    @ColumnInfo(name = "blurry_count") val blurryCount: Int,
+    @ColumnInfo(name = "blurry_bytes") val blurryBytes: Long,
     @ColumnInfo(name = "photos_size_bytes") val photosSizeBytes: Long,
     @ColumnInfo(name = "videos_size_bytes") val videosSizeBytes: Long,
     @ColumnInfo(name = "duplicates_size_bytes") val duplicatesSizeBytes: Long?,

@@ -158,6 +158,8 @@ class RunSmartScanUseCase @Inject constructor(
             screenshotBytes = screenshots.sumOf { it.size },
             largeVideoCount = largeVideos.size,
             largeVideoBytes = largeVideos.sumOf { it.size },
+            blurryCount = blurryItems.size,
+            blurrySizeBytes = blurryItems.sumOf { it.size },
             photosSizeBytes = images.sumOf { it.size },
             videosSizeBytes = videos.sumOf { it.size },
             duplicatesSizeBytes = duplicateGroups.sumOf { it.totalSizeDifferenceBytes },

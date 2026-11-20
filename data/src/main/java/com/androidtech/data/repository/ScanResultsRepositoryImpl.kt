@@ -72,15 +72,22 @@ class ScanResultsRepositoryImpl @Inject constructor(
 
         var duplicatesRemovedBytes = 0L
         var similarityRemovedBytes = 0L
+        var blurryRemovedBytes = 0L
+        var blurryCountRemoved = 0
 
         currentInsights.forEach { insight ->
             val removedInThisInsight = insight.items.filter { it.id in deletedIds }.sumOf { it.size }
+            val removedCountInThisInsight = insight.items.count { it.id in deletedIds }
             when (insight.type) {
                 SmartInsightType.EXACT_DUPLICATES, SmartInsightType.DUPLICATE_VIDEOS -> {
                     duplicatesRemovedBytes += removedInThisInsight
                 }
                 SmartInsightType.SIMILAR_PHOTOS -> {
                     similarityRemovedBytes += removedInThisInsight
+                }
+                SmartInsightType.BLURRY_PHOTOS -> {
+                    blurryRemovedBytes += removedInThisInsight
+                    blurryCountRemoved += removedCountInThisInsight
                 }
                 else -> {}
             }
@@ -93,6 +100,8 @@ class ScanResultsRepositoryImpl @Inject constructor(
             screenshotBytes = (currentSummary.screenshotBytes - screenshotBytesRemoved).coerceAtLeast(0L),
             largeVideoCount = (currentSummary.largeVideoCount - largeVideoCountRemoved).coerceAtLeast(0),
             largeVideoBytes = (currentSummary.largeVideoBytes - largeVideoBytesRemoved).coerceAtLeast(0L),
+            blurryCount = (currentSummary.blurryCount - blurryCountRemoved).coerceAtLeast(0),
+            blurrySizeBytes = (currentSummary.blurrySizeBytes - blurryRemovedBytes).coerceAtLeast(0L),
             photosSizeBytes = (currentSummary.photosSizeBytes - photoBytesRemoved).coerceAtLeast(0L),
             videosSizeBytes = (currentSummary.videosSizeBytes - videoBytesRemoved).coerceAtLeast(0L),
             duplicatesSizeBytes = (currentSummary.duplicatesSizeBytes?.minus(duplicatesRemovedBytes))?.coerceAtLeast(0L),
@@ -133,6 +142,8 @@ class ScanResultsRepositoryImpl @Inject constructor(
             screenshotBytes = screenshotBytes,
             largeVideoCount = largeVideoCount,
             largeVideoBytes = largeVideoBytes,
+            blurryCount = blurryCount,
+            blurrySizeBytes = blurryBytes,
             photosSizeBytes = photosSizeBytes,
             videosSizeBytes = videosSizeBytes,
             duplicatesSizeBytes = duplicatesSizeBytes,
@@ -151,6 +162,8 @@ class ScanResultsRepositoryImpl @Inject constructor(
             screenshotBytes = screenshotBytes,
             largeVideoCount = largeVideoCount,
             largeVideoBytes = largeVideoBytes,
+            blurryCount = blurryCount,
+            blurryBytes = blurrySizeBytes,
             photosSizeBytes = photosSizeBytes,
             videosSizeBytes = videosSizeBytes,
             duplicatesSizeBytes = duplicatesSizeBytes,

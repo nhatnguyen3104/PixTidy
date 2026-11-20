@@ -33,5 +33,7 @@ sealed class AppDestination(val route: String) {
     @Serializable
     data object LargeVideoScreen: AppDestination("large_video_screen")
     @Serializable
+    data object BlurryScreen: AppDestination("blurry_screen")
+    @Serializable
     data object SettingsScreen: AppDestination("settings_screen")
 }

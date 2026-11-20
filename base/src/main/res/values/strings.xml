@@ -40,6 +40,7 @@
     <string name="text_dialog_exit">Yes, cancel</string>
     <string name="text_dialog_cancel">Keep going</string>
 
+    <string name="text_item_capacity">%1$s items • %2$s</string>
     <string name="text_scan_recommended_title" tools:ignore="MissingTranslation">Rescan Recommended</string>
     <string name="text_scan_recommended_desc" tools:ignore="MissingTranslation">Run a scan to update your Smart Insights.</string>
     <string name="text_scan_now" tools:ignore="MissingTranslation">Scan Now</string>
@@ -102,6 +103,14 @@
     <string name="text_large_video_classify">%1$s</string>
     <string name="text_no_large_video_found">No large videos found</string>
     <string name="text_no_large_video_description">Videos meeting your storage criteria will appear here.</string>
+
+    <!-- Blurry -->
+    <string name="text_blurry_photos">Blurry Photos</string>
+    <string name="text_blurry_photos_description">%1$s</string>
+    <string name="text_blur">blur %1$d</string>
+    <string name="text_no_blurry_photos_found">No blurry photos found</string>
+    <string name="text_no_blurry_photos_description">Your photo gallery has no blurry items.</string>
+
 
     <!-- Settings -->
     <string name="text_settings_title">Settings</string>

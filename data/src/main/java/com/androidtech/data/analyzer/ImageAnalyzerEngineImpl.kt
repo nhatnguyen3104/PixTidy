@@ -196,6 +196,10 @@ class ImageAnalyzerEngineImpl @Inject constructor(
         // typically all cache hits with zero further decode work.
         val analyses = resolveAnalyses(candidates, onProgress)
         candidates.filter { item -> analyses[item.id]?.isBlurry == true }
+            .map { item ->
+                val score = analyses[item.id]?.qualityScore
+                item.copy(blurScore = score)
+            }
     }
 
     // ---- Shared cache-aware per-item resolution ---------------------------------------------------

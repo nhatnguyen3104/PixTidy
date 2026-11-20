@@ -143,6 +143,8 @@ class ScanViewModel @Inject constructor(
             var screenshotBytes = 0L
             var largeVideoCount = 0
             var largeVideoBytes = 0L
+            var blurryCount = 0
+            var blurryBytes = 0L
 
             success.insights.forEach { insight ->
                 when (insight.type) {
@@ -160,6 +162,10 @@ class ScanViewModel @Inject constructor(
                         largeVideoCount = insight.affectedItemsCount
                         largeVideoBytes = insight.reclaimableBytes
                     }
+                    SmartInsightType.BLURRY_PHOTOS -> {
+                        blurryCount = insight.affectedItemsCount
+                        blurryBytes = insight.reclaimableBytes
+                    }
                     else -> {}
                 }
             }
@@ -171,7 +177,9 @@ class ScanViewModel @Inject constructor(
                 screenshotCount = if (screenshotCount > 0) screenshotCount else currentSummary.screenshotCount,
                 screenshotBytes = if (screenshotBytes > 0) screenshotBytes else currentSummary.screenshotBytes,
                 largeVideoCount = if (largeVideoCount > 0) largeVideoCount else currentSummary.largeVideoCount,
-                largeVideoBytes = if (largeVideoBytes > 0) largeVideoBytes else currentSummary.largeVideoBytes
+                largeVideoBytes = if (largeVideoBytes > 0) largeVideoBytes else currentSummary.largeVideoBytes,
+                blurryCount = if (blurryCount > 0) blurryCount else currentSummary.blurryCount,
+                blurrySizeBytes = if (blurryBytes > 0) blurryBytes else currentSummary.blurrySizeBytes
             )
             
             saveScanResultsUseCase(SaveScanResultsUseCase.Params(updatedSummary, success.insights))
@@ -198,7 +206,7 @@ class ScanViewModel @Inject constructor(
             }
 
             SmartInsightType.BLURRY_PHOTOS -> {
-
+                setEffect { ScanEffect.NavigateToBlurry }
             }
             SmartInsightType.DEEP_OCR_DOCUMENTS -> {
 

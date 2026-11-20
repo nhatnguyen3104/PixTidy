@@ -84,6 +84,9 @@ fun ScanScreen(
                 is ScanEffect.NavigateToLargeVideo -> {
                     navController.navigate(AppDestination.LargeVideoScreen.route)
                 }
+                is ScanEffect.NavigateToBlurry -> {
+                    navController.navigate(AppDestination.BlurryScreen.route)
+                }
             }
         }
     }
@@ -213,6 +216,9 @@ fun ScanContent(
                         val largeVideoSize = largeVideoInsight?.reclaimableBytes ?: process.summary.largeVideoBytes ?: 0L
                         val largeVideoCount = largeVideoInsight?.affectedItemsCount ?: process.summary.largeVideoCount
 
+                        val blurrySize = process.summary.blurrySizeBytes
+                        val blurryCount = process.summary.blurryCount
+
                         Column(
                             modifier = Modifier.fillMaxWidth(),
                             horizontalAlignment = Alignment.CenterHorizontally
@@ -245,7 +251,7 @@ fun ScanContent(
                             // 1. Duplicate Photos
                             ScanCategoryCard(
                                 title = stringResource(R.string.text_duplicate_photos),
-                                sizeText = "$duplicatesCount items • ${duplicatesSize.formatSize()}",
+                                sizeText = stringResource(R.string.text_item_capacity, duplicatesCount, duplicatesSize.formatSize()),
                                 icon = Icons.Outlined.ContentCopy,
                                 badgeColor = ImageBadge,
                                 onClick = {
@@ -258,7 +264,7 @@ fun ScanContent(
                             // 2. Similar Photos
                             ScanCategoryCard(
                                 title = stringResource(R.string.text_similar_photos),
-                                sizeText = "$similarityCount items • ${similaritySize.formatSize()}",
+                                sizeText = stringResource(R.string.text_item_capacity, similarityCount, similaritySize.formatSize()),
                                 icon = Icons.Outlined.Collections,
                                 badgeColor = AudioBadge,
                                 onClick = {
@@ -271,7 +277,7 @@ fun ScanContent(
                             // 3. Screenshots
                             ScanCategoryCard(
                                 title = stringResource(R.string.text_screenshots_old),
-                                sizeText = "$screenshotCount items • ${screenshotSize.formatSize()}",
+                                sizeText = stringResource(R.string.text_item_capacity, screenshotCount, screenshotSize.formatSize()),
                                 icon = Icons.Outlined.Smartphone,
                                 badgeColor = DocumentBadge,
                                 onClick = {
@@ -284,12 +290,26 @@ fun ScanContent(
                             // 4. Large Videos
                             ScanCategoryCard(
                                 title = stringResource(R.string.text_large_videos),
-                                sizeText = "$largeVideoCount items • ${largeVideoSize.formatSize()}",
+                                sizeText = stringResource(R.string.text_item_capacity, largeVideoCount, largeVideoSize.formatSize()),
                                 icon = Icons.Outlined.VideoLibrary,
                                 badgeColor = VideoBadge,
                                 isEnabled = true,
                                 onClick = {
                                     onEvent(ScanEvent.SmartInsightTypeClick(SmartInsightType.LARGE_VIDEOS))
+                                }
+                            )
+
+                            Spacer(modifier = Modifier.height(12.dp))
+
+                            // 5. Blurry Photos
+                            ScanCategoryCard(
+                                title = stringResource(R.string.text_blurry_photos),
+                                sizeText = stringResource(R.string.text_item_capacity, blurryCount, blurrySize.formatSize()),
+                                icon = Icons.Outlined.BlurOn,
+                                badgeColor = FolderBadge,
+                                isEnabled = true,
+                                onClick = {
+                                    onEvent(ScanEvent.SmartInsightTypeClick(SmartInsightType.BLURRY_PHOTOS))
                                 }
                             )
                         }
