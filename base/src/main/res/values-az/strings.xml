@@ -107,4 +107,13 @@
     <string name="update_dialog_negative">Ötür</string>
     <string name="update_uptodate_title">Tətbiq yenilənib</string>
     <string name="update_uptodate_message">Tətbiqin ən son versiyasından istifadə edirsiniz.</string>
+    <string name="text_item_capacity">%1$s element • %2$s</string>
+    <string name="text_scan_recommended_title">Yenidən skan etmək tövsiyə olunur</string>
+    <string name="text_scan_recommended_desc">Ağıllı məlumatları yeniləmək üçün skan edin.</string>
+    <string name="text_scan_now">İndi skan et</string>
+    <string name="text_blurry_photos">Bulanıq fotolar</string>
+    <string name="text_blurry_photos_description">%1$s</string>
+    <string name="text_blur">bulanıq %1$d</string>
+    <string name="text_no_blurry_photos_found">Bulanıq foto tapılmadı</string>
+    <string name="text_no_blurry_photos_description">Foto qalereyanızda bulanıq element yoxdur.</string>
 </resources>

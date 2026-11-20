@@ -107,4 +107,13 @@
     <string name="update_dialog_negative">Sleppa</string>
     <string name="update_uptodate_title">Forritið er uppfært</string>
     <string name="update_uptodate_message">Þú notar nýjustu útgáfu forritsins.</string>
+    <string name="text_item_capacity">%1$s atriði • %2$s</string>
+    <string name="text_scan_recommended_title">Mælt er með nýrri skönnun</string>
+    <string name="text_scan_recommended_desc">Keyrðu skönnun til að uppfæra snjallgreininguna.</string>
+    <string name="text_scan_now">Skanna núna</string>
+    <string name="text_blurry_photos">Óskýrar myndir</string>
+    <string name="text_blurry_photos_description">%1$s</string>
+    <string name="text_blur">óskýrleiki %1$d</string>
+    <string name="text_no_blurry_photos_found">Engar óskýrar myndir fundust</string>
+    <string name="text_no_blurry_photos_description">Myndasafnið þitt inniheldur engin óskýr atriði.</string>
 </resources>

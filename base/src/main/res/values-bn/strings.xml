@@ -107,4 +107,13 @@
     <string name="update_dialog_negative">এড়িয়ে যান</string>
     <string name="update_uptodate_title">অ্যাপ আপ-টু-ডেট</string>
     <string name="update_uptodate_message">আপনি অ্যাপের সর্বশেষ সংস্করণ ব্যবহার করছেন।</string>
+    <string name="text_item_capacity">%1$sটি আইটেম • %2$s</string>
+    <string name="text_scan_recommended_title">আবার স্ক্যান করার পরামর্শ</string>
+    <string name="text_scan_recommended_desc">আপনার স্মার্ট ইনসাইট আপডেট করতে স্ক্যান চালান।</string>
+    <string name="text_scan_now">এখনই স্ক্যান করুন</string>
+    <string name="text_blurry_photos">ঝাপসা ছবি</string>
+    <string name="text_blurry_photos_description">%1$s</string>
+    <string name="text_blur">ঝাপসার মাত্রা %1$d</string>
+    <string name="text_no_blurry_photos_found">কোনো ঝাপসা ছবি পাওয়া যায়নি</string>
+    <string name="text_no_blurry_photos_description">আপনার ছবির গ্যালারিতে কোনো ঝাপসা আইটেম নেই।</string>
 </resources>

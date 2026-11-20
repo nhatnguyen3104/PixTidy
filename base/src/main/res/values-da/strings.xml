@@ -107,4 +107,13 @@
     <string name="update_dialog_negative">Spring over</string>
     <string name="update_uptodate_title">Appen er opdateret</string>
     <string name="update_uptodate_message">Du bruger den nyeste version af appen.</string>
+    <string name="text_item_capacity">%1$s elementer • %2$s</string>
+    <string name="text_scan_recommended_title">Ny scanning anbefales</string>
+    <string name="text_scan_recommended_desc">Kør en scanning for at opdatere din Smart Insights.</string>
+    <string name="text_scan_now">Scan nu</string>
+    <string name="text_blurry_photos">Slørede fotos</string>
+    <string name="text_blurry_photos_description">%1$s</string>
+    <string name="text_blur">sløring %1$d</string>
+    <string name="text_no_blurry_photos_found">Ingen slørede fotos fundet</string>
+    <string name="text_no_blurry_photos_description">Dit fotogalleri indeholder ingen slørede elementer.</string>
 </resources>

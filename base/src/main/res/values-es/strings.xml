@@ -107,4 +107,13 @@
     <string name="update_dialog_negative">Omitir</string>
     <string name="update_uptodate_title">La aplicación está actualizada</string>
     <string name="update_uptodate_message">Estás usando la última versión de la aplicación.</string>
+    <string name="text_item_capacity">%1$s elementos • %2$s</string>
+    <string name="text_scan_recommended_title">Se recomienda volver a analizar</string>
+    <string name="text_scan_recommended_desc">Realiza un análisis para actualizar tus estadísticas inteligentes.</string>
+    <string name="text_scan_now">Analizar ahora</string>
+    <string name="text_blurry_photos">Fotos borrosas</string>
+    <string name="text_blurry_photos_description">%1$s</string>
+    <string name="text_blur">desenfoque %1$d</string>
+    <string name="text_no_blurry_photos_found">No se encontraron fotos borrosas</string>
+    <string name="text_no_blurry_photos_description">Tu galería no tiene elementos borrosos.</string>
 </resources>

@@ -134,4 +134,13 @@
     <string name="update_dialog_negative">Skip</string>
     <string name="update_uptodate_title">App is up to date</string>
     <string name="update_uptodate_message">You are using the latest version of the App.</string>
+    <string name="text_item_capacity">%1$s éléments • %2$s</string>
+    <string name="text_scan_recommended_title">Nouvelle analyse recommandée</string>
+    <string name="text_scan_recommended_desc">Lancez une analyse pour mettre à jour vos aperçus intelligents.</string>
+    <string name="text_scan_now">Analyser maintenant</string>
+    <string name="text_blurry_photos">Photos floues</string>
+    <string name="text_blurry_photos_description">%1$s</string>
+    <string name="text_blur">flou %1$d</string>
+    <string name="text_no_blurry_photos_found">Aucune photo floue trouvée</string>
+    <string name="text_no_blurry_photos_description">Votre galerie ne contient aucun élément flou.</string>
 </resources>

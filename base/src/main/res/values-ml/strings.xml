@@ -107,4 +107,13 @@
     <string name="update_dialog_negative">ഒഴിവാക്കുക</string>
     <string name="update_uptodate_title">ആപ്പ് അപ്ഡേറ്റ് ചെയ്തിട്ടുണ്ട്</string>
     <string name="update_uptodate_message">നിങ്ങൾ ആപ്പിന്റെ ഏറ്റവും പുതിയ പതിപ്പാണ് ഉപയോഗിക്കുന്നത്.</string>
+    <string name="text_item_capacity">%1$s ഇനങ്ങൾ • %2$s</string>
+    <string name="text_scan_recommended_title">വീണ്ടും സ്കാൻ ചെയ്യാൻ ശുപാർശ ചെയ്യുന്നു</string>
+    <string name="text_scan_recommended_desc">നിങ്ങളുടെ സ്മാർട്ട് ഇൻസൈറ്റുകൾ അപ്‌ഡേറ്റ് ചെയ്യാൻ സ്കാൻ നടത്തുക.</string>
+    <string name="text_scan_now">ഇപ്പോൾ സ്കാൻ ചെയ്യുക</string>
+    <string name="text_blurry_photos">മങ്ങിയ ഫോട്ടോകൾ</string>
+    <string name="text_blurry_photos_description">%1$s</string>
+    <string name="text_blur">മങ്ങൽ %1$d</string>
+    <string name="text_no_blurry_photos_found">മങ്ങിയ ഫോട്ടോകളൊന്നും കണ്ടെത്തിയില്ല</string>
+    <string name="text_no_blurry_photos_description">നിങ്ങളുടെ ഫോട്ടോ ഗാലറിയിൽ മങ്ങിയ ഇനങ്ങളില്ല.</string>
 </resources>

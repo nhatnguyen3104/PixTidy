@@ -107,4 +107,13 @@
     <string name="update_dialog_negative">ကျော်ရန်</string>
     <string name="update_uptodate_title">အက်ပ်သည် နောက်ဆုံးဗားရှင်းဖြစ်သည်</string>
     <string name="update_uptodate_message">သင်သည် အက်ပ်၏နောက်ဆုံးဗားရှင်းကို အသုံးပြုနေပါသည်။</string>
+    <string name="text_item_capacity">%1$s ခု • %2$s</string>
+    <string name="text_scan_recommended_title">ပြန်လည်စကင်ဖတ်ရန် အကြံပြုသည်</string>
+    <string name="text_scan_recommended_desc">သင်၏ Smart Insights ကို အပ်ဒိတ်လုပ်ရန် စကင်ဖတ်ပါ။</string>
+    <string name="text_scan_now">ယခု စကင်ဖတ်ရန်</string>
+    <string name="text_blurry_photos">ဝါးနေသော ဓာတ်ပုံများ</string>
+    <string name="text_blurry_photos_description">%1$s</string>
+    <string name="text_blur">ဝါးမှု %1$d</string>
+    <string name="text_no_blurry_photos_found">ဝါးနေသော ဓာတ်ပုံ မတွေ့ပါ</string>
+    <string name="text_no_blurry_photos_description">သင့်ဓာတ်ပုံပြခန်းတွင် ဝါးနေသောအရာ မရှိပါ။</string>
 </resources>

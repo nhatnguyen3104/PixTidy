@@ -107,4 +107,13 @@
     <string name="update_dialog_negative">Ehasa</string>
     <string name="update_uptodate_title">Aplicación oñembopyahu</string>
     <string name="update_uptodate_message">Eipuru hína aplicación versión ipyahuvéva.</string>
+    <string name="text_item_capacity">%1$s mba’erepy • %2$s</string>
+    <string name="text_scan_recommended_title">Oñemomarandu jey hag̃ua</string>
+    <string name="text_scan_recommended_desc">Ejapo peteĩ jehechajey embohekopyahu hag̃ua ne marandu arandu.</string>
+    <string name="text_scan_now">Ehecha ko’ág̃a</string>
+    <string name="text_blurry_photos">Ta’ãnga sa’yju</string>
+    <string name="text_blurry_photos_description">%1$s</string>
+    <string name="text_blur">sa’yju %1$d</string>
+    <string name="text_no_blurry_photos_found">Ndojejuhúi ta’ãnga sa’yju</string>
+    <string name="text_no_blurry_photos_description">Ndaipóri mba’erepy sa’yju ne ta’ãnga renda ryepýpe.</string>
 </resources>

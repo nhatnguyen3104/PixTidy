@@ -107,4 +107,13 @@
     <string name="update_dialog_negative">Ignora</string>
     <string name="update_uptodate_title">L\'app è aggiornata</string>
     <string name="update_uptodate_message">Stai usando l\'ultima versione dell\'app.</string>
+    <string name="text_item_capacity">%1$s elementi • %2$s</string>
+    <string name="text_scan_recommended_title">Si consiglia una nuova scansione</string>
+    <string name="text_scan_recommended_desc">Avvia una scansione per aggiornare le informazioni intelligenti.</string>
+    <string name="text_scan_now">Scansiona ora</string>
+    <string name="text_blurry_photos">Foto sfocate</string>
+    <string name="text_blurry_photos_description">%1$s</string>
+    <string name="text_blur">sfocatura %1$d</string>
+    <string name="text_no_blurry_photos_found">Nessuna foto sfocata trovata</string>
+    <string name="text_no_blurry_photos_description">La galleria non contiene elementi sfocati.</string>
 </resources>

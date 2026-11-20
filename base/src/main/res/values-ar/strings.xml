@@ -107,4 +107,13 @@
     <string name="update_dialog_negative">تخطي</string>
     <string name="update_uptodate_title">التطبيق محدّث</string>
     <string name="update_uptodate_message">أنت تستخدم أحدث إصدار من التطبيق.</string>
+    <string name="text_item_capacity">%1$s عنصر • %2$s</string>
+    <string name="text_scan_recommended_title">يوصى بإعادة الفحص</string>
+    <string name="text_scan_recommended_desc">أجرِ فحصًا لتحديث الرؤى الذكية.</string>
+    <string name="text_scan_now">افحص الآن</string>
+    <string name="text_blurry_photos">صور ضبابية</string>
+    <string name="text_blurry_photos_description">%1$s</string>
+    <string name="text_blur">درجة الضبابية %1$d</string>
+    <string name="text_no_blurry_photos_found">لم يتم العثور على صور ضبابية</string>
+    <string name="text_no_blurry_photos_description">لا تحتوي معرض الصور على صور ضبابية.</string>
 </resources>

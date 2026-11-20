@@ -107,4 +107,13 @@
     <string name="update_dialog_negative">略過</string>
     <string name="update_uptodate_title">應用程式已是最新版本</string>
     <string name="update_uptodate_message">你正在使用最新版本的應用程式。</string>
+    <string name="text_item_capacity">%1$s 個項目 • %2$s</string>
+    <string name="text_scan_recommended_title">建議重新掃描</string>
+    <string name="text_scan_recommended_desc">執行掃描以更新智能摘要。</string>
+    <string name="text_scan_now">立即掃描</string>
+    <string name="text_blurry_photos">模糊相片</string>
+    <string name="text_blurry_photos_description">%1$s</string>
+    <string name="text_blur">模糊度 %1$d</string>
+    <string name="text_no_blurry_photos_found">找不到模糊相片</string>
+    <string name="text_no_blurry_photos_description">你的相片庫沒有模糊項目。</string>
 </resources>

@@ -107,4 +107,13 @@
     <string name="update_dialog_negative">Omiteți</string>
     <string name="update_uptodate_title">Aplicația este actualizată</string>
     <string name="update_uptodate_message">Folosiți cea mai recentă versiune a aplicației.</string>
+    <string name="text_item_capacity">%1$s elemente • %2$s</string>
+    <string name="text_scan_recommended_title">Se recomandă o nouă scanare</string>
+    <string name="text_scan_recommended_desc">Rulează o scanare pentru a actualiza informațiile inteligente.</string>
+    <string name="text_scan_now">Scanează acum</string>
+    <string name="text_blurry_photos">Fotografii neclare</string>
+    <string name="text_blurry_photos_description">%1$s</string>
+    <string name="text_blur">neclaritate %1$d</string>
+    <string name="text_no_blurry_photos_found">Nu s-au găsit fotografii neclare</string>
+    <string name="text_no_blurry_photos_description">Galeria foto nu conține elemente neclare.</string>
 </resources>

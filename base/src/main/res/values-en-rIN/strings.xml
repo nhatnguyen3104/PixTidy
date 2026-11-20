@@ -132,4 +132,13 @@
     <string name="update_dialog_negative">Skip</string>
     <string name="update_uptodate_title">App is up to date</string>
     <string name="update_uptodate_message">You are using the latest version of the App.</string>
+    <string name="text_item_capacity">%1$s items • %2$s</string>
+    <string name="text_scan_recommended_title">Rescan recommended</string>
+    <string name="text_scan_recommended_desc">Run a scan to update your Smart Insights.</string>
+    <string name="text_scan_now">Scan now</string>
+    <string name="text_blurry_photos">Blurry photos</string>
+    <string name="text_blurry_photos_description">%1$s</string>
+    <string name="text_blur">blur %1$d</string>
+    <string name="text_no_blurry_photos_found">No blurry photos found</string>
+    <string name="text_no_blurry_photos_description">Your photo gallery has no blurry items.</string>
 </resources>

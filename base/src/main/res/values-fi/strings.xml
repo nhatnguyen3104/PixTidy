@@ -107,4 +107,13 @@
     <string name="update_dialog_negative">Ohita</string>
     <string name="update_uptodate_title">Sovellus on ajan tasalla</string>
     <string name="update_uptodate_message">Käytössäsi on sovelluksen uusin versio.</string>
+    <string name="text_item_capacity">%1$s kohdetta • %2$s</string>
+    <string name="text_scan_recommended_title">Uusi skannaus on suositeltavaa</string>
+    <string name="text_scan_recommended_desc">Päivitä älykkäät tiedot suorittamalla skannaus.</string>
+    <string name="text_scan_now">Skannaa nyt</string>
+    <string name="text_blurry_photos">Epäselvät kuvat</string>
+    <string name="text_blurry_photos_description">%1$s</string>
+    <string name="text_blur">epätarkkuus %1$d</string>
+    <string name="text_no_blurry_photos_found">Epäselviä kuvia ei löytynyt</string>
+    <string name="text_no_blurry_photos_description">Kuvagalleriassasi ei ole epäselviä kohteita.</string>
 </resources>

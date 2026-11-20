@@ -107,4 +107,13 @@
     <string name="update_dialog_negative">Langkau</string>
     <string name="update_uptodate_title">Aplikasi dikemas kini</string>
     <string name="update_uptodate_message">Anda menggunakan versi aplikasi terkini.</string>
+    <string name="text_item_capacity">%1$s item • %2$s</string>
+    <string name="text_scan_recommended_title">Imbasan semula disyorkan</string>
+    <string name="text_scan_recommended_desc">Jalankan imbasan untuk mengemas kini Wawasan Pintar anda.</string>
+    <string name="text_scan_now">Imbas Sekarang</string>
+    <string name="text_blurry_photos">Foto Kabur</string>
+    <string name="text_blurry_photos_description">%1$s</string>
+    <string name="text_blur">kekaburan %1$d</string>
+    <string name="text_no_blurry_photos_found">Tiada foto kabur ditemui</string>
+    <string name="text_no_blurry_photos_description">Galeri foto anda tiada item yang kabur.</string>
 </resources>

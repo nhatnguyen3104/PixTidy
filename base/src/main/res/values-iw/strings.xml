@@ -107,4 +107,13 @@
     <string name="update_dialog_negative">דילוג</string>
     <string name="update_uptodate_title">האפליקציה מעודכנת</string>
     <string name="update_uptodate_message">אתה משתמש בגרסה העדכנית ביותר של האפליקציה.</string>
+    <string name="text_item_capacity">%1$s פריטים • %2$s</string>
+    <string name="text_scan_recommended_title">מומלץ לסרוק מחדש</string>
+    <string name="text_scan_recommended_desc">יש להפעיל סריקה כדי לעדכן את התובנות החכמות.</string>
+    <string name="text_scan_now">סריקה עכשיו</string>
+    <string name="text_blurry_photos">תמונות מטושטשות</string>
+    <string name="text_blurry_photos_description">%1$s</string>
+    <string name="text_blur">טשטוש %1$d</string>
+    <string name="text_no_blurry_photos_found">לא נמצאו תמונות מטושטשות</string>
+    <string name="text_no_blurry_photos_description">אין פריטים מטושטשים בגלריית התמונות שלך.</string>
 </resources>

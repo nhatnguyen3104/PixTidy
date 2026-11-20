@@ -107,4 +107,13 @@
     <string name="update_dialog_negative">Preskoči</string>
     <string name="update_uptodate_title">Aplikacija je ažurirana</string>
     <string name="update_uptodate_message">Upotrebljavate najnoviju verziju aplikacije.</string>
+    <string name="text_item_capacity">%1$s stavki • %2$s</string>
+    <string name="text_scan_recommended_title">Preporučuje se ponovno skeniranje</string>
+    <string name="text_scan_recommended_desc">Pokrenite skeniranje da biste ažurirali pametne uvide.</string>
+    <string name="text_scan_now">Skeniraj sada</string>
+    <string name="text_blurry_photos">Mutne fotografije</string>
+    <string name="text_blurry_photos_description">%1$s</string>
+    <string name="text_blur">zamućenje %1$d</string>
+    <string name="text_no_blurry_photos_found">Nema pronađenih mutnih fotografija</string>
+    <string name="text_no_blurry_photos_description">U vašoj galeriji nema mutnih stavki.</string>
 </resources>

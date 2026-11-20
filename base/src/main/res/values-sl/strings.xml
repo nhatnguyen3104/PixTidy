@@ -107,4 +107,13 @@
     <string name="update_dialog_negative">Preskoči</string>
     <string name="update_uptodate_title">Aplikacija je posodobljena</string>
     <string name="update_uptodate_message">Uporabljate najnovejšo različico aplikacije.</string>
+    <string name="text_item_capacity">%1$s elementov • %2$s</string>
+    <string name="text_scan_recommended_title">Priporočamo ponovno pregledovanje</string>
+    <string name="text_scan_recommended_desc">Zaženite pregled, da posodobite pametne vpoglede.</string>
+    <string name="text_scan_now">Preglej zdaj</string>
+    <string name="text_blurry_photos">Zamegljene fotografije</string>
+    <string name="text_blurry_photos_description">%1$s</string>
+    <string name="text_blur">zamegljenost %1$d</string>
+    <string name="text_no_blurry_photos_found">Zamegljenih fotografij ni bilo mogoče najti</string>
+    <string name="text_no_blurry_photos_description">V galeriji ni zamegljenih elementov.</string>
 </resources>

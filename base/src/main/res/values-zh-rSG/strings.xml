@@ -9,4 +9,13 @@
     <string name="text_similar_photos">相似媒体</string>
     <string name="text_settings_title">设置</string>
     <string name="text_include_downloads_folder">包含下载文件夹</string>
+    <string name="text_item_capacity">%1$s 个项目 • %2$s</string>
+    <string name="text_scan_recommended_title">建议重新扫描</string>
+    <string name="text_scan_recommended_desc">运行扫描以更新智能洞察。</string>
+    <string name="text_scan_now">立即扫描</string>
+    <string name="text_blurry_photos">模糊照片</string>
+    <string name="text_blurry_photos_description">%1$s</string>
+    <string name="text_blur">模糊度 %1$d</string>
+    <string name="text_no_blurry_photos_found">未找到模糊照片</string>
+    <string name="text_no_blurry_photos_description">您的照片库中没有模糊项目。</string>
 </resources>

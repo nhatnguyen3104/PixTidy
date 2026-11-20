@@ -107,4 +107,13 @@
     <string name="update_dialog_negative">O‘tkazib yuborish</string>
     <string name="update_uptodate_title">Ilova yangilangan</string>
     <string name="update_uptodate_message">Ilovaning eng so‘nggi versiyasidan foydalanmoqdasiz.</string>
+    <string name="text_item_capacity">%1$s ta element • %2$s</string>
+    <string name="text_scan_recommended_title">Qayta skanerlash tavsiya etiladi</string>
+    <string name="text_scan_recommended_desc">Aqlli maʼlumotlarni yangilash uchun skanerlashni boshlang.</string>
+    <string name="text_scan_now">Hozir skanerlash</string>
+    <string name="text_blurry_photos">Xira rasmlar</string>
+    <string name="text_blurry_photos_description">%1$s</string>
+    <string name="text_blur">xiralik %1$d</string>
+    <string name="text_no_blurry_photos_found">Xira rasmlar topilmadi</string>
+    <string name="text_no_blurry_photos_description">Foto galereyangizda xira elementlar yoʻq.</string>
 </resources>

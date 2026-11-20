@@ -107,4 +107,13 @@
     <string name="update_dialog_negative">Παράλειψη</string>
     <string name="update_uptodate_title">Η εφαρμογή είναι ενημερωμένη</string>
     <string name="update_uptodate_message">Χρησιμοποιείτε την πιο πρόσφατη έκδοση της εφαρμογής.</string>
+    <string name="text_item_capacity">%1$s στοιχεία • %2$s</string>
+    <string name="text_scan_recommended_title">Συνιστάται νέα σάρωση</string>
+    <string name="text_scan_recommended_desc">Εκτελέστε σάρωση για να ενημερώσετε τις Έξυπνες πληροφορίες.</string>
+    <string name="text_scan_now">Σάρωση τώρα</string>
+    <string name="text_blurry_photos">Θολές φωτογραφίες</string>
+    <string name="text_blurry_photos_description">%1$s</string>
+    <string name="text_blur">θόλωση %1$d</string>
+    <string name="text_no_blurry_photos_found">Δεν βρέθηκαν θολές φωτογραφίες</string>
+    <string name="text_no_blurry_photos_description">Η συλλογή φωτογραφιών σας δεν περιέχει θολά στοιχεία.</string>
 </resources>

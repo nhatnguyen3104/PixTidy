@@ -107,4 +107,13 @@
     <string name="update_dialog_negative">Pomiń</string>
     <string name="update_uptodate_title">Aplikacja jest aktualna</string>
     <string name="update_uptodate_message">Korzystasz z najnowszej wersji aplikacji.</string>
+    <string name="text_item_capacity">%1$s elementów • %2$s</string>
+    <string name="text_scan_recommended_title">Zalecane ponowne skanowanie</string>
+    <string name="text_scan_recommended_desc">Uruchom skanowanie, aby zaktualizować inteligentne statystyki.</string>
+    <string name="text_scan_now">Skanuj teraz</string>
+    <string name="text_blurry_photos">Rozmazane zdjęcia</string>
+    <string name="text_blurry_photos_description">%1$s</string>
+    <string name="text_blur">rozmycie %1$d</string>
+    <string name="text_no_blurry_photos_found">Nie znaleziono rozmazanych zdjęć</string>
+    <string name="text_no_blurry_photos_description">W galerii nie ma rozmazanych elementów.</string>
 </resources>

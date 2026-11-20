@@ -107,4 +107,13 @@
     <string name="update_dialog_negative">Kihagyás</string>
     <string name="update_uptodate_title">Az alkalmazás naprakész</string>
     <string name="update_uptodate_message">Az alkalmazás legújabb verzióját használod.</string>
+    <string name="text_item_capacity">%1$s elem • %2$s</string>
+    <string name="text_scan_recommended_title">Újraellenőrzés javasolt</string>
+    <string name="text_scan_recommended_desc">Indítson vizsgálatot az intelligens áttekintések frissítéséhez.</string>
+    <string name="text_scan_now">Vizsgálat most</string>
+    <string name="text_blurry_photos">Homályos fotók</string>
+    <string name="text_blurry_photos_description">%1$s</string>
+    <string name="text_blur">homályosság %1$d</string>
+    <string name="text_no_blurry_photos_found">Nem találhatók homályos fotók</string>
+    <string name="text_no_blurry_photos_description">A fotógaléria nem tartalmaz homályos elemeket.</string>
 </resources>

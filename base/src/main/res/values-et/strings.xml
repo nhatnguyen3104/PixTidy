@@ -107,4 +107,13 @@
     <string name="update_dialog_negative">Jäta vahele</string>
     <string name="update_uptodate_title">Rakendus on ajakohane</string>
     <string name="update_uptodate_message">Kasutad rakenduse uusimat versiooni.</string>
+    <string name="text_item_capacity">%1$s üksust • %2$s</string>
+    <string name="text_scan_recommended_title">Soovitame uuesti skannida</string>
+    <string name="text_scan_recommended_desc">Käivita skannimine, et oma nutikat ülevaadet värskendada.</string>
+    <string name="text_scan_now">Skanni kohe</string>
+    <string name="text_blurry_photos">Hägused fotod</string>
+    <string name="text_blurry_photos_description">%1$s</string>
+    <string name="text_blur">hägusus %1$d</string>
+    <string name="text_no_blurry_photos_found">Häguseid fotosid ei leitud</string>
+    <string name="text_no_blurry_photos_description">Sinu fotogaleriis pole häguseid üksusi.</string>
 </resources>

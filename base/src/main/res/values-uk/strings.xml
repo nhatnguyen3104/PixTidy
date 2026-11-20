@@ -107,4 +107,13 @@
     <string name="update_dialog_negative">Пропустити</string>
     <string name="update_uptodate_title">Додаток оновлено</string>
     <string name="update_uptodate_message">Ви використовуєте останню версію додатка.</string>
+    <string name="text_item_capacity">%1$s елементів • %2$s</string>
+    <string name="text_scan_recommended_title">Рекомендуємо повторне сканування</string>
+    <string name="text_scan_recommended_desc">Запустіть сканування, щоб оновити розумну статистику.</string>
+    <string name="text_scan_now">Сканувати зараз</string>
+    <string name="text_blurry_photos">Розмиті фото</string>
+    <string name="text_blurry_photos_description">%1$s</string>
+    <string name="text_blur">розмитість %1$d</string>
+    <string name="text_no_blurry_photos_found">Розмитих фото не знайдено</string>
+    <string name="text_no_blurry_photos_description">У вашій фотогалереї немає розмитих елементів.</string>
 </resources>

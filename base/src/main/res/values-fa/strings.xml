@@ -107,4 +107,13 @@
     <string name="update_dialog_negative">رد کردن</string>
     <string name="update_uptodate_title">برنامه به‌روز است</string>
     <string name="update_uptodate_message">از آخرین نسخه برنامه استفاده می‌کنید.</string>
+    <string name="text_item_capacity">%1$s مورد • %2$s</string>
+    <string name="text_scan_recommended_title">اسکن دوباره پیشنهاد می‌شود</string>
+    <string name="text_scan_recommended_desc">برای به‌روزرسانی بینش‌های هوشمند، اسکن را اجرا کنید.</string>
+    <string name="text_scan_now">اکنون اسکن کنید</string>
+    <string name="text_blurry_photos">عکس‌های تار</string>
+    <string name="text_blurry_photos_description">%1$s</string>
+    <string name="text_blur">میزان تاری %1$d</string>
+    <string name="text_no_blurry_photos_found">عکس تاری پیدا نشد</string>
+    <string name="text_no_blurry_photos_description">گالری عکس شما مورد تاری ندارد.</string>
 </resources>

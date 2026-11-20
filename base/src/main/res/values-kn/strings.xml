@@ -107,4 +107,13 @@
     <string name="update_dialog_negative">ಬಿಟ್ಟುಬಿಡಿ</string>
     <string name="update_uptodate_title">ಆ್ಯಪ್ ನವೀಕೃತವಾಗಿದೆ</string>
     <string name="update_uptodate_message">ನೀವು ಆ್ಯಪ್‌ನ ಇತ್ತೀಚಿನ ಆವೃತ್ತಿಯನ್ನು ಬಳಸುತ್ತಿದ್ದೀರಿ.</string>
+    <string name="text_item_capacity">%1$s ಐಟಂಗಳು • %2$s</string>
+    <string name="text_scan_recommended_title">ಮರು ಸ್ಕ್ಯಾನ್ ಮಾಡಲು ಶಿಫಾರಸು</string>
+    <string name="text_scan_recommended_desc">ನಿಮ್ಮ ಸ್ಮಾರ್ಟ್ ಒಳನೋಟಗಳನ್ನು ನವೀಕರಿಸಲು ಸ್ಕ್ಯಾನ್ ಮಾಡಿ.</string>
+    <string name="text_scan_now">ಈಗ ಸ್ಕ್ಯಾನ್ ಮಾಡಿ</string>
+    <string name="text_blurry_photos">ಮಸುಕಾದ ಫೋಟೋಗಳು</string>
+    <string name="text_blurry_photos_description">%1$s</string>
+    <string name="text_blur">ಮಸುಕು %1$d</string>
+    <string name="text_no_blurry_photos_found">ಮಸುಕಾದ ಫೋಟೋಗಳು ಕಂಡುಬಂದಿಲ್ಲ</string>
+    <string name="text_no_blurry_photos_description">ನಿಮ್ಮ ಫೋಟೋ ಗ್ಯಾಲರಿಯಲ್ಲಿ ಮಸುಕಾದ ಐಟಂಗಳಿಲ್ಲ.</string>
 </resources>

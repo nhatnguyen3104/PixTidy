@@ -107,4 +107,13 @@
     <string name="update_dialog_negative">Прескочи</string>
     <string name="update_uptodate_title">Апликација је ажурирана</string>
     <string name="update_uptodate_message">Користите најновију верзију апликације.</string>
+    <string name="text_item_capacity">%1$s ставки • %2$s</string>
+    <string name="text_scan_recommended_title">Препоручује се поновно скенирање</string>
+    <string name="text_scan_recommended_desc">Покрените скенирање да бисте ажурирали паметне увиде.</string>
+    <string name="text_scan_now">Скенирај сада</string>
+    <string name="text_blurry_photos">Замагљене фотографије</string>
+    <string name="text_blurry_photos_description">%1$s</string>
+    <string name="text_blur">замућење %1$d</string>
+    <string name="text_no_blurry_photos_found">Нису пронађене замагљене фотографије</string>
+    <string name="text_no_blurry_photos_description">У вашој галерији нема замагљених ставки.</string>
 </resources>

@@ -107,4 +107,13 @@
     <string name="update_dialog_negative">Пропускане</string>
     <string name="update_uptodate_title">Приложението е актуално</string>
     <string name="update_uptodate_message">Използвате най-новата версия на приложението.</string>
+    <string name="text_item_capacity">%1$s елемента • %2$s</string>
+    <string name="text_scan_recommended_title">Препоръчва се повторно сканиране</string>
+    <string name="text_scan_recommended_desc">Сканирайте, за да актуализирате Smart Insights.</string>
+    <string name="text_scan_now">Сканирай сега</string>
+    <string name="text_blurry_photos">Размазани снимки</string>
+    <string name="text_blurry_photos_description">%1$s</string>
+    <string name="text_blur">размазване %1$d</string>
+    <string name="text_no_blurry_photos_found">Не са открити размазани снимки</string>
+    <string name="text_no_blurry_photos_description">Във вашата галерия няма размазани елементи.</string>
 </resources>

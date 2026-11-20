@@ -107,4 +107,13 @@
     <string name="update_dialog_negative">वगळा</string>
     <string name="update_uptodate_title">अॅप अद्ययावत आहे</string>
     <string name="update_uptodate_message">तुम्ही अॅपची नवीनतम आवृत्ती वापरत आहात.</string>
+    <string name="text_item_capacity">%1$s आयटम • %2$s</string>
+    <string name="text_scan_recommended_title">पुन्हा स्कॅन करण्याची शिफारस</string>
+    <string name="text_scan_recommended_desc">तुमची स्मार्ट माहिती अपडेट करण्यासाठी स्कॅन चालवा.</string>
+    <string name="text_scan_now">आता स्कॅन करा</string>
+    <string name="text_blurry_photos">अस्पष्ट फोटो</string>
+    <string name="text_blurry_photos_description">%1$s</string>
+    <string name="text_blur">अस्पष्टता %1$d</string>
+    <string name="text_no_blurry_photos_found">अस्पष्ट फोटो आढळले नाहीत</string>
+    <string name="text_no_blurry_photos_description">तुमच्या फोटो गॅलरीत अस्पष्ट आयटम नाहीत.</string>
 </resources>

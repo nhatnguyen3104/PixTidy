@@ -107,4 +107,13 @@
     <string name="update_dialog_negative">Hoppa över</string>
     <string name="update_uptodate_title">Appen är uppdaterad</string>
     <string name="update_uptodate_message">Du använder den senaste versionen av appen.</string>
+    <string name="text_item_capacity">%1$s objekt • %2$s</string>
+    <string name="text_scan_recommended_title">Ny skanning rekommenderas</string>
+    <string name="text_scan_recommended_desc">Kör en skanning för att uppdatera dina smarta insikter.</string>
+    <string name="text_scan_now">Skanna nu</string>
+    <string name="text_blurry_photos">Suddiga foton</string>
+    <string name="text_blurry_photos_description">%1$s</string>
+    <string name="text_blur">oskärpa %1$d</string>
+    <string name="text_no_blurry_photos_found">Inga suddiga foton hittades</string>
+    <string name="text_no_blurry_photos_description">Ditt fotogalleri innehåller inga suddiga objekt.</string>
 </resources>

@@ -107,4 +107,13 @@
     <string name="update_dialog_negative">Lewati</string>
     <string name="update_uptodate_title">Aplikasi sudah terbaru</string>
     <string name="update_uptodate_message">Anda menggunakan versi aplikasi terbaru.</string>
+    <string name="text_item_capacity">%1$s item • %2$s</string>
+    <string name="text_scan_recommended_title">Disarankan untuk memindai ulang</string>
+    <string name="text_scan_recommended_desc">Jalankan pemindaian untuk memperbarui Insight Cerdas.</string>
+    <string name="text_scan_now">Pindai sekarang</string>
+    <string name="text_blurry_photos">Foto buram</string>
+    <string name="text_blurry_photos_description">%1$s</string>
+    <string name="text_blur">keburaman %1$d</string>
+    <string name="text_no_blurry_photos_found">Tidak ada foto buram ditemukan</string>
+    <string name="text_no_blurry_photos_description">Galeri foto Anda tidak memiliki item buram.</string>
 </resources>

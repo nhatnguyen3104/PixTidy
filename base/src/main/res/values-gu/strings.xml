@@ -107,4 +107,13 @@
     <string name="update_dialog_negative">છોડી દો</string>
     <string name="update_uptodate_title">ઍપ અપડેટ છે</string>
     <string name="update_uptodate_message">તમે ઍપનું નવીનતમ સંસ્કરણ વાપરી રહ્યા છો.</string>
+    <string name="text_item_capacity">%1$s આઇટમ • %2$s</string>
+    <string name="text_scan_recommended_title">ફરી સ્કૅન કરવાની ભલામણ</string>
+    <string name="text_scan_recommended_desc">તમારી સ્માર્ટ ઇનસાઇટ્સ અપડેટ કરવા સ્કૅન ચલાવો.</string>
+    <string name="text_scan_now">હમણાં સ્કૅન કરો</string>
+    <string name="text_blurry_photos">ધૂંધળા ફોટા</string>
+    <string name="text_blurry_photos_description">%1$s</string>
+    <string name="text_blur">ધૂંધળાપણું %1$d</string>
+    <string name="text_no_blurry_photos_found">કોઈ ધૂંધળા ફોટા મળ્યા નથી</string>
+    <string name="text_no_blurry_photos_description">તમારી ફોટો ગૅલેરીમાં કોઈ ધૂંધળી આઇટમ નથી.</string>
 </resources>

@@ -107,4 +107,13 @@
     <string name="update_dialog_negative">Přeskočit</string>
     <string name="update_uptodate_title">Aplikace je aktuální</string>
     <string name="update_uptodate_message">Používáte nejnovější verzi aplikace.</string>
+    <string name="text_item_capacity">%1$s položek • %2$s</string>
+    <string name="text_scan_recommended_title">Doporučujeme znovu skenovat</string>
+    <string name="text_scan_recommended_desc">Spuštěním skenování aktualizujete chytré přehledy.</string>
+    <string name="text_scan_now">Skenovat</string>
+    <string name="text_blurry_photos">Rozmazané fotografie</string>
+    <string name="text_blurry_photos_description">%1$s</string>
+    <string name="text_blur">rozmazání %1$d</string>
+    <string name="text_no_blurry_photos_found">Nebyly nalezeny žádné rozmazané fotografie</string>
+    <string name="text_no_blurry_photos_description">Vaše galerie neobsahuje rozmazané položky.</string>
 </resources>

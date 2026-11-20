@@ -107,4 +107,13 @@
     <string name="update_dialog_negative">Praleisti</string>
     <string name="update_uptodate_title">Programa atnaujinta</string>
     <string name="update_uptodate_message">Naudojate naujausią programos versiją.</string>
+    <string name="text_item_capacity">%1$s elementų • %2$s</string>
+    <string name="text_scan_recommended_title">Rekomenduojama nuskaityti iš naujo</string>
+    <string name="text_scan_recommended_desc">Nuskaitykite, kad atnaujintumėte išmaniąsias įžvalgas.</string>
+    <string name="text_scan_now">Nuskaityti dabar</string>
+    <string name="text_blurry_photos">Neryškios nuotraukos</string>
+    <string name="text_blurry_photos_description">%1$s</string>
+    <string name="text_blur">neryškumas %1$d</string>
+    <string name="text_no_blurry_photos_found">Neryškių nuotraukų nerasta</string>
+    <string name="text_no_blurry_photos_description">Nuotraukų galerijoje nėra neryškių elementų.</string>
 </resources>

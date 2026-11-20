@@ -107,4 +107,13 @@
     <string name="update_dialog_negative">Ignorar</string>
     <string name="update_uptodate_title">O app está atualizado</string>
     <string name="update_uptodate_message">Você está usando a versão mais recente do app.</string>
+    <string name="text_item_capacity">%1$s itens • %2$s</string>
+    <string name="text_scan_recommended_title">Recomenda-se fazer uma nova varredura</string>
+    <string name="text_scan_recommended_desc">Faça uma varredura para atualizar seus insights inteligentes.</string>
+    <string name="text_scan_now">Fazer varredura agora</string>
+    <string name="text_blurry_photos">Fotos desfocadas</string>
+    <string name="text_blurry_photos_description">%1$s</string>
+    <string name="text_blur">desfoque %1$d</string>
+    <string name="text_no_blurry_photos_found">Nenhuma foto desfocada encontrada</string>
+    <string name="text_no_blurry_photos_description">Sua galeria de fotos não tem itens desfocados.</string>
 </resources>

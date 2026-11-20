@@ -107,4 +107,13 @@
     <string name="update_dialog_negative">Omet</string>
     <string name="update_uptodate_title">L\'aplicació està actualitzada</string>
     <string name="update_uptodate_message">Estàs utilitzant l\'última versió de l\'aplicació.</string>
+    <string name="text_item_capacity">%1$s elements • %2$s</string>
+    <string name="text_scan_recommended_title">Es recomana tornar a escanejar</string>
+    <string name="text_scan_recommended_desc">Fes un escaneig per actualitzar les estadístiques intel·ligents.</string>
+    <string name="text_scan_now">Escaneja ara</string>
+    <string name="text_blurry_photos">Fotos borroses</string>
+    <string name="text_blurry_photos_description">%1$s</string>
+    <string name="text_blur">desenfocament %1$d</string>
+    <string name="text_no_blurry_photos_found">No s’han trobat fotos borroses</string>
+    <string name="text_no_blurry_photos_description">La galeria no conté elements borrosos.</string>
 </resources>

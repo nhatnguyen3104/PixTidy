@@ -37,6 +37,12 @@
     <string name="text_scan_recommended_title">Đề xuất quét lại</string>
     <string name="text_scan_recommended_desc">Thực hiện quét để cập nhật Thông tin thông minh với các tệp vừa khôi phục.</string>
     <string name="text_scan_now">Quét ngay</string>
+    <string name="text_item_capacity">%1$s mục • %2$s</string>
+    <string name="text_blurry_photos">Ảnh mờ</string>
+    <string name="text_blurry_photos_description">%1$s</string>
+    <string name="text_blur">độ mờ %1$d</string>
+    <string name="text_no_blurry_photos_found">Không tìm thấy ảnh mờ</string>
+    <string name="text_no_blurry_photos_description">Thư viện ảnh của bạn không có mục nào bị mờ.</string>
     <string name="text_onboarding_title_1">Riêng tư và xử lý cục bộ</string>
     <string name="text_onboarding_title_2">Dọn ảnh tương tự và trùng lặp</string>
     <string name="text_onboarding_title_3">Quản lý video lớn và ảnh chụp màn hình</string>

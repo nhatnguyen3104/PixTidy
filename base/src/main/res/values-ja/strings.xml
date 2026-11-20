@@ -107,4 +107,13 @@
     <string name="update_dialog_negative">スキップ</string>
     <string name="update_uptodate_title">アプリは最新です</string>
     <string name="update_uptodate_message">最新バージョンのアプリを使用しています。</string>
+    <string name="text_item_capacity">%1$s件 • %2$s</string>
+    <string name="text_scan_recommended_title">再スキャンをおすすめします</string>
+    <string name="text_scan_recommended_desc">スキャンを実行してスマートインサイトを更新してください。</string>
+    <string name="text_scan_now">今すぐスキャン</string>
+    <string name="text_blurry_photos">ぼやけた写真</string>
+    <string name="text_blurry_photos_description">%1$s</string>
+    <string name="text_blur">ぼやけ度 %1$d</string>
+    <string name="text_no_blurry_photos_found">ぼやけた写真はありません</string>
+    <string name="text_no_blurry_photos_description">フォトギャラリーにぼやけた項目はありません。</string>
 </resources>

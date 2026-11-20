@@ -107,4 +107,13 @@
     <string name="update_dialog_negative">छोड़ें</string>
     <string name="update_uptodate_title">ऐप अपडेटेड है</string>
     <string name="update_uptodate_message">आप ऐप का नवीनतम वर्शन इस्तेमाल कर रहे हैं।</string>
+    <string name="text_item_capacity">%1$s आइटम • %2$s</string>
+    <string name="text_scan_recommended_title">फिर से स्कैन करने की सलाह</string>
+    <string name="text_scan_recommended_desc">अपनी स्मार्ट जानकारी अपडेट करने के लिए स्कैन चलाएं।</string>
+    <string name="text_scan_now">अभी स्कैन करें</string>
+    <string name="text_blurry_photos">धुंधली फ़ोटो</string>
+    <string name="text_blurry_photos_description">%1$s</string>
+    <string name="text_blur">धुंधलापन %1$d</string>
+    <string name="text_no_blurry_photos_found">कोई धुंधली फ़ोटो नहीं मिली</string>
+    <string name="text_no_blurry_photos_description">आपकी फ़ोटो गैलरी में कोई धुंधली सामग्री नहीं है।</string>
 </resources>
