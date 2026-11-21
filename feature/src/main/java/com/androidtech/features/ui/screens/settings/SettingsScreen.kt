@@ -2,6 +2,7 @@ package com.androidtech.features.ui.screens.settings
 
 import android.app.Activity
 import android.content.Intent
+import androidx.activity.compose.LocalActivity
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -26,6 +27,7 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -45,6 +47,7 @@ import androidx.lifecycle.flowWithLifecycle
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import com.ads.monetization.ui.bannerad.BannerAd
+import com.ads.monetization.ui.nativead.MediumNativeAdView
 import com.androidtech.base.R
 import com.androidtech.base.extension.AppDestination
 import com.androidtech.base.extension.LocalNavController
@@ -57,6 +60,7 @@ import com.androidtech.base.permission.rememberMultiplePermissions
 import com.androidtech.domain.model.settings.AppTheme
 import com.androidtech.features.ui.components.PermissionRationaleDialog
 import com.androidtech.features.ui.components.SettingsRedirectDialog
+import com.androidtech.features.ui.screens.language.LanguageEvent
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
@@ -79,6 +83,13 @@ fun SettingsScreen(
     val lifecycleOwner = LocalLifecycleOwner.current
     val navController = LocalNavController.current
     val context = LocalContext.current
+    val activity = LocalActivity.current
+
+    LaunchedEffect(activity) {
+        activity?.let { act ->
+            viewModel.handleEvent(SettingsEvent.PreloadAds(act))
+        }
+    }
 
     val requiredPermissions = remember { MediaPermissionHelper.getRequiredPermissions() }
     val permissionState = rememberMultiplePermissions(
@@ -211,10 +222,14 @@ fun SettingsContent(
         },
         snackbarHost = { SnackbarHost(snackbarHostState) },
         bottomBar = {
-            BannerAd(
-                modifier = modifier.fillMaxWidth().background(MaterialTheme.colorScheme.background),
-                adHolder = uiState.bannerAdHolder
-            )
+            key(uiState.adLoadTrigger) {
+                MediumNativeAdView(
+                    adHolder = uiState.nativeHolder,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .background(MaterialTheme.colorScheme.background)
+                )
+            }
         },
         containerColor = MaterialTheme.colorScheme.background
     ) { paddingValues ->
@@ -232,12 +247,12 @@ fun SettingsContent(
             ) {
                 Spacer(modifier = Modifier.height(8.dp))
 
-                // 1. Privacy hero banner
+                /*// 1. Privacy hero banner
                 PrivacyGuaranteeHeroCard(
                     onClick = { onEvent(SettingsEvent.PrivacyPolicyClicked) }
                 )
 
-                Spacer(modifier = Modifier.height(20.dp))
+                Spacer(modifier = Modifier.height(20.dp))*/
 
                 // 2. Scanning preferences
                 SettingsSectionHeader(title = stringResource(R.string.text_scan_and_cleanup))

@@ -1,6 +1,7 @@
 package com.androidtech.features.ui.screens.settings
 
-import com.ads.monetization.adholder.BannerAdHolder
+import android.app.Activity
+import com.ads.monetization.adholder.NativeAdHolder
 import com.androidtech.base.model.LanguageModel
 import com.androidtech.base.permission.MediaPermissionStatus
 import com.androidtech.base.utils.UiText
@@ -18,7 +19,8 @@ data class SettingsState(
     val permissionStatus: MediaPermissionStatus = MediaPermissionStatus.DENIED,
     val showRationaleDialog: Boolean = false,
     val showSettingsRedirectDialog: Boolean = false,
-    val bannerAdHolder: BannerAdHolder? = null
+    val nativeHolder: NativeAdHolder? = null,
+    val adLoadTrigger: Int = 0
 ) : UIState
 
 sealed class SettingsEvent : UIEvent {
@@ -36,6 +38,7 @@ sealed class SettingsEvent : UIEvent {
     data class LanguageSelected(val languageModel: LanguageModel) : SettingsEvent()
     object CheckForUpdatesClicked : SettingsEvent()
     object ShowUpToDateSnackbar : SettingsEvent()
+    data class PreloadAds(val activity: Activity) : SettingsEvent()
 }
 
 sealed class SettingsEffect : UIEffect {

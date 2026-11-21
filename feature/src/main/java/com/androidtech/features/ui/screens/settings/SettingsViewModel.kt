@@ -24,6 +24,7 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import kotlin.time.Duration.Companion.milliseconds
 
 @HiltViewModel
 class SettingsViewModel @Inject constructor(
@@ -37,8 +38,8 @@ class SettingsViewModel @Inject constructor(
 
     init {
         observeUserSettings()
-        loadBannerAd()
-        observeBannerAd()
+        preloadAds()
+        observeAds()
     }
 
     private fun observeUserSettings() {
@@ -105,6 +106,9 @@ class SettingsViewModel @Inject constructor(
             is SettingsEvent.ShowUpToDateSnackbar -> {
                 setEffect { SettingsEffect.ShowSnackbar(UiText.StringResource(R.string.update_uptodate_message)) }
             }
+            is SettingsEvent.PreloadAds -> {
+                preloadAds()
+            }
         }
     }
 
@@ -122,34 +126,25 @@ class SettingsViewModel @Inject constructor(
         viewModelScope.launch {
             setState { copy(isLoading = true) }
             updateLanguageUseCase(languageModel.languageCode)
-            delay(500)
+            delay(500.milliseconds)
             setState { copy(isLoading = false) }
             setEffect { SettingsEffect.RecreateActivity }
         }
     }
 
-    private fun handleCheckForUpdates() {
-        setEffect { SettingsEffect.CheckForUpdates }
-    }
-
-    private fun loadBannerAd() {
+    private fun preloadAds() {
         viewModelScope.launch {
-            adManager.preloadBannerNativeAd(
-                placeName = AdPlaceName.SETTINGS_BOTTOM,
-                subPlaceLevel = 0
-            )
-            val bannerHolder = adManager.getBannerAdHolder(AdPlaceName.SETTINGS_BOTTOM)
-            setState { copy(bannerAdHolder = bannerHolder) }
+            adManager.preloadBannerNativeAd(placeName = AdPlaceName.SETTING_BOTTOM)
+            val nativeHolder = adManager.getNativeAdHolder(AdPlaceName.SETTING_BOTTOM)
+            setState { copy(nativeHolder = nativeHolder, adLoadTrigger = adLoadTrigger + 1) }
         }
     }
 
-    private fun observeBannerAd() {
+    private fun observeAds() {
         viewModelScope.launch {
-            adManager.adBannerNativeFlow.collect { resource ->
-                if (resource.getAdPlaceName() == AdPlaceName.SETTINGS_BOTTOM) {
-                    val bannerHolder = adManager.getBannerAdHolder(AdPlaceName.SETTINGS_BOTTOM)
-                    setState { copy(bannerAdHolder = bannerHolder) }
-                }
+            adManager.observeBannerNativeAd(AdPlaceName.SETTING_BOTTOM).collect {
+                val nativeHolder = adManager.getNativeAdHolder(AdPlaceName.SETTING_BOTTOM)
+                setState { copy(nativeHolder = nativeHolder, adLoadTrigger = adLoadTrigger + 1) }
             }
         }
     }
