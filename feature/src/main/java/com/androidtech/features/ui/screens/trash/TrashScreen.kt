@@ -230,7 +230,7 @@ fun TrashContent(
                 Spacer(modifier = Modifier.width(8.dp))
                 BannerAd(
                     adHolder = uiState.bannerAdHolder,
-                    modifier = modifier.fillMaxWidth().background(Color.White)
+                    modifier = modifier.fillMaxWidth().background(MaterialTheme.colorScheme.background)
                 )
             }
         },

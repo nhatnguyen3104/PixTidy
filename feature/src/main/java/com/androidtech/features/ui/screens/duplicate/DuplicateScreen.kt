@@ -260,9 +260,7 @@ fun DuplicateContent(
                 Spacer(modifier = Modifier.height(8.dp))
                 BannerAd(
                     adHolder = uiState.bannerAdHolder,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .background(Color.White),
+                    modifier = modifier.fillMaxWidth().background(MaterialTheme.colorScheme.background)
                 )
             }
 

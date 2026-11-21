@@ -212,9 +212,7 @@ fun SettingsContent(
         snackbarHost = { SnackbarHost(snackbarHostState) },
         bottomBar = {
             BannerAd(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .background(Color.White),
+                modifier = modifier.fillMaxWidth().background(MaterialTheme.colorScheme.background),
                 adHolder = uiState.bannerAdHolder
             )
         },

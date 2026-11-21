@@ -250,7 +250,7 @@ fun BlurryContent(
                 Spacer(modifier = Modifier.height(8.dp))
                 BannerAd(
                     adHolder = uiState.bannerAdHolder,
-                    modifier = modifier.fillMaxWidth().background(Color.White)
+                    modifier = modifier.fillMaxWidth().background(MaterialTheme.colorScheme.background)
                 )
             }
         },
