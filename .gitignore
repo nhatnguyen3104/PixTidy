@@ -4,10 +4,9 @@ build/
 
 # Local configuration file (sdk path, etc)
 local.properties
-
+secrets.properties
 .artifacts
 .kotlin
-
 
 # Log/OS Files
 *.log
@@ -59,4 +58,8 @@ render.experimental.xml
 /.idea/misc.xml
 /.idea/kotlinc.xml
 /.idea/gradle.xml
-
+**/google-services.json
+**/remote_configs_default.xml
+KeyStore_SnapSweep/
+data/
+monetization/
