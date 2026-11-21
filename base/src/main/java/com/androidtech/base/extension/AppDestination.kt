@@ -35,5 +35,7 @@ sealed class AppDestination(val route: String) {
     @Serializable
     data object BlurryScreen: AppDestination("blurry_screen")
     @Serializable
+    data object OcrDocumentScreen: AppDestination("ocr_document_screen")
+    @Serializable
     data object SettingsScreen: AppDestination("settings_screen")
 }

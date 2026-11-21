@@ -108,6 +108,11 @@
             "ad_type": "banner"
             },
             {
+            "name": "ocr_document_bottom",
+            "level": "1|3",
+            "ad_type": "banner"
+            },
+            {
             "name": "ai_smart_bottom",
             "level": "0|2",
             "ad_type": "banner"

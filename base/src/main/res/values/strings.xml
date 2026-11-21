@@ -111,6 +111,11 @@
     <string name="text_no_blurry_photos_found">No blurry photos found</string>
     <string name="text_no_blurry_photos_description">Your photo gallery has no blurry items.</string>
 
+    <!-- Ocr Document -->
+    <string name="text_ocr_document" translatable="false">OCR Document</string>
+    <string name="text_ocr_document_description" translatable="false">%1$s</string>
+    <string name="text_no_ocr_document_found" translatable="false">No OCR Document found</string>
+    <string name="text_no_ocr_document_description" translatable="false">Your photo gallery has no OCR Document.</string>
 
     <!-- Settings -->
     <string name="text_settings_title">Settings</string>

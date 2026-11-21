@@ -14,6 +14,7 @@ import com.androidtech.features.ui.screens.duplicate.duplicateScreen
 import com.androidtech.features.ui.screens.home.homeScreen
 import com.androidtech.features.ui.screens.language.languageScreen
 import com.androidtech.features.ui.screens.largevideo.largeVideoScreen
+import com.androidtech.features.ui.screens.ocrdodument.ocrDocumentScreen
 import com.androidtech.features.ui.screens.onboarding.onboardingScreen
 import com.androidtech.features.ui.screens.scan.scanScreen
 import com.androidtech.features.ui.screens.screenshot.screenshotScreen
@@ -49,6 +50,7 @@ fun AppScreens(
                 screenshotScreen()
                 largeVideoScreen()
                 blurryScreen()
+                ocrDocumentScreen()
                 settingsScreen(onCheckForUpdates = onCheckForUpdates)
             }
         }

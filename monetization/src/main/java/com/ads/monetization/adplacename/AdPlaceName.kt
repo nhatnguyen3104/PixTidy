@@ -32,4 +32,5 @@ object AdPlaceName {
     const val SCAN_BOTTOM = "scan_bottom"
     const val TRASH_BOTTOM = "trash_bottom"
     const val BLURRY_BOTTOM = "blurry_bottom"
+    const val OCR_DOCUMENT_BOTTOM = "ocr_document_bottom"
 }
