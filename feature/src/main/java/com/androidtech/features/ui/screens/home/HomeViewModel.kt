@@ -1,10 +1,12 @@
 package com.androidtech.features.ui.screens.home
 
+import android.app.Activity
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.ads.monetization.AdManager
 import com.ads.monetization.adplacename.AdPlaceName
 import com.androidtech.base.viewmodel.BaseViewModel
+import com.androidtech.data.model.aduiresource.AdFullScreenUiResource
 import com.androidtech.data.model.aduiresource.getAdPlaceName
 import com.androidtech.domain.extensions.UiState
 import com.androidtech.domain.model.media.ScanLayer
@@ -39,6 +41,7 @@ class HomeViewModel @Inject constructor(
         observeUserSettings()
         loadBannerAd()
         observeBannerAd()
+        listenRewardedAdEvents()
     }
 
     private fun observeUserSettings() {
@@ -99,7 +102,15 @@ class HomeViewModel @Inject constructor(
             }
 
             is HomeEvent.DeepScanClicked -> {
-                setEffect { HomeEffect.NavigateToDeepScan }
+                setEffect { HomeEffect.ShowRewardedAd }
+            }
+
+            is HomeEvent.ShowRewardedAd -> {
+                showRewardedAd(event.activity)
+            }
+
+            is HomeEvent.PreloadAds -> {
+                preloadAds(event.activity)
             }
 
             is HomeEvent.SettingsClicked -> {
@@ -177,4 +188,34 @@ class HomeViewModel @Inject constructor(
         }
     }
 
+    private fun showRewardedAd(activity: Activity) {
+        viewModelScope.launch {
+            adManager.showFullScreenAd(activity, AdPlaceName.DEEP_SCAN)
+        }
+    }
+
+    private fun preloadAds(activity: Activity) {
+        viewModelScope.launch {
+            adManager.preloadFullScreenAd(activity, AdPlaceName.DEEP_SCAN)
+        }
+    }
+
+    private fun listenRewardedAdEvents() {
+        viewModelScope.launch {
+            adManager.observeFullScreenAd(AdPlaceName.DEEP_SCAN).collect { uiResource ->
+                when (uiResource) {
+                    is AdFullScreenUiResource.AdLoaded -> {
+                        // Ad loaded
+                    }
+                    is AdFullScreenUiResource.AdCompleted,
+                    is AdFullScreenUiResource.AdNotValidOrLoadFailed,
+                    is AdFullScreenUiResource.AdFailedToShow -> {
+                        // After ad completes or fails/not valid, proceed to Deep Scan
+                        setEffect { HomeEffect.NavigateToDeepScan }
+                    }
+                    else -> Unit
+                }
+            }
+        }
+    }
 }

@@ -1,5 +1,6 @@
 package com.androidtech.features.ui.screens.home
 
+import android.app.Activity
 import com.ads.monetization.adholder.BannerAdHolder
 import com.androidtech.base.viewmodel.UIEffect
 import com.androidtech.base.viewmodel.UIEvent
@@ -25,6 +26,8 @@ sealed class HomeEvent : UIEvent {
     object FastScan : HomeEvent()
     object RequestPermissionClicked : HomeEvent()
     data class PermissionStatusChanged(val isGranted: Boolean) : HomeEvent()
+    data class ShowRewardedAd(val activity: Activity) : HomeEvent()
+    data class PreloadAds(val activity: Activity) : HomeEvent()
 }
 
 sealed class HomeEffect : UIEffect {
@@ -39,4 +42,5 @@ sealed class HomeEffect : UIEffect {
     object NavigateToBlurry : HomeEffect()
     object NavigateToOcrDocument : HomeEffect()
     object RequestStoragePermissions : HomeEffect()
+    object ShowRewardedAd : HomeEffect()
 }

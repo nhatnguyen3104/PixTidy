@@ -2,7 +2,9 @@ package com.androidtech.features.ui.screens.home
 
 import android.content.Intent
 import android.os.Build
+import androidx.activity.compose.LocalActivity
 import androidx.compose.foundation.layout.*
+import com.androidtech.data.utils.findActivity
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -71,6 +73,7 @@ fun HomeScreen(
     val lifecycleOwner = LocalLifecycleOwner.current
     val navController = LocalNavController.current
     val context = LocalContext.current
+    val activity = LocalActivity.current
 
     var permissionStatus by remember { mutableStateOf(MediaPermissionHelper.checkPermissionStatus(context)) }
     var showRationaleDialog by remember { mutableStateOf(false) }
@@ -102,6 +105,13 @@ fun HomeScreen(
 
     LaunchedEffect(permissionStatus) {
         viewModel.handleEvent(HomeEvent.PermissionStatusChanged(permissionStatus == MediaPermissionStatus.FULL_ACCESS || permissionStatus == MediaPermissionStatus.PARTIAL_ACCESS))
+    }
+
+    LaunchedEffect(activity) {
+        val act = activity ?: context.findActivity()
+        act?.let {
+            viewModel.handleEvent(HomeEvent.PreloadAds(it))
+        }
     }
 
     val snackbarHostState = remember { SnackbarHostState() }
@@ -140,6 +150,13 @@ fun HomeScreen(
 
                 is HomeEffect.NavigateToDeepScan -> {
                     navController.navigate(AppDestination.ScanScreen.createRoute(ScanLayer.DEEP.name))
+                }
+
+                is HomeEffect.ShowRewardedAd -> {
+                    val act = activity ?: context.findActivity()
+                    act?.let {
+                        viewModel.handleEvent(HomeEvent.ShowRewardedAd(it))
+                    }
                 }
 
                 is HomeEffect.NavigateToSettings -> {

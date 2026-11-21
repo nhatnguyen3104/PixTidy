@@ -9,6 +9,7 @@ sealed class AdType {
             Banner.key -> Banner
             Native.key -> Native
             Interstitial.key -> Interstitial
+            Rewarded.key -> Rewarded
             RewardedInterstitial.key -> RewardedInterstitial
             AppOpen.key -> AppOpen
             else -> None
