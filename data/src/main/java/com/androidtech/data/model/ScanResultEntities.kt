@@ -23,6 +23,8 @@ data class ScanSummaryEntity(
     @ColumnInfo(name = "videos_size_bytes") val videosSizeBytes: Long,
     @ColumnInfo(name = "duplicates_size_bytes") val duplicatesSizeBytes: Long?,
     @ColumnInfo(name = "similarity_size_bytes") val similaritySizeBytes: Long?,
+    @ColumnInfo(name = "document_count") val documentCount: Int = 0,
+    @ColumnInfo(name = "document_bytes") val documentBytes: Long = 0L,
     @ColumnInfo(name = "storage_summary_json") val storageSummaryJson: String
 )
 

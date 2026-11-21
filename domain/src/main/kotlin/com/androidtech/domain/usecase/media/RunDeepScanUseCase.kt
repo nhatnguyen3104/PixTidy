@@ -126,8 +126,10 @@ class RunDeepScanUseCase @Inject constructor(
         var blurrySizeBytes = 0L
         var duplicatesBytes = 0L
         var similarityBytes = 0L
+        var documentCount = 0
+        var documentBytes = 0L
 
-        smartScanInsights.forEach { insight ->
+        combinedInsights.forEach { insight ->
             when (insight.type) {
                 SmartInsightType.EXACT_DUPLICATES, SmartInsightType.DUPLICATE_VIDEOS -> {
                     duplicatesBytes += insight.reclaimableBytes
@@ -146,6 +148,10 @@ class RunDeepScanUseCase @Inject constructor(
                 SmartInsightType.BLURRY_PHOTOS -> {
                     blurryCount = insight.affectedItemsCount
                     blurrySizeBytes = insight.reclaimableBytes
+                }
+                SmartInsightType.DEEP_OCR_DOCUMENTS -> {
+                    documentCount = insight.affectedItemsCount
+                    documentBytes = insight.reclaimableBytes
                 }
                 else -> {}
             }
@@ -166,6 +172,8 @@ class RunDeepScanUseCase @Inject constructor(
             videosSizeBytes = 0L,
             duplicatesSizeBytes = duplicatesBytes,
             similaritySizeBytes = similarityBytes,
+            documentCount = documentCount,
+            documentBytes = documentBytes,
             storageSummary = storageSummary.copy(mediaUsedBytes = totalMediaSize)
         )
 

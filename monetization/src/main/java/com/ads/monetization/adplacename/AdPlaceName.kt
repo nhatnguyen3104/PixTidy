@@ -8,11 +8,18 @@ object AdPlaceName {
     // Interstitial
     const val OPEN_FIRST = "open_first"
     const val PASS_INTRO = "pass_intro"
+    const val TRASH_RESTORE = "trash_restore"
+
+    // Interstitial Rewarded
+
+    // Rewarded
+    const val DEEP_SCAN = "ai_smart_clean"
 
     // Native
     const val OPEN_NATIVE_FIRST = "open_native_first"
     const val LANGUAGE_BOTTOM = "language_bottom"
     const val INTRO_V2_BOTTOM = "intro_v2_bottom"
+    const val SETTING_BOTTOM = "setting_bottom"
 
     // Banner
     const val HOME_BOTTOM = "home_bottom"

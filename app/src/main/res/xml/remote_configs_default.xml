@@ -310,6 +310,11 @@
             "native_full_after_inter_name": "native_after_inter"
             },
             {
+            "name": "trash_restore",
+            "ad_type": "interstitial",
+            "native_full_after_inter_name": "native_after_inter"
+            },
+            {
             "name": "ai_smart_delete",
             "ad_type": "interstitial",
             "native_full_after_inter_name": "native_after_inter"

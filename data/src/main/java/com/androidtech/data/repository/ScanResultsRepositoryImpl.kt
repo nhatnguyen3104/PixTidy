@@ -148,6 +148,8 @@ class ScanResultsRepositoryImpl @Inject constructor(
             videosSizeBytes = videosSizeBytes,
             duplicatesSizeBytes = duplicatesSizeBytes,
             similaritySizeBytes = similaritySizeBytes,
+            documentCount = documentCount,
+            documentBytes = documentBytes,
             storageSummary = storageSummary
         )
     }
@@ -168,6 +170,8 @@ class ScanResultsRepositoryImpl @Inject constructor(
             videosSizeBytes = videosSizeBytes,
             duplicatesSizeBytes = duplicatesSizeBytes,
             similaritySizeBytes = similaritySizeBytes,
+            documentCount = documentCount,
+            documentBytes = documentBytes,
             storageSummaryJson = storageSummaryAdapter.toJson(storageSummary)
         )
     }
