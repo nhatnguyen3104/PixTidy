@@ -75,6 +75,12 @@ class DuplicateViewModel @Inject constructor(
                     deletePhotos(event.selectedPhotoIds)
                 }
             }
+            is DuplicateEvent.PhotoClicked -> {
+                previewPhoto(event.photoId)
+            }
+            is DuplicateEvent.ClosePreview -> {
+                closePreview()
+            }
             is DuplicateEvent.PhotoToggleSelection -> {
                 togglePhotoSelection(event.photoId)
             }
@@ -151,6 +157,27 @@ class DuplicateViewModel @Inject constructor(
         }
     }
 
+    private fun previewPhoto(photoId: Long) {
+        val group = uiState.value.duplicateGroups.find { group ->
+            group.allItems.any { it.id == photoId }
+        }
+        if (group != null) {
+            val index = group.allItems.indexOfFirst { it.id == photoId }
+            if (index != -1) {
+                setState {
+                    copy(
+                        previewMediaList = group.allItems,
+                        previewInitialIndex = index
+                    )
+                }
+            }
+        }
+    }
+
+    private fun closePreview() {
+        setState { copy(previewMediaList = null) }
+    }
+
     private fun togglePhotoSelection(photoId: Long) {
         val currentGroups = uiState.value.duplicateGroups
         val updatedGroups = currentGroups.map { group ->
@@ -175,7 +202,8 @@ class DuplicateViewModel @Inject constructor(
         val updatedGroups = uiState.value.duplicateGroups.map { group ->
             if (group.groupId == groupId) {
                 group.copy(
-                    duplicateItems = group.duplicateItems.map { it.copy(isSelected = isSelected) }
+                    duplicateItems = group.duplicateItems.map { it.copy(isSelected = isSelected) },
+                    originalItem = group.originalItem.copy(isSelected = false)
                 )
             } else {
                 group

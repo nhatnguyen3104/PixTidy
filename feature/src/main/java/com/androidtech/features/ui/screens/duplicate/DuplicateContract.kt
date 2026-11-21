@@ -7,16 +7,19 @@ import com.androidtech.base.viewmodel.UIEffect
 import com.androidtech.base.viewmodel.UIEvent
 import com.androidtech.base.viewmodel.UIState
 import com.androidtech.domain.model.media.DuplicateGroup
+import com.androidtech.domain.model.media.MediaItem
 
 data class DuplicateState(
     val isLoading: Boolean = false,
     val showBackConfirmationDialog: Boolean = false,
     val duplicateGroups: List<DuplicateGroup> = emptyList(),
+    val previewMediaList: List<MediaItem>? = null,
+    val previewInitialIndex: Int = 0,
     val bannerAdHolder: BannerAdHolder? = null
 ): UIState {
     val isSelectionActive: Boolean
         get() = duplicateGroups.any { group ->
-            /*group.originalItem.isSelected || */group.duplicateItems.any { it.isSelected }
+            /*group.originalItem.isSelected ||*/ group.duplicateItems.any { it.isSelected }
         }
 }
 
@@ -25,6 +28,8 @@ sealed class DuplicateEvent : UIEvent {
     object ClearSelectionClicked : DuplicateEvent()
     object NavigateBackClick : DuplicateEvent()
     data class DeleteClick(val selectedPhotoIds: List<Long>) : DuplicateEvent()
+    data class PhotoClicked(val photoId: Long) : DuplicateEvent()
+    object ClosePreview : DuplicateEvent()
     data class PhotoToggleSelection(val photoId: Long) : DuplicateEvent()
     data class GroupToggleClicked(val groupId: String, val isSelected: Boolean) : DuplicateEvent()
     data class ConfirmCacheCleanup(val photoIds: List<Long>) : DuplicateEvent()

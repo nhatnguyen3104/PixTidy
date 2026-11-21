@@ -14,6 +14,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.outlined.Check
 import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material.icons.outlined.Star
@@ -24,6 +25,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -31,6 +33,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
+import coil.request.ImageRequest
+import coil.request.videoFramePercent
 import com.androidtech.base.theme.AppTheme
 import com.androidtech.base.ui.animation.bounceClick
 import com.androidtech.base.R
@@ -41,6 +45,7 @@ import com.androidtech.domain.model.media.MediaItem
 @Composable
 fun DuplicateGroupSection(
     group: DuplicateGroup,
+    onItemClick: (Long) -> Unit,
     onPhotoToggle: (Long) -> Unit,
     onGroupToggle: (Boolean) -> Unit
 ) {
@@ -122,8 +127,9 @@ fun DuplicateGroupSection(
                             Box(modifier = Modifier.weight(1f)) {
                                 DuplicatePhotoCard(
                                     duplicateItem = item,
-                                    isSelectable = !isOriginal,
-                                    onToggle = { if (!isOriginal) onPhotoToggle(item.id) }
+                                    isOriginal = isOriginal,
+                                    onItemClick = { onItemClick(item.id) },
+                                    onToggle = { onPhotoToggle(item.id) }
                                 )
                             }
                         }
@@ -141,34 +147,61 @@ fun DuplicateGroupSection(
 @Composable
 fun DuplicatePhotoCard(
     duplicateItem: MediaItem,
-    isSelectable: Boolean = true,
+    isOriginal: Boolean,
+    onItemClick: () -> Unit,
     onToggle: () -> Unit
 ) {
-    val borderColor = if (duplicateItem.isSelected && isSelectable) MaterialTheme.colorScheme.primary else Color.Transparent
-    val borderWidth = if (duplicateItem.isSelected && isSelectable) 3.dp else 0.dp
+    val context = LocalContext.current
+    val isVideo = duplicateItem.isVideo
+
+    val borderColor =
+        if (duplicateItem.isSelected) MaterialTheme.colorScheme.primary else Color.Transparent
+    val borderWidth = if (duplicateItem.isSelected) 3.dp else 0.dp
 
     Box(
         modifier = Modifier
             .aspectRatio(1f)
             .clip(RoundedCornerShape(16.dp))
             .border(borderWidth, borderColor, RoundedCornerShape(16.dp))
-            .then(
-                if (isSelectable) Modifier.clickable { onToggle() } else Modifier
-            )
+            .clickable { onItemClick() }
     ) {
         // Thumbnail Image
         AsyncImage(
-            model = duplicateItem.uri,
+            model = ImageRequest.Builder(context)
+                .data(duplicateItem.uri)
+                .apply {
+                    if (isVideo) videoFramePercent(0.1)
+                }
+                .crossfade(true)
+                .build(),
             contentDescription = null,
             contentScale = ContentScale.Crop,
             modifier = Modifier.fillMaxSize()
         )
 
-        // Bottom-Left "Best Shot / Keep" Star Badge
-        if (duplicateItem.isBestKeep) {
+        if (isVideo) {
             Box(
                 modifier = Modifier
-                    .align(Alignment.BottomStart)
+                    .align(Alignment.Center)
+                    .size(40.dp)
+                    .clip(CircleShape)
+                    .background(Color.Black.copy(alpha = 0.5f)),
+                contentAlignment = Alignment.Center
+            ) {
+                Icon(
+                    imageVector = Icons.Filled.PlayArrow,
+                    contentDescription = "Video",
+                    tint = Color.White,
+                    modifier = Modifier.size(24.dp)
+                )
+            }
+        }
+
+        // Start Right "Best Shot / Keep" Star Badge
+        if (isOriginal) {
+            Box(
+                modifier = Modifier
+                    .align(Alignment.TopStart)
                     .padding(10.dp)
                     .size(28.dp)
                     .clip(CircleShape)
@@ -185,28 +218,28 @@ fun DuplicatePhotoCard(
         }
 
         // Selection Circle Checkbox (Bottom-Right)
-        if (isSelectable) {
-            Box(
-                modifier = Modifier
-                    .align(Alignment.BottomEnd)
-                    .padding(8.dp)
-                    .size(24.dp)
-                    .clip(CircleShape)
-                    .background(
-                        if (duplicateItem.isSelected) MaterialTheme.colorScheme.primary else Color.White.copy(alpha = 0.75f)
-                    ),
-                contentAlignment = Alignment.Center
-            ) {
-                if (duplicateItem.isSelected) {
-                    Icon(
-                        imageVector = Icons.Outlined.Check,
-                        contentDescription = "Selected",
-                        tint = MaterialTheme.colorScheme.onPrimary,
-                        modifier = Modifier.size(16.dp)
-                    )
-                }
+        Box(
+            modifier = Modifier
+                .align(Alignment.BottomEnd)
+                .padding(8.dp)
+                .size(24.dp)
+                .clip(CircleShape)
+                .background(
+                    if (duplicateItem.isSelected) MaterialTheme.colorScheme.primary else Color.White.copy(alpha = 0.75f)
+                )
+                .clickable { onToggle() },
+            contentAlignment = Alignment.Center
+        ) {
+            if (duplicateItem.isSelected) {
+                Icon(
+                    imageVector = Icons.Outlined.Check,
+                    contentDescription = "Selected",
+                    tint = MaterialTheme.colorScheme.onPrimary,
+                    modifier = Modifier.size(16.dp)
+                )
             }
         }
     }
+
 }
 

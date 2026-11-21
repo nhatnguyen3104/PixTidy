@@ -44,7 +44,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -67,6 +66,7 @@ import com.androidtech.base.theme.Title20Bold
 import com.androidtech.base.utils.UiText
 import com.androidtech.base.utils.formatSize
 import com.androidtech.features.ui.components.DeleteBottomBar
+import com.androidtech.features.ui.components.MediaPreviewScreen
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
@@ -145,13 +145,19 @@ fun DuplicateScreen(
             }
         }
     }
-
-    DuplicateContent(
-        uiState = uiState.value,
-        onEvent = { viewModel.handleEvent(it) },
-        snackbarHostState = snackbarHostState
-    )
-
+    if (uiState.value.previewMediaList != null) {
+        MediaPreviewScreen(
+            mediaList = uiState.value.previewMediaList!!,
+            initialIndex = uiState.value.previewInitialIndex,
+            onBackClick = { viewModel.handleEvent(DuplicateEvent.ClosePreview) }
+        )
+    } else {
+        DuplicateContent(
+            uiState = uiState.value,
+            onEvent = { viewModel.handleEvent(it) },
+            snackbarHostState = snackbarHostState
+        )
+    }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -328,6 +334,9 @@ fun DuplicateContent(
                     items(duplicateGroups, key = { it.groupId }) { group ->
                         DuplicateGroupSection(
                             group = group,
+                            onItemClick = { itemId ->
+                                onEvent(DuplicateEvent.PhotoClicked(itemId))
+                            },
                             onPhotoToggle = { photoId ->
                                 onEvent(
                                     DuplicateEvent.PhotoToggleSelection(
