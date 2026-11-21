@@ -22,7 +22,7 @@
     <string name="text_items_selected">%1$d개 선택됨</string>
     <string name="text_delete_items_selected">사진 %1$d개 삭제</string>
     <string name="text_delete_items_selected_description">사진 %1$d개를 삭제하시겠습니까?</string>
-    <string name="text_smart_insights">스마트 분석</string>
+    <string name="text_smart_insights">스마트 분석 결과를 찾았습니다</string>
     <string name="text_available_after_access">접근 권한을 허용한 후 사용할 수 있습니다"</string>
     <string name="text_permission_grant_title">정리를 시작하려면 접근 권한을 허용하세요</string>
     <string name="text_permission_grant_description">중복 사진, 흐릿한 사진, 불필요한 파일을 찾으려면 %1$s에 사진 및 파일 접근 권한이 필요합니다. 파일은 이 기기에서 안전하게 보호됩니다.</string>

@@ -22,7 +22,7 @@
     <string name="text_items_selected">%1$d valgt</string>
     <string name="text_delete_items_selected">Slet %1$d fotos</string>
     <string name="text_delete_items_selected_description">Er du sikker på, at du vil slette %1$d fotos?</string>
-    <string name="text_smart_insights">Smarte indsigter</string>
+    <string name="text_smart_insights">Smarte indsigter fundet</string>
     <string name="text_available_after_access">Tilgængelig, når der er givet adgang"</string>
     <string name="text_permission_grant_title">Giv adgang for at begynde oprydningen</string>
     <string name="text_permission_grant_description">%1$s skal have adgang til fotos og filer for at finde dubletter, slørede fotos og uønskede filer. Dine filer forbliver private på denne enhed.</string>

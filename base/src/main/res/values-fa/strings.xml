@@ -22,7 +22,7 @@
     <string name="text_items_selected">%1$d مورد انتخاب شد</string>
     <string name="text_delete_items_selected">حذف %1$d عکس</string>
     <string name="text_delete_items_selected_description">مطمئنید می‌خواهید %1$d عکس را حذف کنید؟</string>
-    <string name="text_smart_insights">بینش‌های هوشمند</string>
+    <string name="text_smart_insights">بینش‌های هوشمند پیدا شد</string>
     <string name="text_available_after_access">پس از اعطای دسترسی در دسترس خواهد بود"</string>
     <string name="text_permission_grant_title">برای شروع پاک‌سازی، دسترسی بدهید</string>
     <string name="text_permission_grant_description">برای شناسایی موارد تکراری، عکس‌های تار و فایل‌های اضافی، %1$s به دسترسی عکس‌ها و فایل‌ها نیاز دارد. فایل‌های شما در این دستگاه خصوصی می‌مانند.</string>

@@ -22,7 +22,7 @@
     <string name="text_items_selected">%1$d seleccionados</string>
     <string name="text_delete_items_selected">Eliminar %1$d fotos</string>
     <string name="text_delete_items_selected_description">¿Seguro que quieres eliminar %1$d fotos?</string>
-    <string name="text_smart_insights">Análisis inteligente</string>
+    <string name="text_smart_insights">Se encontraron análisis inteligentes</string>
     <string name="text_available_after_access">Disponible después de conceder acceso"</string>
     <string name="text_permission_grant_title">Concede acceso para empezar a limpiar</string>
     <string name="text_permission_grant_description">%1$s necesita acceso a las fotos y los archivos para detectar duplicados, fotos borrosas y archivos innecesarios. Tus archivos permanecen privados en este dispositivo.</string>

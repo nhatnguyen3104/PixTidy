@@ -22,7 +22,7 @@
     <string name="text_items_selected">%1$d ခု ရွေးထားသည်</string>
     <string name="text_delete_items_selected">ဓာတ်ပုံ %1$d ပုံကို ဖျက်ရန်</string>
     <string name="text_delete_items_selected_description">ဓာတ်ပုံ %1$d ပုံကို ဖျက်ရန် သေချာပါသလား?</string>
-    <string name="text_smart_insights">စမတ်အချက်အလက်များ</string>
+    <string name="text_smart_insights">စမတ်အချက်အလက်များကို တွေ့ရှိခဲ့သည်</string>
     <string name="text_available_after_access">အသုံးပြုခွင့်ပေးပြီးနောက် ရရှိနိုင်သည်"</string>
     <string name="text_permission_grant_title">ရှင်းလင်းမှုစတင်ရန် အသုံးပြုခွင့်ပေးပါ</string>
     <string name="text_permission_grant_description">မိတ္တူပွားများ၊ ဝါးနေသောဓာတ်ပုံများနှင့် မလိုအပ်သောဖိုင်များကို ရှာဖွေရန် %1$s သည် ဓာတ်ပုံနှင့်ဖိုင်များကို အသုံးပြုခွင့်လိုအပ်သည်။ သင့်ဖိုင်များသည် ဤစက်တွင်သာ လုံခြုံစွာရှိနေမည်။</string>

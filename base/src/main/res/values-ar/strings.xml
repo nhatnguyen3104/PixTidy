@@ -22,7 +22,7 @@
     <string name="text_items_selected">تم تحديد %1$d</string>
     <string name="text_delete_items_selected">حذف %1$d من الصور</string>
     <string name="text_delete_items_selected_description">هل تريد بالتأكيد حذف %1$d من الصور؟</string>
-    <string name="text_smart_insights">رؤى ذكية</string>
+    <string name="text_smart_insights">تم العثور على رؤى ذكية</string>
     <string name="text_available_after_access">يتاح بعد منح الإذن"</string>
     <string name="text_permission_grant_title">امنح الإذن لبدء التنظيف</string>
     <string name="text_permission_grant_description">يحتاج %1$s إلى الوصول للصور والملفات لاكتشاف الصور المكررة والضبابية والملفات غير الضرورية. تظل ملفاتك خاصة على هذا الجهاز.</string>

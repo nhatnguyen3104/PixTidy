@@ -22,7 +22,7 @@
     <string name="text_items_selected">已選取 %1$d 個項目</string>
     <string name="text_delete_items_selected">刪除 %1$d 張相片</string>
     <string name="text_delete_items_selected_description">確定要刪除 %1$d 張相片嗎？</string>
-    <string name="text_smart_insights">智能分析</string>
+    <string name="text_smart_insights">已找到智能分析</string>
     <string name="text_available_after_access">授予存取權後即可使用"</string>
     <string name="text_permission_grant_title">授予存取權以開始清理</string>
     <string name="text_permission_grant_description">%1$s 需要存取相片和檔案，才能偵測重複相片、模糊相片和垃圾檔案。你的檔案會保留在此裝置上，並受到保護。</string>

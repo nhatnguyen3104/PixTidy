@@ -22,7 +22,7 @@
     <string name="text_items_selected">Vybraté: %1$d</string>
     <string name="text_delete_items_selected">Odstrániť %1$d fotiek</string>
     <string name="text_delete_items_selected_description">Naozaj chcete odstrániť %1$d fotiek?</string>
-    <string name="text_smart_insights">Inteligentné prehľady</string>
+    <string name="text_smart_insights">Našli sa inteligentné prehľady</string>
     <string name="text_available_after_access">Dostupné po povolení prístupu"</string>
     <string name="text_permission_grant_title">Povoľte prístup a začnite s čistením</string>
     <string name="text_permission_grant_description">Aplikácia %1$s potrebuje prístup k fotkám a súborom, aby našla duplikáty, rozmazané fotky a nepotrebné súbory. Vaše súbory zostanú v tomto zariadení súkromné.</string>

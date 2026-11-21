@@ -22,7 +22,7 @@
     <string name="text_items_selected">%1$d dipilih</string>
     <string name="text_delete_items_selected">Hapus %1$d foto</string>
     <string name="text_delete_items_selected_description">Yakin ingin menghapus %1$d foto?</string>
-    <string name="text_smart_insights">Wawasan cerdas</string>
+    <string name="text_smart_insights">Wawasan cerdas ditemukan</string>
     <string name="text_available_after_access">Tersedia setelah akses diberikan"</string>
     <string name="text_permission_grant_title">Berikan akses untuk mulai membersihkan</string>
     <string name="text_permission_grant_description">%1$s memerlukan akses foto dan file untuk mendeteksi duplikat, foto buram, dan file sampah. File Anda tetap pribadi di perangkat ini.</string>

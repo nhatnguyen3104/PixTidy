@@ -22,7 +22,7 @@
     <string name="text_items_selected">%1$d seleccionats</string>
     <string name="text_delete_items_selected">Suprimeix %1$d fotos</string>
     <string name="text_delete_items_selected_description">Segur que vols suprimir %1$d fotos?</string>
-    <string name="text_smart_insights">Anàlisis intel·ligents</string>
+    <string name="text_smart_insights">S\'han trobat anàlisis intel·ligents</string>
     <string name="text_available_after_access">Disponible després de concedir-hi accés"</string>
     <string name="text_permission_grant_title">Concedeix accés per començar a netejar</string>
     <string name="text_permission_grant_description">Per detectar duplicats, fotos borroses i fitxers innecessaris, %1$s necessita accés a les fotos i als fitxers. Els fitxers es mantenen privats en aquest dispositiu.</string>

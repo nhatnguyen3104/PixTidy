@@ -22,7 +22,7 @@
     <string name="text_items_selected">已选择 %1$d 项</string>
     <string name="text_delete_items_selected">删除 %1$d 张照片</string>
     <string name="text_delete_items_selected_description">确定要删除 %1$d 张照片吗？</string>
-    <string name="text_smart_insights">智能洞察</string>
+    <string name="text_smart_insights">已找到智能洞察</string>
     <string name="text_available_after_access">授予访问权限后即可使用"</string>
     <string name="text_permission_grant_title">授予访问权限以开始清理</string>
     <string name="text_permission_grant_description">%1$s 需要访问照片和文件，才能检测重复照片、模糊照片和垃圾文件。您的文件会保留在此设备上，不会泄露。</string>

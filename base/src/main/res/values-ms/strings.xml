@@ -22,7 +22,7 @@
     <string name="text_items_selected">%1$d dipilih</string>
     <string name="text_delete_items_selected">Padam %1$d foto</string>
     <string name="text_delete_items_selected_description">Adakah anda pasti mahu memadam %1$d foto?</string>
-    <string name="text_smart_insights">Pandangan pintar</string>
+    <string name="text_smart_insights">Pandangan pintar ditemui</string>
     <string name="text_available_after_access">Tersedia selepas akses diberikan"</string>
     <string name="text_permission_grant_title">Berikan akses untuk mula membersihkan</string>
     <string name="text_permission_grant_description">%1$s memerlukan akses kepada foto dan fail untuk mengesan pendua, foto kabur dan fail sampah. Fail anda kekal peribadi pada peranti ini.</string>

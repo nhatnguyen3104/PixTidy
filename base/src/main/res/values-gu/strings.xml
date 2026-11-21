@@ -22,7 +22,7 @@
     <string name="text_items_selected">%1$d પસંદ કરેલ</string>
     <string name="text_delete_items_selected">%1$d ફોટા કાઢી નાખો</string>
     <string name="text_delete_items_selected_description">શું તમે ખરેખર %1$d ફોટા કાઢી નાખવા માંગો છો?</string>
-    <string name="text_smart_insights">સ્માર્ટ જાણકારી</string>
+    <string name="text_smart_insights">સ્માર્ટ જાણકારી મળી</string>
     <string name="text_available_after_access">ઍક્સેસ આપ્યા પછી ઉપલબ્ધ થશે"</string>
     <string name="text_permission_grant_title">સફાઈ શરૂ કરવા માટે ઍક્સેસ આપો</string>
     <string name="text_permission_grant_description">ડુપ્લિકેટ, ઝાંખા ફોટા અને બિનજરૂરી ફાઇલો શોધવા માટે %1$sને ફોટા અને ફાઇલોની ઍક્સેસની જરૂર છે. તમારી ફાઇલો આ ઉપકરણ પર ખાનગી રહે છે.</string>

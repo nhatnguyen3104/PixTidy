@@ -6,19 +6,15 @@ import com.ads.monetization.AdManager
 import com.ads.monetization.adplacename.AdPlaceName
 import com.androidtech.base.viewmodel.BaseViewModel
 import com.androidtech.data.model.aduiresource.getAdPlaceName
-import com.androidtech.domain.extensions.UiState
 import com.androidtech.domain.model.media.ScanLayer
 import com.androidtech.domain.model.media.ScanProgress
-import com.androidtech.domain.model.media.ScanSummary
 import com.androidtech.domain.model.media.SmartInsightType
-import com.androidtech.domain.usecase.media.GetLatestScanResultsUseCase
 import com.androidtech.domain.usecase.media.RunDeepScanUseCase
 import com.androidtech.domain.usecase.media.RunSmartScanUseCase
 import com.androidtech.domain.usecase.media.SaveScanResultsUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
@@ -31,7 +27,6 @@ class ScanViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val runSmartScanUseCase: RunSmartScanUseCase,
     private val runDeepScanUseCase: RunDeepScanUseCase,
-    private val getLatestScanResultsUseCase: GetLatestScanResultsUseCase,
     private val saveScanResultsUseCase: SaveScanResultsUseCase,
     private val adManager: AdManager
 ): BaseViewModel<ScanEvent, ScanState, ScanEffect> (savedStateHandle) {
@@ -66,7 +61,7 @@ class ScanViewModel @Inject constructor(
 
     private fun startScan() {
         if (scanJob?.isActive == true) return
-        
+
         val mode = getScanMode()
         val scanFlow = when (mode) {
             ScanLayer.SMART -> runSmartScanUseCase()
@@ -88,7 +83,7 @@ class ScanViewModel @Inject constructor(
                         setState { copy(scanProcess = uiProgress) }
                     }
                     is DomainScanState.Success -> {
-                        saveLatestResults(mode, domainState)
+                        saveLatestResults(domainState)
                         // Emit a final 100% scanning state to allow the UI to finish the gauge animation completely
                         val finalCount = domainState.summary.totalMediaCount
                         val finalProgress = ScanProgress.fixed(
@@ -100,7 +95,7 @@ class ScanViewModel @Inject constructor(
                         )
                         setState { copy(scanProcess = DomainScanState.Scanning(finalProgress)) }
                         delay(800.milliseconds)
-                        
+
                         val uiSuccess = DomainScanState.Success(
                             insights = domainState.insights,
                             summary = domainState.summary,
@@ -131,66 +126,9 @@ class ScanViewModel @Inject constructor(
         scanJob?.cancel()
     }
 
-    private fun saveLatestResults(mode: ScanLayer, success: DomainScanState.Success) {
+    private fun saveLatestResults(success: DomainScanState.Success) {
         viewModelScope.launch {
-            val uiState = getLatestScanResultsUseCase(Unit).firstOrNull()
-            val currentSummary = (uiState as? UiState.Success)?.data
-                ?: ScanSummary.EMPTY.copy(lastScanLevel = mode)
-
-            var duplicatesBytes = 0L
-            var similarityBytes = 0L
-            var screenshotCount = 0
-            var screenshotBytes = 0L
-            var largeVideoCount = 0
-            var largeVideoBytes = 0L
-            var blurryCount = 0
-            var blurryBytes = 0L
-            var documentCount = 0
-            var documentBytes = 0L
-
-            success.insights.forEach { insight ->
-                when (insight.type) {
-                    SmartInsightType.EXACT_DUPLICATES, SmartInsightType.DUPLICATE_VIDEOS -> {
-                        duplicatesBytes += insight.reclaimableBytes
-                    }
-                    SmartInsightType.SIMILAR_PHOTOS -> {
-                        similarityBytes += insight.reclaimableBytes
-                    }
-                    SmartInsightType.SCREENSHOTS -> {
-                        screenshotCount = insight.affectedItemsCount
-                        screenshotBytes = insight.reclaimableBytes
-                    }
-                    SmartInsightType.LARGE_VIDEOS -> {
-                        largeVideoCount = insight.affectedItemsCount
-                        largeVideoBytes = insight.reclaimableBytes
-                    }
-                    SmartInsightType.BLURRY_PHOTOS -> {
-                        blurryCount = insight.affectedItemsCount
-                        blurryBytes = insight.reclaimableBytes
-                    }
-                    SmartInsightType.DEEP_OCR_DOCUMENTS -> {
-                        documentCount = insight.affectedItemsCount
-                        documentBytes = insight.reclaimableBytes
-                    }
-                    else -> {}
-                }
-            }
-
-            val updatedSummary = currentSummary.copy(
-                lastScanLevel = mode,
-                duplicatesSizeBytes = duplicatesBytes,
-                similaritySizeBytes = similarityBytes,
-                screenshotCount = if (screenshotCount > 0) screenshotCount else currentSummary.screenshotCount,
-                screenshotBytes = if (screenshotBytes > 0) screenshotBytes else currentSummary.screenshotBytes,
-                largeVideoCount = if (largeVideoCount > 0) largeVideoCount else currentSummary.largeVideoCount,
-                largeVideoBytes = if (largeVideoBytes > 0) largeVideoBytes else currentSummary.largeVideoBytes,
-                blurryCount = if (blurryCount > 0) blurryCount else currentSummary.blurryCount,
-                blurrySizeBytes = if (blurryBytes > 0) blurryBytes else currentSummary.blurrySizeBytes,
-                documentCount = if (documentCount > 0) documentCount else currentSummary.documentCount,
-                documentBytes = if (documentBytes > 0) documentBytes else currentSummary.documentBytes
-            )
-            
-            saveScanResultsUseCase(SaveScanResultsUseCase.Params(updatedSummary, success.insights))
+            saveScanResultsUseCase(SaveScanResultsUseCase.Params(success.summary, success.insights))
                 .launchIn(this)
         }
     }

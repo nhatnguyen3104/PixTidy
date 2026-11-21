@@ -22,7 +22,7 @@
     <string name="text_items_selected">Вибрано: %1$d</string>
     <string name="text_delete_items_selected">Видалити %1$d фотографій</string>
     <string name="text_delete_items_selected_description">Ви справді хочете видалити %1$d фотографій?</string>
-    <string name="text_smart_insights">Розумна аналітика</string>
+    <string name="text_smart_insights">Знайдено розумну аналітику</string>
     <string name="text_available_after_access">Буде доступно після надання доступу"</string>
     <string name="text_permission_grant_title">Надайте доступ, щоб почати очищення</string>
     <string name="text_permission_grant_description">Додатку %1$s потрібен доступ до фотографій і файлів, щоб знаходити дублікати, розмиті фотографії та непотрібні файли. Ваші файли залишаються приватними на цьому пристрої.</string>

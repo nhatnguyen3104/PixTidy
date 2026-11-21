@@ -22,7 +22,7 @@
     <string name="text_items_selected">เลือกแล้ว %1$d รายการ</string>
     <string name="text_delete_items_selected">ลบรูปภาพ %1$d รูป</string>
     <string name="text_delete_items_selected_description">คุณแน่ใจหรือไม่ว่าต้องการลบรูปภาพ %1$d รูป</string>
-    <string name="text_smart_insights">ข้อมูลเชิงลึกอัจฉริยะ</string>
+    <string name="text_smart_insights">พบข้อมูลเชิงลึกอัจฉริยะแล้ว</string>
     <string name="text_available_after_access">ใช้ได้หลังจากอนุญาตการเข้าถึง"</string>
     <string name="text_permission_grant_title">อนุญาตการเข้าถึงเพื่อเริ่มล้าง</string>
     <string name="text_permission_grant_description">%1$s ต้องเข้าถึงรูปภาพและไฟล์เพื่อตรวจหารายการซ้ำ รูปภาพที่เบลอ และไฟล์ขยะ ไฟล์ของคุณจะยังคงเป็นส่วนตัวในอุปกรณ์นี้</string>

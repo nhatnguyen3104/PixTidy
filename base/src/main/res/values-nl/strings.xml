@@ -22,7 +22,7 @@
     <string name="text_items_selected">%1$d geselecteerd</string>
     <string name="text_delete_items_selected">%1$d foto\'s verwijderen</string>
     <string name="text_delete_items_selected_description">Weet je zeker dat je %1$d foto\'s wilt verwijderen?</string>
-    <string name="text_smart_insights">Slimme inzichten</string>
+    <string name="text_smart_insights">Slimme inzichten gevonden</string>
     <string name="text_available_after_access">Beschikbaar nadat toegang is verleend"</string>
     <string name="text_permission_grant_title">Verleen toegang om te beginnen met opschonen</string>
     <string name="text_permission_grant_description">%1$s heeft toegang tot foto\'s en bestanden nodig om duplicaten, onscherpe foto\'s en ongewenste bestanden te vinden. Je bestanden blijven privé op dit apparaat.</string>

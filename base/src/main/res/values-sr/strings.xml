@@ -22,7 +22,7 @@
     <string name="text_items_selected">Изабрано: %1$d</string>
     <string name="text_delete_items_selected">Избриши %1$d фотографија</string>
     <string name="text_delete_items_selected_description">Да ли сте сигурни да желите да избришете %1$d фотографија?</string>
-    <string name="text_smart_insights">Паметни увиди</string>
+    <string name="text_smart_insights">Пронађени паметни увиди</string>
     <string name="text_available_after_access">Доступно након одобравања приступа"</string>
     <string name="text_permission_grant_title">Дозволите приступ да бисте започели чишћење</string>
     <string name="text_permission_grant_description">Апликацији %1$s је потребан приступ фотографијама и датотекама да би открила дупликате, мутне фотографије и непотребне датотеке. Ваше датотеке остају приватне на овом уређају.</string>

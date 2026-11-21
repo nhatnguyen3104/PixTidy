@@ -22,7 +22,7 @@
     <string name="text_items_selected">Избрани: %1$d</string>
     <string name="text_delete_items_selected">Изтриване на %1$d снимки</string>
     <string name="text_delete_items_selected_description">Сигурни ли сте, че искате да изтриете %1$d снимки?</string>
-    <string name="text_smart_insights">Интелигентни анализи</string>
+    <string name="text_smart_insights">Открити са интелигентни анализи</string>
     <string name="text_available_after_access">Налично след предоставяне на достъп"</string>
     <string name="text_permission_grant_title">Предоставете достъп, за да започнете почистването</string>
     <string name="text_permission_grant_description">На %1$s е необходим достъп до снимки и файлове, за да открива дубликати, размазани снимки и ненужни файлове. Файловете ви остават поверителни на това устройство.</string>

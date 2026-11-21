@@ -22,7 +22,7 @@
     <string name="text_items_selected">Valitud: %1$d</string>
     <string name="text_delete_items_selected">Kustuta %1$d fotot</string>
     <string name="text_delete_items_selected_description">Kas soovid kindlasti kustutada %1$d fotot?</string>
-    <string name="text_smart_insights">Nutikad ülevaated</string>
+    <string name="text_smart_insights">Leiti nutikad ülevaated</string>
     <string name="text_available_after_access">Saadaval pärast juurdepääsu lubamist"</string>
     <string name="text_permission_grant_title">Puhastamise alustamiseks luba juurdepääs</string>
     <string name="text_permission_grant_description">%1$s vajab duplikaatide, uduste fotode ja rämpsfailide leidmiseks juurdepääsu fotodele ja failidele. Sinu failid jäävad selles seadmes privaatseks.</string>

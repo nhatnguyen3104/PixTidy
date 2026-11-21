@@ -22,7 +22,7 @@
     <string name="text_items_selected">Pasirinkta: %1$d</string>
     <string name="text_delete_items_selected">Ištrinti %1$d nuotraukų</string>
     <string name="text_delete_items_selected_description">Ar tikrai norite ištrinti %1$d nuotraukų?</string>
-    <string name="text_smart_insights">Išmaniosios įžvalgos</string>
+    <string name="text_smart_insights">Rastos išmaniosios įžvalgos</string>
     <string name="text_available_after_access">Bus pasiekiama suteikus prieigą"</string>
     <string name="text_permission_grant_title">Suteikite prieigą, kad galėtumėte pradėti valyti</string>
     <string name="text_permission_grant_description">Kad aptiktų dublikatus, neryškias nuotraukas ir nereikalingus failus, programai %1$s reikia prieigos prie nuotraukų ir failų. Jūsų failai lieka privatūs šiame įrenginyje.</string>

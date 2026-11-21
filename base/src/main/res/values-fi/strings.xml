@@ -22,7 +22,7 @@
     <string name="text_items_selected">%1$d valittu</string>
     <string name="text_delete_items_selected">Poista %1$d kuvaa</string>
     <string name="text_delete_items_selected_description">Haluatko varmasti poistaa %1$d kuvaa?</string>
-    <string name="text_smart_insights">Älykkäät havainnot</string>
+    <string name="text_smart_insights">Älykkäitä havaintoja löytyi</string>
     <string name="text_available_after_access">Käytettävissä, kun käyttöoikeus on myönnetty"</string>
     <string name="text_permission_grant_title">Aloita siivous myöntämällä käyttöoikeus</string>
     <string name="text_permission_grant_description">%1$s tarvitsee käyttöoikeuden kuviin ja tiedostoihin löytääkseen kaksoiskappaleet, epätarkat kuvat ja turhat tiedostot. Tiedostosi pysyvät yksityisinä tällä laitteella.</string>

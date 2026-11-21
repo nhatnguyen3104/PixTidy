@@ -22,7 +22,7 @@
     <string name="text_items_selected">%1$d valin</string>
     <string name="text_delete_items_selected">Eyða %1$d myndum</string>
     <string name="text_delete_items_selected_description">Ertu viss um að þú viljir eyða %1$d myndum?</string>
-    <string name="text_smart_insights">Snjallar upplýsingar</string>
+    <string name="text_smart_insights">Snjallar upplýsingar fundust</string>
     <string name="text_available_after_access">Tiltækt eftir aðgangsheimild"</string>
     <string name="text_permission_grant_title">Veittu aðgang til að hefja hreinsun</string>
     <string name="text_permission_grant_description">%1$s þarf aðgang að myndum og skrám til að finna afrit, óskýrar myndir og ruslskrár. Skrárnar þínar eru áfram á þessu tæki.</string>

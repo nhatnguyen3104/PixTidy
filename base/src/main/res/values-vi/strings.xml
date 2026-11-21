@@ -22,7 +22,7 @@
     <string name="text_items_selected">Đã chọn %1$d</string>
     <string name="text_delete_items_selected">Xóa %1$d ảnh</string>
     <string name="text_delete_items_selected_description">Bạn có chắc muốn xóa %1$d ảnh không?</string>
-    <string name="text_smart_insights">Thông tin thông minh</string>
+    <string name="text_smart_insights">Đã tìm thấy thông tin thông minh</string>
     <string name="text_available_after_access">Có sau khi cấp quyền truy cập"</string>
     <string name="text_permission_grant_title">Cấp quyền truy cập để bắt đầu dọn dẹp</string>
     <string name="text_permission_grant_description">%1$s cần quyền truy cập ảnh và tệp để phát hiện ảnh trùng lặp, ảnh mờ và tệp rác. Tệp của bạn luôn riêng tư trên thiết bị này.</string>

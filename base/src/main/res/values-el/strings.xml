@@ -22,7 +22,7 @@
     <string name="text_items_selected">Επιλέχθηκαν %1$d</string>
     <string name="text_delete_items_selected">Διαγραφή %1$d φωτογραφιών</string>
     <string name="text_delete_items_selected_description">Θέλετε σίγουρα να διαγράψετε %1$d φωτογραφίες;</string>
-    <string name="text_smart_insights">Έξυπνες πληροφορίες</string>
+    <string name="text_smart_insights">Βρέθηκαν έξυπνες πληροφορίες</string>
     <string name="text_available_after_access">Διαθέσιμο μετά την παροχή πρόσβασης"</string>
     <string name="text_permission_grant_title">Επιτρέψτε την πρόσβαση για να ξεκινήσει ο καθαρισμός</string>
     <string name="text_permission_grant_description">Το %1$s χρειάζεται πρόσβαση σε φωτογραφίες και αρχεία για να εντοπίζει διπλότυπα, θολές φωτογραφίες και άχρηστα αρχεία. Τα αρχεία σας παραμένουν ιδιωτικά σε αυτήν τη συσκευή.</string>

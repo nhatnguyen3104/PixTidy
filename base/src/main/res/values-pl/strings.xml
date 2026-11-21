@@ -22,7 +22,7 @@
     <string name="text_items_selected">Wybrano: %1$d</string>
     <string name="text_delete_items_selected">Usuń %1$d zdjęć</string>
     <string name="text_delete_items_selected_description">Czy na pewno chcesz usunąć %1$d zdjęć?</string>
-    <string name="text_smart_insights">Inteligentne wskazówki</string>
+    <string name="text_smart_insights">Znaleziono inteligentne wskazówki</string>
     <string name="text_available_after_access">Dostępne po przyznaniu dostępu"</string>
     <string name="text_permission_grant_title">Przyznaj dostęp, aby rozpocząć czyszczenie</string>
     <string name="text_permission_grant_description">Aplikacja %1$s potrzebuje dostępu do zdjęć i plików, aby wykrywać duplikaty, rozmazane zdjęcia i niepotrzebne pliki. Twoje pliki pozostają prywatne na tym urządzeniu.</string>

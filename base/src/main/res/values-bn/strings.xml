@@ -22,7 +22,7 @@
     <string name="text_items_selected">%1$dটি নির্বাচিত</string>
     <string name="text_delete_items_selected">%1$dটি ছবি মুছুন</string>
     <string name="text_delete_items_selected_description">আপনি কি নিশ্চিত যে %1$dটি ছবি মুছতে চান?</string>
-    <string name="text_smart_insights">স্মার্ট অন্তর্দৃষ্টি</string>
+    <string name="text_smart_insights">স্মার্ট অন্তর্দৃষ্টি পাওয়া গেছে</string>
     <string name="text_available_after_access">অনুমতি দেওয়ার পর পাওয়া যাবে"</string>
     <string name="text_permission_grant_title">পরিষ্কার শুরু করতে অ্যাক্সেসের অনুমতি দিন</string>
     <string name="text_permission_grant_description">ডুপ্লিকেট, ঝাপসা ছবি ও অপ্রয়োজনীয় ফাইল খুঁজতে %1$s-এর ছবি ও ফাইলে অ্যাক্সেস প্রয়োজন। আপনার ফাইল এই ডিভাইসেই ব্যক্তিগত থাকে।</string>

@@ -22,7 +22,7 @@
     <string name="text_items_selected">%1$d markerade</string>
     <string name="text_delete_items_selected">Ta bort %1$d foton</string>
     <string name="text_delete_items_selected_description">Vill du ta bort %1$d foton?</string>
-    <string name="text_smart_insights">Smarta insikter</string>
+    <string name="text_smart_insights">Smarta insikter hittades</string>
     <string name="text_available_after_access">Tillgängligt när åtkomst har beviljats"</string>
     <string name="text_permission_grant_title">Ge åtkomst för att börja rensa</string>
     <string name="text_permission_grant_description">%1$s behöver åtkomst till foton och filer för att hitta dubbletter, suddiga foton och skräpfiler. Dina filer förblir privata på den här enheten.</string>

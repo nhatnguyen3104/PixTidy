@@ -22,7 +22,7 @@
     <string name="text_items_selected">Odabrano: %1$d</string>
     <string name="text_delete_items_selected">Izbriši %1$d fotografija</string>
     <string name="text_delete_items_selected_description">Želite li zaista izbrisati %1$d fotografija?</string>
-    <string name="text_smart_insights">Pametni uvidi</string>
+    <string name="text_smart_insights">Pronađeni pametni uvidi</string>
     <string name="text_available_after_access">Dostupno nakon odobravanja pristupa"</string>
     <string name="text_permission_grant_title">Dopustite pristup za početak čišćenja</string>
     <string name="text_permission_grant_description">Aplikaciji %1$s potreban je pristup fotografijama i datotekama za otkrivanje duplikata, mutnih fotografija i nepotrebnih datoteka. Vaše datoteke ostaju privatne na ovom uređaju.</string>

@@ -22,7 +22,7 @@
     <string name="text_items_selected">%1$d kiválasztva</string>
     <string name="text_delete_items_selected">%1$d fotó törlése</string>
     <string name="text_delete_items_selected_description">Biztosan törlöd ezt a(z) %1$d fotót?</string>
-    <string name="text_smart_insights">Intelligens elemzések</string>
+    <string name="text_smart_insights">Intelligens elemzések találhatók</string>
     <string name="text_available_after_access">A hozzáférés megadása után érhető el"</string>
     <string name="text_permission_grant_title">A tisztítás megkezdéséhez engedélyezd a hozzáférést</string>
     <string name="text_permission_grant_description">A(z) %1$s alkalmazásnak hozzá kell férnie a fotókhoz és fájlokhoz az ismétlődő, homályos fotók és felesleges fájlok felismeréséhez. A fájljaid ezen az eszközön maradnak.</string>

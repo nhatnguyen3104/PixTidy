@@ -22,7 +22,7 @@
     <string name="text_items_selected">%1$d निवडले</string>
     <string name="text_delete_items_selected">%1$d फोटो हटवा</string>
     <string name="text_delete_items_selected_description">तुम्हाला %1$d फोटो हटवायचे आहेत याची खात्री आहे का?</string>
-    <string name="text_smart_insights">स्मार्ट माहिती</string>
+    <string name="text_smart_insights">स्मार्ट माहिती आढळली</string>
     <string name="text_available_after_access">प्रवेश दिल्यानंतर उपलब्ध होईल"</string>
     <string name="text_permission_grant_title">साफसफाई सुरू करण्यासाठी प्रवेश द्या</string>
     <string name="text_permission_grant_description">डुप्लिकेट, अस्पष्ट फोटो आणि अनावश्यक फाइल शोधण्यासाठी %1$s ला फोटो आणि फाइलचा प्रवेश आवश्यक आहे. तुमच्या फाइल या डिव्हाइसवरच खाजगी राहतात.</string>

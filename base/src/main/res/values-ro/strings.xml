@@ -22,7 +22,7 @@
     <string name="text_items_selected">%1$d selectate</string>
     <string name="text_delete_items_selected">Ștergeți %1$d fotografii</string>
     <string name="text_delete_items_selected_description">Sigur doriți să ștergeți %1$d fotografii?</string>
-    <string name="text_smart_insights">Statistici inteligente</string>
+    <string name="text_smart_insights">Au fost găsite statistici inteligente</string>
     <string name="text_available_after_access">Disponibil după acordarea accesului"</string>
     <string name="text_permission_grant_title">Acordați acces pentru a începe curățarea</string>
     <string name="text_permission_grant_description">%1$s are nevoie de acces la fotografii și fișiere pentru a detecta duplicate, fotografii neclare și fișiere inutile. Fișierele dvs. rămân private pe acest dispozitiv.</string>

@@ -22,7 +22,7 @@
     <string name="text_items_selected">%1$d נבחרו</string>
     <string name="text_delete_items_selected">מחיקת %1$d תמונות</string>
     <string name="text_delete_items_selected_description">למחוק %1$d תמונות?</string>
-    <string name="text_smart_insights">תובנות חכמות</string>
+    <string name="text_smart_insights">נמצאו תובנות חכמות</string>
     <string name="text_available_after_access">יהיה זמין לאחר מתן גישה"</string>
     <string name="text_permission_grant_title">יש להעניק גישה כדי להתחיל בניקוי</string>
     <string name="text_permission_grant_description">כדי לזהות כפילויות, תמונות מטושטשות וקבצים מיותרים, %1$s זקוקה לגישה לתמונות ולקבצים. הקבצים שלך נשארים פרטיים במכשיר הזה.</string>

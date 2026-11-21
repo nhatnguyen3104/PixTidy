@@ -22,7 +22,7 @@
     <string name="text_items_selected">%1$d seçildi</string>
     <string name="text_delete_items_selected">%1$d fotoğrafı sil</string>
     <string name="text_delete_items_selected_description">%1$d fotoğrafı silmek istediğinizden emin misiniz?</string>
-    <string name="text_smart_insights">Akıllı analizler</string>
+    <string name="text_smart_insights">Akıllı analizler bulundu</string>
     <string name="text_available_after_access">Erişim izni verildikten sonra kullanılabilir"</string>
     <string name="text_permission_grant_title">Temizlemeye başlamak için erişim izni verin</string>
     <string name="text_permission_grant_description">Yinelenen, bulanık fotoğrafları ve gereksiz dosyaları bulmak için %1$s uygulamasının fotoğraflara ve dosyalara erişmesi gerekir. Dosyalarınız bu cihazda gizli kalır.</string>

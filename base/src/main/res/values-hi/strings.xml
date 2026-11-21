@@ -22,7 +22,7 @@
     <string name="text_items_selected">%1$d चुने गए</string>
     <string name="text_delete_items_selected">%1$d फ़ोटो मिटाएँ</string>
     <string name="text_delete_items_selected_description">क्या आप वाकई %1$d फ़ोटो मिटाना चाहते हैं?</string>
-    <string name="text_smart_insights">स्मार्ट जानकारी</string>
+    <string name="text_smart_insights">स्मार्ट जानकारी मिली</string>
     <string name="text_available_after_access">ऐक्सेस देने के बाद उपलब्ध होगा"</string>
     <string name="text_permission_grant_title">साफ़-सफ़ाई शुरू करने के लिए ऐक्सेस दें</string>
     <string name="text_permission_grant_description">डुप्लिकेट, धुंधली फ़ोटो और जंक फ़ाइलें ढूँढने के लिए %1$s को फ़ोटो और फ़ाइलों का ऐक्सेस चाहिए। आपकी फ़ाइलें इस डिवाइस पर निजी रहती हैं।</string>

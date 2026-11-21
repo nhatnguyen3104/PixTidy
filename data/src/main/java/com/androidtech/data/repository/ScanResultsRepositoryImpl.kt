@@ -3,6 +3,7 @@ package com.androidtech.data.repository
 import com.androidtech.data.local.database.ScanResultsDao
 import com.androidtech.data.model.ScanSummaryEntity
 import com.androidtech.data.model.SmartInsightEntity
+import com.androidtech.domain.model.media.ScanLayer
 import com.androidtech.domain.model.media.ScanSummary
 import com.androidtech.domain.model.media.MediaItem
 import com.androidtech.domain.model.media.isScreenshot
@@ -40,8 +41,53 @@ class ScanResultsRepositoryImpl @Inject constructor(
         }
 
     override suspend fun saveResults(summary: ScanSummary, insights: List<SmartInsight>) {
-        val summaryEntity = summary.toEntity()
-        val insightEntities = insights.map { it.toEntity() }
+        val currentSummaryEntity = scanResultsDao.getLatestSummaryOneShot()
+        val currentSummary = currentSummaryEntity?.toDomain()
+        val currentInsightEntities = scanResultsDao.getAllInsightsOneShot()
+        val currentInsights = currentInsightEntities.map { it.toDomain() }
+
+        val incomingTypes = insights.map { it.type }.toSet()
+
+        // If previous scan was DEEP and current incoming insights don't contain deep insights (e.g. running a SMART scan),
+        // preserve existing DEEP insights (OCR documents & duplicate videos).
+        val deepInsightsToPreserve = if (currentSummary?.lastScanLevel == ScanLayer.DEEP) {
+            currentInsights.filter {
+                (it.type == SmartInsightType.DEEP_OCR_DOCUMENTS || it.type == SmartInsightType.DUPLICATE_VIDEOS) &&
+                        it.type !in incomingTypes
+            }
+        } else {
+            emptyList()
+        }
+
+        val mergedInsights = insights + deepInsightsToPreserve
+
+        var documentCount = summary.documentCount
+        var documentBytes = summary.documentBytes
+
+        deepInsightsToPreserve.forEach { insight ->
+            when (insight.type) {
+                SmartInsightType.DEEP_OCR_DOCUMENTS -> {
+                    documentCount = insight.affectedItemsCount
+                    documentBytes = insight.reclaimableBytes
+                }
+                else -> {}
+            }
+        }
+
+        val finalScanLevel = if (currentSummary?.lastScanLevel == ScanLayer.DEEP || summary.lastScanLevel == ScanLayer.DEEP) {
+            ScanLayer.DEEP
+        } else {
+            summary.lastScanLevel
+        }
+
+        val finalSummary = summary.copy(
+            lastScanLevel = finalScanLevel,
+            documentCount = if (documentCount > 0) documentCount else (currentSummary?.documentCount ?: 0),
+            documentBytes = if (documentBytes > 0) documentBytes else (currentSummary?.documentBytes ?: 0L)
+        )
+
+        val summaryEntity = finalSummary.toEntity()
+        val insightEntities = mergedInsights.map { it.toEntity() }
         scanResultsDao.updateScanResults(summaryEntity, insightEntities)
     }
 
@@ -74,6 +120,8 @@ class ScanResultsRepositoryImpl @Inject constructor(
         var similarityRemovedBytes = 0L
         var blurryRemovedBytes = 0L
         var blurryCountRemoved = 0
+        var documentRemovedBytes = 0L
+        var documentCountRemoved = 0
 
         currentInsights.forEach { insight ->
             val removedInThisInsight = insight.items.filter { it.id in deletedIds }.sumOf { it.size }
@@ -89,6 +137,10 @@ class ScanResultsRepositoryImpl @Inject constructor(
                     blurryRemovedBytes += removedInThisInsight
                     blurryCountRemoved += removedCountInThisInsight
                 }
+                SmartInsightType.DEEP_OCR_DOCUMENTS -> {
+                    documentRemovedBytes += removedInThisInsight
+                    documentCountRemoved += removedCountInThisInsight
+                }
                 else -> {}
             }
         }
@@ -102,6 +154,8 @@ class ScanResultsRepositoryImpl @Inject constructor(
             largeVideoBytes = (currentSummary.largeVideoBytes - largeVideoBytesRemoved).coerceAtLeast(0L),
             blurryCount = (currentSummary.blurryCount - blurryCountRemoved).coerceAtLeast(0),
             blurrySizeBytes = (currentSummary.blurrySizeBytes - blurryRemovedBytes).coerceAtLeast(0L),
+            documentCount = (currentSummary.documentCount - documentCountRemoved).coerceAtLeast(0),
+            documentBytes = (currentSummary.documentBytes - documentRemovedBytes).coerceAtLeast(0L),
             photosSizeBytes = (currentSummary.photosSizeBytes - photoBytesRemoved).coerceAtLeast(0L),
             videosSizeBytes = (currentSummary.videosSizeBytes - videoBytesRemoved).coerceAtLeast(0L),
             duplicatesSizeBytes = (currentSummary.duplicatesSizeBytes?.minus(duplicatesRemovedBytes))?.coerceAtLeast(0L),

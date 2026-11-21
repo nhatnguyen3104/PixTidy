@@ -31,7 +31,7 @@
     <string name="text_items_selected">%1$d selected</string>
     <string name="text_delete_items_selected">Delete %1$d photos</string>
     <string name="text_delete_items_selected_description">Are you sure you want to delete %1$d photos?</string>
-    <string name="text_smart_insights">Smart insights</string>
+    <string name="text_smart_insights">Se encontraron análisis inteligentes</string>
     <string name="text_available_after_access">Available after access</string>
     <string name="text_permission_grant_title">Grant access to start cleaning</string>
     <string name="text_permission_grant_description">%1$s needs photo &amp; file access to detect duplicates, blurry photos, and junk files. Your files remain private on this device.</string>

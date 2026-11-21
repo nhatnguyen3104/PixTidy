@@ -22,7 +22,7 @@
     <string name="text_items_selected">%1$d seçildi</string>
     <string name="text_delete_items_selected">%1$d şəkli sil</string>
     <string name="text_delete_items_selected_description">%1$d şəkli silmək istədiyinizə əminsiniz?</string>
-    <string name="text_smart_insights">Ağıllı təhlillər</string>
+    <string name="text_smart_insights">Ağıllı təhlillər tapıldı</string>
     <string name="text_available_after_access">İcazə verildikdən sonra əlçatan olacaq"</string>
     <string name="text_permission_grant_title">Təmizləməyə başlamaq üçün giriş icazəsi verin</string>
     <string name="text_permission_grant_description">Dublikatları, bulanıq şəkilləri və lazımsız faylları tapmaq üçün %1$s tətbiqinə şəkillərə və fayllara giriş lazımdır. Fayllarınız bu cihazda məxfi qalır.</string>
