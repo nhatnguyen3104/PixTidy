@@ -333,9 +333,9 @@ val SmartInsightType.badgeColor: Color
     get() = when (this) {
         SmartInsightType.EXACT_DUPLICATES, SmartInsightType.DUPLICATE_VIDEOS -> ImageBadge
         SmartInsightType.SIMILAR_PHOTOS -> AudioBadge
-        SmartInsightType.SCREENSHOTS -> DocumentBadge
+        SmartInsightType.SCREENSHOTS -> ArchiveBadge
         SmartInsightType.LARGE_VIDEOS -> VideoBadge
-        SmartInsightType.BLURRY_PHOTOS -> ArchiveBadge
+        SmartInsightType.BLURRY_PHOTOS -> FolderBadge
         SmartInsightType.DEEP_OCR_DOCUMENTS -> DocumentBadge
     }
 

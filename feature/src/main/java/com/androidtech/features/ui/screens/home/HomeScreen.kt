@@ -48,6 +48,8 @@ import com.androidtech.domain.model.media.ScanLayer
 import com.androidtech.domain.model.media.SmartInsightType
 import com.androidtech.features.ui.components.PermissionRationaleDialog
 import com.androidtech.features.ui.components.SettingsRedirectDialog
+import com.androidtech.features.ui.screens.scan.badgeColor
+import com.androidtech.features.ui.screens.scan.icon
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
@@ -281,7 +283,7 @@ fun HomeContent(
             BannerAd(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .background(Color.White),
+                    .background(MaterialTheme.colorScheme.background),
                 adHolder = uiState.bannerAdHolder
             )
         },
@@ -358,8 +360,8 @@ fun HomeContent(
                     title = stringResource(R.string.text_duplicate_photos),
                     sizeText = duplicatesSize.formatSize(),
                     isPermissionGranted = uiState.isPermissionGranted,
-                    icon = Icons.Outlined.ContentCopy,
-                    badgeColor = ImageBadge,
+                    icon = SmartInsightType.EXACT_DUPLICATES.icon,
+                    badgeColor = SmartInsightType.EXACT_DUPLICATES.badgeColor,
                     modifier = Modifier.weight(1f),
                     onClick = { onEvent(HomeEvent.SmartInsightTypeClick(SmartInsightType.EXACT_DUPLICATES)) }
                 )
@@ -367,8 +369,8 @@ fun HomeContent(
                     title = stringResource(R.string.text_similar_photos),
                     sizeText = similaritySize.formatSize(),
                     isPermissionGranted = uiState.isPermissionGranted,
-                    icon = Icons.Outlined.Collections,
-                    badgeColor = AudioBadge,
+                    icon = SmartInsightType.SIMILAR_PHOTOS.icon,
+                    badgeColor = SmartInsightType.SIMILAR_PHOTOS.badgeColor,
                     modifier = Modifier.weight(1f),
                     onClick = { onEvent(HomeEvent.SmartInsightTypeClick(SmartInsightType.SIMILAR_PHOTOS)) }
                 )
@@ -384,8 +386,8 @@ fun HomeContent(
                     title = stringResource(R.string.text_screenshots_old),
                     sizeText = uiState.scanSummary.screenshotBytes.formatSize(),
                     isPermissionGranted = uiState.isPermissionGranted,
-                    icon = Icons.Outlined.Smartphone,
-                    badgeColor = DocumentBadge,
+                    icon = SmartInsightType.SCREENSHOTS.icon,
+                    badgeColor = SmartInsightType.SCREENSHOTS.badgeColor,
                     modifier = Modifier.weight(1f),
                     onClick = { onEvent(HomeEvent.SmartInsightTypeClick(SmartInsightType.SCREENSHOTS)) }
                 )
@@ -393,8 +395,8 @@ fun HomeContent(
                     title = stringResource(R.string.text_large_videos),
                     sizeText = uiState.scanSummary.largeVideoBytes.formatSize(),
                     isPermissionGranted = uiState.isPermissionGranted,
-                    icon = Icons.Outlined.VideoLibrary,
-                    badgeColor = VideoBadge,
+                    icon = SmartInsightType.LARGE_VIDEOS.icon,
+                    badgeColor = SmartInsightType.LARGE_VIDEOS.badgeColor,
                     modifier = Modifier.weight(1f),
                     onClick = { onEvent(HomeEvent.SmartInsightTypeClick(SmartInsightType.LARGE_VIDEOS)) }
                 )
@@ -410,10 +412,19 @@ fun HomeContent(
                     title = stringResource(R.string.text_blurry_photos),
                     sizeText = uiState.scanSummary.blurrySizeBytes.formatSize(),
                     isPermissionGranted = uiState.isPermissionGranted,
-                    icon = Icons.Outlined.BlurOn,
-                    badgeColor = FolderBadge,
+                    icon = SmartInsightType.BLURRY_PHOTOS.icon,
+                    badgeColor = SmartInsightType.BLURRY_PHOTOS.badgeColor,
                     modifier = Modifier.weight(1f),
                     onClick = { onEvent(HomeEvent.SmartInsightTypeClick(SmartInsightType.BLURRY_PHOTOS)) }
+                )
+                CategoryCard(
+                    title = stringResource(R.string.text_ocr_document),
+                    sizeText = uiState.scanSummary.documentBytes.formatSize(),
+                    isPermissionGranted = uiState.isPermissionGranted,
+                    icon = SmartInsightType.DEEP_OCR_DOCUMENTS.icon,
+                    badgeColor = SmartInsightType.DEEP_OCR_DOCUMENTS.badgeColor,
+                    modifier = Modifier.weight(1f),
+                    onClick = { onEvent(HomeEvent.SmartInsightTypeClick(SmartInsightType.DEEP_OCR_DOCUMENTS)) }
                 )
             }
 

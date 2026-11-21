@@ -135,7 +135,7 @@ fun ScanContent(
             BannerAd(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .background(Color.White),
+                    .background(MaterialTheme.colorScheme.background),
                 adHolder = uiState.bannerAdHolder
             )
         },
@@ -219,6 +219,9 @@ fun ScanContent(
                         val blurrySize = process.summary.blurrySizeBytes
                         val blurryCount = process.summary.blurryCount
 
+                        val ocrDocumentSize = process.summary.documentBytes
+                        val ocrDocumentCount = process.summary.documentBytes
+
                         Column(
                             modifier = Modifier.fillMaxWidth(),
                             horizontalAlignment = Alignment.CenterHorizontally
@@ -252,8 +255,8 @@ fun ScanContent(
                             ScanCategoryCard(
                                 title = stringResource(R.string.text_duplicate_photos),
                                 sizeText = stringResource(R.string.text_item_capacity, duplicatesCount, duplicatesSize.formatSize()),
-                                icon = Icons.Outlined.ContentCopy,
-                                badgeColor = ImageBadge,
+                                icon = SmartInsightType.EXACT_DUPLICATES.icon,
+                                badgeColor = SmartInsightType.EXACT_DUPLICATES.badgeColor,
                                 onClick = {
                                     onEvent(ScanEvent.SmartInsightTypeClick(SmartInsightType.EXACT_DUPLICATES))
                                 }
@@ -265,8 +268,8 @@ fun ScanContent(
                             ScanCategoryCard(
                                 title = stringResource(R.string.text_similar_photos),
                                 sizeText = stringResource(R.string.text_item_capacity, similarityCount, similaritySize.formatSize()),
-                                icon = Icons.Outlined.Collections,
-                                badgeColor = AudioBadge,
+                                icon = SmartInsightType.SIMILAR_PHOTOS.icon,
+                                badgeColor = SmartInsightType.SIMILAR_PHOTOS.badgeColor,
                                 onClick = {
                                     onEvent(ScanEvent.SmartInsightTypeClick(SmartInsightType.SIMILAR_PHOTOS))
                                 }
@@ -278,8 +281,8 @@ fun ScanContent(
                             ScanCategoryCard(
                                 title = stringResource(R.string.text_screenshots_old),
                                 sizeText = stringResource(R.string.text_item_capacity, screenshotCount, screenshotSize.formatSize()),
-                                icon = Icons.Outlined.Smartphone,
-                                badgeColor = DocumentBadge,
+                                icon = SmartInsightType.SCREENSHOTS.icon,
+                                badgeColor = SmartInsightType.SCREENSHOTS.badgeColor,
                                 onClick = {
                                     onEvent(ScanEvent.SmartInsightTypeClick(SmartInsightType.SCREENSHOTS))
                                 }
@@ -291,8 +294,8 @@ fun ScanContent(
                             ScanCategoryCard(
                                 title = stringResource(R.string.text_large_videos),
                                 sizeText = stringResource(R.string.text_item_capacity, largeVideoCount, largeVideoSize.formatSize()),
-                                icon = Icons.Outlined.VideoLibrary,
-                                badgeColor = VideoBadge,
+                                icon = SmartInsightType.LARGE_VIDEOS.icon,
+                                badgeColor = SmartInsightType.LARGE_VIDEOS.badgeColor,
                                 isEnabled = true,
                                 onClick = {
                                     onEvent(ScanEvent.SmartInsightTypeClick(SmartInsightType.LARGE_VIDEOS))
@@ -305,11 +308,25 @@ fun ScanContent(
                             ScanCategoryCard(
                                 title = stringResource(R.string.text_blurry_photos),
                                 sizeText = stringResource(R.string.text_item_capacity, blurryCount, blurrySize.formatSize()),
-                                icon = Icons.Outlined.BlurOn,
-                                badgeColor = FolderBadge,
+                                icon = SmartInsightType.BLURRY_PHOTOS.icon,
+                                badgeColor = SmartInsightType.BLURRY_PHOTOS.badgeColor,
                                 isEnabled = true,
                                 onClick = {
                                     onEvent(ScanEvent.SmartInsightTypeClick(SmartInsightType.BLURRY_PHOTOS))
+                                }
+                            )
+
+                            Spacer(modifier = Modifier.height(12.dp))
+
+                            // 6. Ocr Document
+                            ScanCategoryCard(
+                                title = stringResource(R.string.text_ocr_document),
+                                sizeText = stringResource(R.string.text_item_capacity, ocrDocumentCount, ocrDocumentSize.formatSize()),
+                                icon = SmartInsightType.DEEP_OCR_DOCUMENTS.icon,
+                                badgeColor = SmartInsightType.DEEP_OCR_DOCUMENTS.badgeColor,
+                                isEnabled = true,
+                                onClick = {
+                                    onEvent(ScanEvent.SmartInsightTypeClick(SmartInsightType.DEEP_OCR_DOCUMENTS))
                                 }
                             )
                         }
