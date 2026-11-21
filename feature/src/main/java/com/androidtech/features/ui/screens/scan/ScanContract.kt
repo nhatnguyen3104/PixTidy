@@ -29,4 +29,5 @@ sealed class ScanEffect : UIEffect {
     object NavigareToScreenshot : ScanEffect()
     object NavigateToLargeVideo : ScanEffect()
     object NavigateToBlurry : ScanEffect()
+    object NavigateToOcrDocument : ScanEffect()
 }

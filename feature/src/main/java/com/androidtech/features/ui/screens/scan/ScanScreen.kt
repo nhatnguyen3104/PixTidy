@@ -87,6 +87,9 @@ fun ScanScreen(
                 is ScanEffect.NavigateToBlurry -> {
                     navController.navigate(AppDestination.BlurryScreen.route)
                 }
+                is ScanEffect.NavigateToOcrDocument -> {
+                    navController.navigate(AppDestination.OcrDocumentScreen.route)
+                }
             }
         }
     }

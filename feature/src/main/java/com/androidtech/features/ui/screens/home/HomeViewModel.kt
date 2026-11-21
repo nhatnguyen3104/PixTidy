@@ -145,7 +145,7 @@ class HomeViewModel @Inject constructor(
                 setEffect { HomeEffect.NavigateToBlurry }
             }
             SmartInsightType.DEEP_OCR_DOCUMENTS -> {
-
+                setEffect { HomeEffect.NavigateToOcrDocument }
             }
             SmartInsightType.DUPLICATE_VIDEOS -> {
 

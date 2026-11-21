@@ -209,7 +209,7 @@ class ScanViewModel @Inject constructor(
                 setEffect { ScanEffect.NavigateToBlurry }
             }
             SmartInsightType.DEEP_OCR_DOCUMENTS -> {
-
+                setEffect { ScanEffect.NavigateToOcrDocument }
             }
             SmartInsightType.DUPLICATE_VIDEOS -> {
 

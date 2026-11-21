@@ -37,5 +37,6 @@ sealed class HomeEffect : UIEffect {
     object NavigateToScreenshot : HomeEffect()
     object NavigateToLargeVideo : HomeEffect()
     object NavigateToBlurry : HomeEffect()
+    object NavigateToOcrDocument : HomeEffect()
     object RequestStoragePermissions : HomeEffect()
 }

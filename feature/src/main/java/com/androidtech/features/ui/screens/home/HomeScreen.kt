@@ -169,6 +169,10 @@ fun HomeScreen(
                 is HomeEffect.NavigateToBlurry -> {
                     navController.navigate(AppDestination.BlurryScreen.route)
                 }
+
+                is HomeEffect.NavigateToOcrDocument -> {
+                    navController.navigate(AppDestination.OcrDocumentScreen.route)
+                }
             }
         }
     }
