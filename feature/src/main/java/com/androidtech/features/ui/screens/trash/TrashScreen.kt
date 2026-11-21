@@ -1,5 +1,6 @@
 package com.androidtech.features.ui.screens.trash
 
+import androidx.activity.compose.LocalActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.IntentSenderRequest
 import androidx.activity.result.contract.ActivityResultContracts
@@ -58,8 +59,10 @@ import com.androidtech.base.extension.LocalNavController
 import com.androidtech.base.theme.Title20Bold
 import com.androidtech.base.utils.UiText
 import com.androidtech.base.utils.formatSize
+import com.androidtech.data.utils.findActivity
 import com.androidtech.features.ui.components.MediaPreviewScreen
 import com.androidtech.features.ui.components.RestoreDeleteBottomBar
+import com.androidtech.features.ui.screens.home.HomeEvent
 import com.androidtech.features.ui.screens.similar.SimilarEvent
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
@@ -80,6 +83,14 @@ fun TrashScreen(
     val lifecycleOwner = LocalLifecycleOwner.current
     val navController = LocalNavController.current
     val context = LocalContext.current
+    val activity = LocalActivity.current
+
+    LaunchedEffect(activity) {
+        val act = activity ?: context.findActivity()
+        act?.let {
+            viewModel.handleEvent(TrashEvent.PreloadAds(it))
+        }
+    }
 
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
@@ -113,6 +124,12 @@ fun TrashScreen(
                     intentSenderLauncher.launch(
                         IntentSenderRequest.Builder(effect.intentSender).build()
                     )
+                }
+                is TrashEffect.ShowFullScreenAd -> {
+                    val atc = activity ?: context.findActivity()
+                    atc?.let {
+                        viewModel.handleEvent(TrashEvent.ShowInterAd(it))
+                    }
                 }
             }
         }

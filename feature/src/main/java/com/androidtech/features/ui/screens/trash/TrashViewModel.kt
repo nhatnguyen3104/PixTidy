@@ -1,5 +1,6 @@
 package com.androidtech.features.ui.screens.trash
 
+import android.app.Activity
 import android.app.PendingIntent
 import android.content.IntentSender
 import androidx.lifecycle.SavedStateHandle
@@ -9,12 +10,14 @@ import com.ads.monetization.adplacename.AdPlaceName
 import com.androidtech.base.R
 import com.androidtech.base.utils.UiText
 import com.androidtech.base.viewmodel.BaseViewModel
+import com.androidtech.data.model.aduiresource.AdFullScreenUiResource
 import com.androidtech.data.model.aduiresource.getAdPlaceName
 import com.androidtech.domain.extensions.UiState
 import com.androidtech.domain.model.media.TrashActionResult
 import com.androidtech.domain.usecase.media.DeletePermanentlyUseCase
 import com.androidtech.domain.usecase.media.GetTrashedMediaUseCase
 import com.androidtech.domain.usecase.media.RestoreItemsUseCase
+import com.androidtech.features.ui.screens.home.HomeEffect
 import com.androidtech.features.ui.screens.similar.SimilarEffect
 import com.androidtech.features.ui.screens.similar.SimilarEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -31,12 +34,15 @@ class TrashViewModel @Inject constructor(
     private val deletePermanentlyUseCase: DeletePermanentlyUseCase,
     private val adManager: AdManager
 ): BaseViewModel<TrashEvent, TrashState, TrashEffect>(savedStateHandle) {
+
+    private var pendingRestoreIds: List<Long>? = null
     override fun createInitializeState(): TrashState = TrashState()
 
     init {
         loadTrashMedia()
         loadBannerAd()
         observeBannerAd()
+        listenInterstitialAdEvents()
     }
 
     private fun loadTrashMedia() {
@@ -70,7 +76,10 @@ class TrashViewModel @Inject constructor(
                 toggleItemSelection(event.id)
             }
             is TrashEvent.RestoreClick -> {
-                restoreItems(event.selectedIds)
+                if (event.selectedIds.isNotEmpty()) {
+                    pendingRestoreIds = event.selectedIds
+                    setEffect { TrashEffect.ShowFullScreenAd }
+                }
             }
             is TrashEvent.DeleteClick -> {
                 deleteItems(event.selectedIds)
@@ -87,6 +96,12 @@ class TrashViewModel @Inject constructor(
             is TrashEvent.ConfirmBackClicked -> {
                 setState { copy(showBackConfirmationDialog = false) }
                 setEffect { TrashEffect.NavigateBack }
+            }
+            is TrashEvent.PreloadAds -> {
+                preLoadAds(event.activity)
+            }
+            is TrashEvent.ShowInterAd -> {
+                showInterstitialAd(event.activity)
             }
         }
     }
@@ -208,6 +223,40 @@ class TrashViewModel @Inject constructor(
                 if (resource.getAdPlaceName() == AdPlaceName.TRASH_BOTTOM) {
                     val bannerHolder = adManager.getBannerAdHolder(AdPlaceName.TRASH_BOTTOM)
                     setState { copy(bannerAdHolder = bannerHolder) }
+                }
+            }
+        }
+    }
+
+    private fun showInterstitialAd(activity: Activity) {
+        viewModelScope.launch {
+            adManager.showFullScreenAd(activity, AdPlaceName.TRASH_RESTORE)
+        }
+    }
+
+    private fun preLoadAds(activity: Activity) {
+        viewModelScope.launch {
+            adManager.preloadFullScreenAd(activity, AdPlaceName.TRASH_RESTORE)
+        }
+    }
+
+    private fun listenInterstitialAdEvents() {
+        viewModelScope.launch {
+            adManager.observeFullScreenAd(AdPlaceName.TRASH_RESTORE).collect { uiResource ->
+                when (uiResource) {
+                    is AdFullScreenUiResource.AdLoaded -> {
+                        // Ad loaded
+                    }
+                    is AdFullScreenUiResource.AdCompleted,
+                    is AdFullScreenUiResource.AdNotValidOrLoadFailed,
+                    is AdFullScreenUiResource.AdFailedToShow -> {
+                        // After ad completes or fails/not valid, proceed restore
+                        pendingRestoreIds?.let { ids ->
+                            restoreItems(ids)
+                            pendingRestoreIds = null
+                        }
+                    }
+                    else -> Unit
                 }
             }
         }

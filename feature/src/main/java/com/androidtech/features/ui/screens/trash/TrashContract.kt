@@ -1,5 +1,6 @@
 package com.androidtech.features.ui.screens.trash
 
+import android.app.Activity
 import android.content.IntentSender
 import com.ads.monetization.adholder.BannerAdHolder
 import com.androidtech.base.utils.UiText
@@ -31,10 +32,13 @@ sealed class TrashEvent: UIEvent {
     object ClosePreview : TrashEvent()
     object DismissBackConfirmation : TrashEvent()
     object ConfirmBackClicked : TrashEvent()
+    data class PreloadAds(val activity: Activity): TrashEvent()
+    data class ShowInterAd(val activity: Activity): TrashEvent()
 }
 
 sealed class TrashEffect: UIEffect {
     object NavigateBack: TrashEffect()
     data class ShowSnackbar(val message: UiText) : TrashEffect()
+    object ShowFullScreenAd : TrashEffect()
     data class LaunchIntentSender(val intentSender: IntentSender) : TrashEffect()
 }
