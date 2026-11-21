@@ -145,6 +145,8 @@ class ScanViewModel @Inject constructor(
             var largeVideoBytes = 0L
             var blurryCount = 0
             var blurryBytes = 0L
+            var documentCount = 0
+            var documentBytes = 0L
 
             success.insights.forEach { insight ->
                 when (insight.type) {
@@ -166,6 +168,10 @@ class ScanViewModel @Inject constructor(
                         blurryCount = insight.affectedItemsCount
                         blurryBytes = insight.reclaimableBytes
                     }
+                    SmartInsightType.DEEP_OCR_DOCUMENTS -> {
+                        documentCount = insight.affectedItemsCount
+                        documentBytes = insight.reclaimableBytes
+                    }
                     else -> {}
                 }
             }
@@ -179,7 +185,9 @@ class ScanViewModel @Inject constructor(
                 largeVideoCount = if (largeVideoCount > 0) largeVideoCount else currentSummary.largeVideoCount,
                 largeVideoBytes = if (largeVideoBytes > 0) largeVideoBytes else currentSummary.largeVideoBytes,
                 blurryCount = if (blurryCount > 0) blurryCount else currentSummary.blurryCount,
-                blurrySizeBytes = if (blurryBytes > 0) blurryBytes else currentSummary.blurrySizeBytes
+                blurrySizeBytes = if (blurryBytes > 0) blurryBytes else currentSummary.blurrySizeBytes,
+                documentCount = if (documentCount > 0) documentCount else currentSummary.documentCount,
+                documentBytes = if (documentBytes > 0) documentBytes else currentSummary.documentBytes
             )
             
             saveScanResultsUseCase(SaveScanResultsUseCase.Params(updatedSummary, success.insights))

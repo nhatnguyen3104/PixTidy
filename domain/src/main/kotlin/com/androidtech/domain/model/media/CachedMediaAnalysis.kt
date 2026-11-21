@@ -11,5 +11,9 @@ data class CachedMediaAnalysis(
     val mediaId: Long,
     val phash: String?,
     val blurScore: Int,
-    val isScreenshot: Boolean
+    val isScreenshot: Boolean,
+    val videoFrames: List<FrameSample>? = null,
+    val isDocument: Boolean? = null,
+    val documentConfidence: Float? = null,
+    val ocrPreview: String? = null
 )

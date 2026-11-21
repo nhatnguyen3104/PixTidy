@@ -12,6 +12,7 @@ import com.androidtech.domain.engine.DeepAnalysisEngine
 import com.androidtech.domain.model.media.DocumentAnalysisResult
 import com.androidtech.domain.model.media.FrameSample
 import com.androidtech.domain.model.media.MediaItem
+import com.androidtech.domain.repository.MediaAnalysisCacheRepository
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
@@ -28,16 +29,29 @@ import androidx.core.net.toUri
  * MediaMetadataRetriever is part of the Android SDK and needs no extra dependency.
  */
 class DeepAnalysisEngineImpl @Inject constructor(
-    @ApplicationContext private val context: Context
+    @ApplicationContext private val context: Context,
+    private val mediaAnalysisCacheRepository: MediaAnalysisCacheRepository
 ) : DeepAnalysisEngine {
 
     override suspend fun sampleKeyFrames(item: MediaItem, maxFrames: Int): List<FrameSample> =
         withContext(Dispatchers.Default) {
             if (!item.isVideo) return@withContext emptyList()
-            DataLogger.d("sampleKeyFrames: starting for ${item.name} (id=${item.id})")
+
+            // Check cache first
+            val cached = runCatching {
+                mediaAnalysisCacheRepository.getValidCache(item.id, item.dateModified)
+            }.getOrNull()
+
+            val cachedFrames = cached?.videoFrames
+            if (cachedFrames != null) {
+                DataLogger.d("sampleKeyFrames: Cache HIT for ${item.name} (id=${item.id}), frames=${cachedFrames.size}")
+                return@withContext cachedFrames
+            }
+
+            DataLogger.d("sampleKeyFrames: Cache MISS, starting for ${item.name} (id=${item.id})")
 
             val retriever = MediaMetadataRetriever()
-            try {
+            val samples = try {
                 retriever.setDataSource(context, item.uri.toUri())
                 val durationMs = item.duration
                     ?: retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)
@@ -55,7 +69,7 @@ class DeepAnalysisEngineImpl @Inject constructor(
                 val frameCount = maxFrames.coerceAtLeast(1)
                 val stepMs = durationMs / (frameCount + 1)
 
-                val samples = mutableListOf<FrameSample>()
+                val list = mutableListOf<FrameSample>()
                 for (i in 1..frameCount) {
                     val timestampMs = stepMs * i
                     val frameBitmap = try {
@@ -75,29 +89,52 @@ class DeepAnalysisEngineImpl @Inject constructor(
                     } finally {
                         frameBitmap.recycle()
                     }
-                    samples += FrameSample(timestampMs = timestampMs, phash = hash)
+                    list += FrameSample(timestampMs = timestampMs, phash = hash)
                 }
-                DataLogger.d("sampleKeyFrames: completed for ${item.name}, found ${samples.size} samples")
-                samples
+                DataLogger.d("sampleKeyFrames: completed for ${item.name}, found ${list.size} samples")
+                list
             } catch (ce: CancellationException) {
                 throw ce
             } catch (e: Exception) {
                 DataLogger.e(e, "sampleKeyFrames: unexpected error for ${item.name}")
                 emptyList()
             } finally {
-                // MediaMetadataRetriever is not Closeable pre-API 29; use try/finally with release().
                 try {
                     retriever.release()
                 } catch (ignored: Exception) {
                     // best-effort cleanup
                 }
             }
+
+            if (samples.isNotEmpty()) {
+                runCatching {
+                    mediaAnalysisCacheRepository.saveVideoFrames(item.id, item.dateModified, samples)
+                }
+            }
+
+            samples
         }
 
     override suspend fun analyzeDocument(item: MediaItem): DocumentAnalysisResult =
         withContext(Dispatchers.Default) {
             if (!item.isImage) return@withContext NOT_A_DOCUMENT
-            DataLogger.d("analyzeDocument: starting OCR for ${item.name} (id=${item.id})")
+
+            // Check cache first
+            val cached = runCatching {
+                mediaAnalysisCacheRepository.getValidCache(item.id, item.dateModified)
+            }.getOrNull()
+
+            val cachedIsDoc = cached?.isDocument
+            if (cachedIsDoc != null) {
+                DataLogger.d("analyzeDocument: Cache HIT for ${item.name} (id=${item.id}), isDocument=$cachedIsDoc")
+                return@withContext DocumentAnalysisResult(
+                    isLikelyDocument = cachedIsDoc,
+                    confidence = cached.documentConfidence ?: 0f,
+                    extractedTextPreview = cached.ocrPreview
+                )
+            }
+
+            DataLogger.d("analyzeDocument: Cache MISS, starting OCR for ${item.name} (id=${item.id})")
 
             val bitmap = try {
                 BitmapHashUtils.decodeDownsampled(
@@ -112,26 +149,37 @@ class DeepAnalysisEngineImpl @Inject constructor(
                 null
             } ?: return@withContext NOT_A_DOCUMENT
 
-            try {
+            val result = try {
                 val inputImage = InputImage.fromBitmap(bitmap, 0)
                 val recognizer = TextRecognition.getClient(TextRecognizerOptions.DEFAULT_OPTIONS)
-                val result = recognizer.process(inputImage).await()
+                val mlResult = recognizer.process(inputImage).await()
 
-                val textLength = result.text.length
-                val blockCount = result.textBlocks.size
+                val textLength = mlResult.text.length
+                val blockCount = mlResult.textBlocks.size
                 val isDocument = textLength >= MIN_TEXT_LENGTH_FOR_DOCUMENT && blockCount >= MIN_BLOCKS_FOR_DOCUMENT
                 val confidence = if (isDocument) {
                     (textLength.toFloat() / DOCUMENT_TEXT_LENGTH_SATURATION).coerceIn(0.5f, 0.95f)
                 } else {
                     0f
                 }
+                val preview = if (isDocument) mlResult.text.take(TEXT_PREVIEW_CHAR_LIMIT) else null
 
                 DataLogger.d("analyzeDocument: completed for ${item.name}, isDocument=$isDocument, textLength=$textLength")
+
+                runCatching {
+                    mediaAnalysisCacheRepository.saveDocumentAnalysis(
+                        mediaId = item.id,
+                        dateModified = item.dateModified,
+                        isDocument = isDocument,
+                        confidence = confidence,
+                        preview = preview
+                    )
+                }
 
                 DocumentAnalysisResult(
                     isLikelyDocument = isDocument,
                     confidence = confidence,
-                    extractedTextPreview = if (isDocument) result.text.take(TEXT_PREVIEW_CHAR_LIMIT) else null
+                    extractedTextPreview = preview
                 )
             } catch (ce: CancellationException) {
                 throw ce
@@ -141,6 +189,8 @@ class DeepAnalysisEngineImpl @Inject constructor(
             } finally {
                 bitmap.recycle()
             }
+
+            result
         }
 
     private companion object {

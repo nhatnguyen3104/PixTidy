@@ -1,6 +1,7 @@
 package com.androidtech.domain.repository
 
 import com.androidtech.domain.model.media.CachedMediaAnalysis
+import com.androidtech.domain.model.media.FrameSample
 
 /**
  * Abstraction over the Smart Scan analysis cache. A cache entry is only ever considered valid if
@@ -20,6 +21,20 @@ interface MediaAnalysisCacheRepository {
         phash: String?,
         blurScore: Int,
         isScreenshot: Boolean
+    )
+
+    suspend fun saveVideoFrames(
+        mediaId: Long,
+        dateModified: Long,
+        videoFrames: List<FrameSample>
+    )
+
+    suspend fun saveDocumentAnalysis(
+        mediaId: Long,
+        dateModified: Long,
+        isDocument: Boolean,
+        confidence: Float,
+        preview: String?
     )
 
     /** Removes cache rows for media no longer present on device (deleted/moved since last scan). */

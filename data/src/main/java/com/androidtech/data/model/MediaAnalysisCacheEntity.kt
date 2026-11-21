@@ -27,6 +27,18 @@ data class MediaAnalysisCacheEntity(
     @ColumnInfo(name = "is_screenshot")
     val isScreenshot: Boolean,
 
+    @ColumnInfo(name = "video_frames_json")
+    val videoFramesJson: String?,
+
+    @ColumnInfo(name = "is_document")
+    val isDocument: Boolean?,
+
+    @ColumnInfo(name = "document_confidence")
+    val documentConfidence: Float?,
+
+    @ColumnInfo(name = "ocr_preview")
+    val ocrPreview: String?,
+
     @ColumnInfo(name = "last_analyzed")
     val lastAnalyzed: Long
 )

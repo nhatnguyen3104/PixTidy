@@ -187,7 +187,10 @@ fun PermissionRequestCard(
 
             // Description
             Text(
-                text = stringResource(R.string.text_permission_grant_description, stringResource(R.string.app_name)),
+                text = stringResource(
+                    R.string.text_permission_grant_description,
+                    stringResource(R.string.app_name)
+                ),
                 style = MaterialTheme.typography.bodyMedium.copy(
                     color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.8f),
                     fontSize = 13.sp,
@@ -272,6 +275,7 @@ fun ScanRecommendationCardPreview(
         ScanRecommendationCard(onSmartScan = {}, onDeepScan = {}, isRecommended = true)
     }
 }
+
 @Composable
 fun ScanRecommendationCard(
     onSmartScan: () -> Unit,
@@ -330,40 +334,39 @@ fun ScanRecommendationCard(
                 Spacer(modifier = Modifier.height(14.dp))
             }
 
-            /*Hide Feature Intelligent Scan
-                Button(
-                    onClick = onDeepScan,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(56.dp)
-                        .bounceClick(onClick = onDeepScan),
-                    shape = RoundedCornerShape(28.dp),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = MaterialTheme.colorScheme.secondary
+            Button(
+                onClick = onDeepScan,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(56.dp)
+                    .bounceClick(onClick = onDeepScan),
+                shape = RoundedCornerShape(28.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.secondary
+                )
+            ) {
+                Icon(
+                    imageVector = Icons.Outlined.AutoAwesome,
+                    contentDescription = null,
+                    modifier = Modifier.size(22.dp)
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+                Text(
+                    text = stringResource(R.string.text_intelligent_scan_storage),
+                    style = MaterialTheme.typography.titleMedium.copy(
+                        fontWeight = FontWeight.SemiBold
                     )
-                ) {
-                    Icon(
-                        imageVector = Icons.Outlined.AutoAwesome,
-                        contentDescription = null,
-                        modifier = Modifier.size(22.dp)
-                    )
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Text(
-                        text = stringResource(R.string.text_intelligent_scan_storage),
-                        style = MaterialTheme.typography.titleMedium.copy(
-                            fontWeight = FontWeight.SemiBold
-                        )
-                    )
-                }
+                )
+            }
 
-                Spacer(modifier = Modifier.height(12.dp))*/
+            Spacer(modifier = Modifier.height(12.dp))
 
             Button(
                 onClick = onSmartScan,
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(56.dp)
-                    .bounceClick(onClick = onSmartScan ),
+                    .bounceClick(onClick = onSmartScan),
                 shape = RoundedCornerShape(28.dp),
                 colors = ButtonDefaults.buttonColors(
                     containerColor = MaterialTheme.colorScheme.primary
@@ -398,7 +401,9 @@ fun CategoryCard(
     comingSoonText: String? = null,
     onClick: () -> Unit
 ) {
-    val activeClick = if (isPermissionGranted && isEnabled) { { onClick() } } else null
+    val activeClick = if (isPermissionGranted && isEnabled) {
+        { onClick() }
+    } else null
     Surface(
         color = MaterialTheme.colorScheme.surfaceVariant,
         shape = RoundedCornerShape(24.dp),

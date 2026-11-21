@@ -75,7 +75,9 @@ class HomeViewModel @Inject constructor(
                             largeVideoCount = if (cached.largeVideoCount > 0) cached.largeVideoCount else fresh.largeVideoCount,
                             largeVideoBytes = if (cached.largeVideoBytes > 0) cached.largeVideoBytes else fresh.largeVideoBytes,
                             blurryCount = if (cached.blurryCount > 0) cached.blurryCount else fresh.blurryCount,
-                            blurrySizeBytes = if (cached.blurrySizeBytes > 0) cached.blurrySizeBytes else fresh.blurrySizeBytes
+                            blurrySizeBytes = if (cached.blurrySizeBytes > 0) cached.blurrySizeBytes else fresh.blurrySizeBytes,
+                            documentCount = if (cached.documentCount > 0) cached.documentCount else fresh.documentCount,
+                            documentBytes = if (cached.documentBytes > 0) cached.documentBytes else fresh.documentBytes
                         )
                     } else {
                         cached.copy(storageSummary = fresh.storageSummary)

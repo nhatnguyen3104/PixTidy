@@ -4,7 +4,10 @@ import com.androidtech.data.local.InMemoryAnalysisCache
 import com.androidtech.data.model.MediaAnalysisCacheEntity
 import com.androidtech.data.local.database.MediaCacheDao
 import com.androidtech.domain.model.media.CachedMediaAnalysis
+import com.androidtech.domain.model.media.FrameSample
 import com.androidtech.domain.repository.MediaAnalysisCacheRepository
+import com.squareup.moshi.Moshi
+import com.squareup.moshi.Types
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
@@ -17,8 +20,13 @@ import javax.inject.Inject
  */
 class MediaAnalysisCacheRepositoryImpl @Inject constructor(
     private val mediaCacheDao: MediaCacheDao,
-    private val inMemoryAnalysisCache: InMemoryAnalysisCache
+    private val inMemoryAnalysisCache: InMemoryAnalysisCache,
+    private val moshi: Moshi
 ) : MediaAnalysisCacheRepository {
+
+    private val frameSampleListAdapter = moshi.adapter<List<FrameSample>>(
+        Types.newParameterizedType(List::class.java, FrameSample::class.java)
+    )
 
     override suspend fun getValidCache(mediaId: Long, dateModified: Long): CachedMediaAnalysis? {
         inMemoryAnalysisCache.get(mediaId)?.let { memoryHit ->
@@ -45,12 +53,19 @@ class MediaAnalysisCacheRepositoryImpl @Inject constructor(
         blurScore: Int,
         isScreenshot: Boolean
     ) {
+        val existing = withContext(Dispatchers.IO) {
+            mediaCacheDao.getCacheForMedia(mediaId)
+        }
         val entity = MediaAnalysisCacheEntity(
             mediaId = mediaId,
             dateModified = dateModified,
-            pHash = phash,
+            pHash = phash ?: existing?.pHash,
             blurScore = blurScore,
             isScreenshot = isScreenshot,
+            videoFramesJson = existing?.videoFramesJson,
+            isDocument = existing?.isDocument,
+            documentConfidence = existing?.documentConfidence,
+            ocrPreview = existing?.ocrPreview,
             lastAnalyzed = System.currentTimeMillis()
         )
 
@@ -60,23 +75,83 @@ class MediaAnalysisCacheRepositoryImpl @Inject constructor(
         inMemoryAnalysisCache.put(entity.toDomain())
     }
 
+    override suspend fun saveVideoFrames(
+        mediaId: Long,
+        dateModified: Long,
+        videoFrames: List<FrameSample>
+    ) {
+        val existing = withContext(Dispatchers.IO) {
+            mediaCacheDao.getCacheForMedia(mediaId)
+        }
+        val framesJson = runCatching { frameSampleListAdapter.toJson(videoFrames) }.getOrNull()
+        val entity = MediaAnalysisCacheEntity(
+            mediaId = mediaId,
+            dateModified = dateModified,
+            pHash = existing?.pHash,
+            blurScore = existing?.blurScore ?: 50,
+            isScreenshot = existing?.isScreenshot ?: false,
+            videoFramesJson = framesJson,
+            isDocument = existing?.isDocument,
+            documentConfidence = existing?.documentConfidence,
+            ocrPreview = existing?.ocrPreview,
+            lastAnalyzed = System.currentTimeMillis()
+        )
+        withContext(Dispatchers.IO) {
+            mediaCacheDao.insertOrUpdateCache(entity)
+        }
+        inMemoryAnalysisCache.put(entity.toDomain())
+    }
+
+    override suspend fun saveDocumentAnalysis(
+        mediaId: Long,
+        dateModified: Long,
+        isDocument: Boolean,
+        confidence: Float,
+        preview: String?
+    ) {
+        val existing = withContext(Dispatchers.IO) {
+            mediaCacheDao.getCacheForMedia(mediaId)
+        }
+        val entity = MediaAnalysisCacheEntity(
+            mediaId = mediaId,
+            dateModified = dateModified,
+            pHash = existing?.pHash,
+            blurScore = existing?.blurScore ?: 50,
+            isScreenshot = existing?.isScreenshot ?: false,
+            videoFramesJson = existing?.videoFramesJson,
+            isDocument = isDocument,
+            documentConfidence = confidence,
+            ocrPreview = preview,
+            lastAnalyzed = System.currentTimeMillis()
+        )
+        withContext(Dispatchers.IO) {
+            mediaCacheDao.insertOrUpdateCache(entity)
+        }
+        inMemoryAnalysisCache.put(entity.toDomain())
+    }
+
     override suspend fun pruneOrphaned(validMediaIds: List<Long>) {
         withContext(Dispatchers.IO) {
-            // NOTE: a single `NOT IN (...)` query cannot safely be split into chunks — each chunk
-            // would incorrectly delete rows belonging to ids in the *other* chunks, since "not in
-            // this chunk" is true for them too. This is fine up to SQLite's bound-parameter limit
-            // (999 on older SQLite, tens of thousands on the version bundled with modern Android);
-            // a library that large should switch this to a staging temp table instead of a direct
-            // NOT IN, but that's out of scope for the DAO surface as specified.
             mediaCacheDao.deleteOrphanedCaches(validMediaIds)
         }
         inMemoryAnalysisCache.retainOnly(validMediaIds.toSet())
     }
 
-    private fun MediaAnalysisCacheEntity.toDomain() = CachedMediaAnalysis(
-        mediaId = mediaId,
-        phash = pHash,
-        blurScore = blurScore,
-        isScreenshot = isScreenshot
-    )
+    private fun MediaAnalysisCacheEntity.toDomain(): CachedMediaAnalysis {
+        val frames = try {
+            videoFramesJson?.let { frameSampleListAdapter.fromJson(it) }
+        } catch (e: Exception) {
+            null
+        }
+        return CachedMediaAnalysis(
+            mediaId = mediaId,
+            phash = pHash,
+            blurScore = blurScore,
+            isScreenshot = isScreenshot,
+            videoFrames = frames,
+            isDocument = isDocument,
+            documentConfidence = documentConfidence,
+            ocrPreview = ocrPreview
+        )
+    }
 }

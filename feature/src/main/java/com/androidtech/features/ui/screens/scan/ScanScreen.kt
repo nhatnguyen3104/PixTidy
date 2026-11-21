@@ -223,7 +223,7 @@ fun ScanContent(
                         val blurryCount = process.summary.blurryCount
 
                         val ocrDocumentSize = process.summary.documentBytes
-                        val ocrDocumentCount = process.summary.documentBytes
+                        val ocrDocumentCount = process.summary.documentCount
 
                         Column(
                             modifier = Modifier.fillMaxWidth(),
