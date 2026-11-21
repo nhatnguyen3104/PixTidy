@@ -116,4 +116,5 @@
     <string name="text_blur">धुंधलापन %1$d</string>
     <string name="text_no_blurry_photos_found">कोई धुंधली फ़ोटो नहीं मिली</string>
     <string name="text_no_blurry_photos_description">आपकी फ़ोटो गैलरी में कोई धुंधली सामग्री नहीं है।</string>
+    <string name="text_no_media_trash_description">ट्रैश में मौजूद मीडिया 30 दिनों के बाद अपने-आप हटा दिया जाएगा।</string>
 </resources>

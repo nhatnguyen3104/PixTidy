@@ -116,4 +116,5 @@
     <string name="text_blur">ધૂંધળાપણું %1$d</string>
     <string name="text_no_blurry_photos_found">કોઈ ધૂંધળા ફોટા મળ્યા નથી</string>
     <string name="text_no_blurry_photos_description">તમારી ફોટો ગૅલેરીમાં કોઈ ધૂંધળી આઇટમ નથી.</string>
+    <string name="text_no_media_trash_description">ટ્રૅશમાં રહેલ મીડિયા 30 દિવસ પછી આપમેળે કાઢી નાખવામાં આવશે.</string>
 </resources>

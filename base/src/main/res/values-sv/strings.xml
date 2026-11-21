@@ -116,4 +116,5 @@
     <string name="text_blur">oskärpa %1$d</string>
     <string name="text_no_blurry_photos_found">Inga suddiga foton hittades</string>
     <string name="text_no_blurry_photos_description">Ditt fotogalleri innehåller inga suddiga objekt.</string>
+    <string name="text_no_media_trash_description">Media i papperskorgen raderas automatiskt efter 30 dagar.</string>
 </resources>

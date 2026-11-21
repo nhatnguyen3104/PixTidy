@@ -116,4 +116,5 @@
     <string name="text_blur">模糊度 %1$d</string>
     <string name="text_no_blurry_photos_found">找不到模糊相片</string>
     <string name="text_no_blurry_photos_description">你的相片庫沒有模糊項目。</string>
+    <string name="text_no_media_trash_description">垃圾桶中的媒體將於 30 天後自動刪除。</string>
 </resources>

@@ -116,4 +116,5 @@
     <string name="text_blur">zamegljenost %1$d</string>
     <string name="text_no_blurry_photos_found">Zamegljenih fotografij ni bilo mogoče najti</string>
     <string name="text_no_blurry_photos_description">V galeriji ni zamegljenih elementov.</string>
+    <string name="text_no_media_trash_description">Predstavnostne datoteke v košu bodo samodejno izbrisane po 30 dneh.</string>
 </resources>

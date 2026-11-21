@@ -116,4 +116,5 @@
     <string name="text_blur">sa’yju %1$d</string>
     <string name="text_no_blurry_photos_found">Ndojejuhúi ta’ãnga sa’yju</string>
     <string name="text_no_blurry_photos_description">Ndaipóri mba’erepy sa’yju ne ta’ãnga renda ryepýpe.</string>
+    <string name="text_no_media_trash_description">Umi mba’e multimedia oĩva yty rendápe oñemboguéta ijehegui 30 ára rire.</string>
 </resources>

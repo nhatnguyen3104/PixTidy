@@ -116,4 +116,5 @@
     <string name="text_blur">अस्पष्टता %1$d</string>
     <string name="text_no_blurry_photos_found">अस्पष्ट फोटो आढळले नाहीत</string>
     <string name="text_no_blurry_photos_description">तुमच्या फोटो गॅलरीत अस्पष्ट आयटम नाहीत.</string>
+    <string name="text_no_media_trash_description">कचरापेटीतील मीडिया ३० दिवसांनंतर आपोआप हटवला जाईल.</string>
 </resources>

@@ -116,4 +116,5 @@
     <string name="text_blur">טשטוש %1$d</string>
     <string name="text_no_blurry_photos_found">לא נמצאו תמונות מטושטשות</string>
     <string name="text_no_blurry_photos_description">אין פריטים מטושטשים בגלריית התמונות שלך.</string>
+    <string name="text_no_media_trash_description">המדיה שבסל האשפה תימחק אוטומטית לאחר 30 יום.</string>
 </resources>

@@ -60,6 +60,7 @@
     <string name="text_restore">Restore</string>
     <string name="text_delete">Delete</string>
     <string name="text_no_media_trash">Empty trash bin</string>
+    <string name="text_no_media_trash_description">Media in Trash will be automatically deleted after 30 days.</string>
 
     <!-- Scan -->
     <string name="text_scan_failed">Scan failed</string>

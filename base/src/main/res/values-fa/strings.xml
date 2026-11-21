@@ -116,4 +116,5 @@
     <string name="text_blur">میزان تاری %1$d</string>
     <string name="text_no_blurry_photos_found">عکس تاری پیدا نشد</string>
     <string name="text_no_blurry_photos_description">گالری عکس شما مورد تاری ندارد.</string>
+    <string name="text_no_media_trash_description">فایل‌های رسانه‌ای سطل زباله پس از ۳۰ روز به‌طور خودکار حذف می‌شوند.</string>
 </resources>

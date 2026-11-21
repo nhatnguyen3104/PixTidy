@@ -116,4 +116,5 @@
     <string name="text_blur">xiralik %1$d</string>
     <string name="text_no_blurry_photos_found">Xira rasmlar topilmadi</string>
     <string name="text_no_blurry_photos_description">Foto galereyangizda xira elementlar yoʻq.</string>
+    <string name="text_no_media_trash_description">Chiqindi qutisidagi media fayllar 30 kundan keyin avtomatik ravishda o‘chiriladi.</string>
 </resources>

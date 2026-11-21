@@ -116,4 +116,5 @@
     <string name="text_blur">rozmazání %1$d</string>
     <string name="text_no_blurry_photos_found">Nebyly nalezeny žádné rozmazané fotografie</string>
     <string name="text_no_blurry_photos_description">Vaše galerie neobsahuje rozmazané položky.</string>
+    <string name="text_no_media_trash_description">Média v koši budou automaticky smazána po 30 dnech.</string>
 </resources>

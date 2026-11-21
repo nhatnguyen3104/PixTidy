@@ -116,4 +116,5 @@
     <string name="text_blur">ぼやけ度 %1$d</string>
     <string name="text_no_blurry_photos_found">ぼやけた写真はありません</string>
     <string name="text_no_blurry_photos_description">フォトギャラリーにぼやけた項目はありません。</string>
+    <string name="text_no_media_trash_description">ゴミ箱内のメディアは30日後に自動的に削除されます。</string>
 </resources>

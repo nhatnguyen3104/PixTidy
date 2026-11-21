@@ -116,4 +116,5 @@
     <string name="text_blur">흐림 %1$d</string>
     <string name="text_no_blurry_photos_found">흐릿한 사진이 없습니다</string>
     <string name="text_no_blurry_photos_description">사진 갤러리에 흐릿한 항목이 없습니다.</string>
+    <string name="text_no_media_trash_description">휴지통의 미디어는 30일 후 자동으로 삭제됩니다.</string>
 </resources>

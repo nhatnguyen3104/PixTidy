@@ -116,4 +116,5 @@
     <string name="text_blur">rozmycie %1$d</string>
     <string name="text_no_blurry_photos_found">Nie znaleziono rozmazanych zdjęć</string>
     <string name="text_no_blurry_photos_description">W galerii nie ma rozmazanych elementów.</string>
+    <string name="text_no_media_trash_description">Multimedia w koszu zostaną automatycznie usunięte po 30 dniach.</string>
 </resources>

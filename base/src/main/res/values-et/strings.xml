@@ -116,4 +116,5 @@
     <string name="text_blur">hägusus %1$d</string>
     <string name="text_no_blurry_photos_found">Häguseid fotosid ei leitud</string>
     <string name="text_no_blurry_photos_description">Sinu fotogaleriis pole häguseid üksusi.</string>
+    <string name="text_no_media_trash_description">Prügikastis olev meedia kustutatakse automaatselt 30 päeva pärast.</string>
 </resources>

@@ -116,4 +116,5 @@
     <string name="text_blur">vervaging %1$d</string>
     <string name="text_no_blurry_photos_found">Geen wazige foto\'s gevonden</string>
     <string name="text_no_blurry_photos_description">Je fotogalerij bevat geen wazige items.</string>
+    <string name="text_no_media_trash_description">Media in de prullenbak wordt na 30 dagen automatisch verwijderd.</string>
 </resources>

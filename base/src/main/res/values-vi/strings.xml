@@ -116,4 +116,5 @@
     <string name="update_dialog_negative">Bỏ qua</string>
     <string name="update_uptodate_title">Ứng dụng đã được cập nhật</string>
     <string name="update_uptodate_message">Bạn đang sử dụng phiên bản mới nhất của ứng dụng.</string>
+    <string name="text_no_media_trash_description">Nội dung đa phương tiện trong Thùng rác sẽ tự động bị xóa sau 30 ngày.</string>
 </resources>

@@ -116,4 +116,5 @@
     <string name="text_blur">θόλωση %1$d</string>
     <string name="text_no_blurry_photos_found">Δεν βρέθηκαν θολές φωτογραφίες</string>
     <string name="text_no_blurry_photos_description">Η συλλογή φωτογραφιών σας δεν περιέχει θολά στοιχεία.</string>
+    <string name="text_no_media_trash_description">Τα αρχεία πολυμέσων στον Κάδο θα διαγραφούν αυτόματα μετά από 30 ημέρες.</string>
 </resources>

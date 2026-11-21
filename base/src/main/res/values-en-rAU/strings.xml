@@ -143,4 +143,5 @@
     <string name="text_blur">blur %1$d</string>
     <string name="text_no_blurry_photos_found">No blurry photos found</string>
     <string name="text_no_blurry_photos_description">Your photo gallery has no blurry items.</string>
+    <string name="text_no_media_trash_description">Items in Bin will be automatically deleted after 30 days.</string>
 </resources>

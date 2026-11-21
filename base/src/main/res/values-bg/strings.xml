@@ -116,4 +116,5 @@
     <string name="text_blur">размазване %1$d</string>
     <string name="text_no_blurry_photos_found">Не са открити размазани снимки</string>
     <string name="text_no_blurry_photos_description">Във вашата галерия няма размазани елементи.</string>
+    <string name="text_no_media_trash_description">Медиите в кошчето ще бъдат изтрити автоматично след 30 дни.</string>
 </resources>

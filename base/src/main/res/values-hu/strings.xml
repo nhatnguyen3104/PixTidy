@@ -116,4 +116,5 @@
     <string name="text_blur">homályosság %1$d</string>
     <string name="text_no_blurry_photos_found">Nem találhatók homályos fotók</string>
     <string name="text_no_blurry_photos_description">A fotógaléria nem tartalmaz homályos elemeket.</string>
+    <string name="text_no_media_trash_description">A kukában lévő médiafájlok 30 nap elteltével automatikusan törlődnek.</string>
 </resources>

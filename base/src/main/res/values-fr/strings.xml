@@ -116,4 +116,5 @@
     <string name="text_blur">flou %1$d</string>
     <string name="text_no_blurry_photos_found">Aucune photo floue trouvée</string>
     <string name="text_no_blurry_photos_description">Votre galerie ne contient aucun élément flou.</string>
+    <string name="text_no_media_trash_description">Les fichiers multimédias de la corbeille seront automatiquement supprimés après 30 jours.</string>
 </resources>

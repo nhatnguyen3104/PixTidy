@@ -116,4 +116,5 @@
     <string name="text_blur">درجة الضبابية %1$d</string>
     <string name="text_no_blurry_photos_found">لم يتم العثور على صور ضبابية</string>
     <string name="text_no_blurry_photos_description">لا تحتوي معرض الصور على صور ضبابية.</string>
+    <string name="text_no_media_trash_description">سيتم حذف الوسائط في سلة المهملات تلقائيًا بعد 30 يومًا.</string>
 </resources>

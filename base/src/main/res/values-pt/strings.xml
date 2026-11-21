@@ -116,4 +116,5 @@
     <string name="text_blur">desfoque %1$d</string>
     <string name="text_no_blurry_photos_found">Nenhuma foto desfocada encontrada</string>
     <string name="text_no_blurry_photos_description">A sua galeria não tem itens desfocados.</string>
+    <string name="text_no_media_trash_description">Os ficheiros multimédia no lixo serão eliminados automaticamente após 30 dias.</string>
 </resources>

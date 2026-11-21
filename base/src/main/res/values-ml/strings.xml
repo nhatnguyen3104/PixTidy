@@ -116,4 +116,5 @@
     <string name="text_blur">മങ്ങൽ %1$d</string>
     <string name="text_no_blurry_photos_found">മങ്ങിയ ഫോട്ടോകളൊന്നും കണ്ടെത്തിയില്ല</string>
     <string name="text_no_blurry_photos_description">നിങ്ങളുടെ ഫോട്ടോ ഗാലറിയിൽ മങ്ങിയ ഇനങ്ങളില്ല.</string>
+    <string name="text_no_media_trash_description">ട്രാഷിലുള്ള മീഡിയ 30 ദിവസത്തിന് ശേഷം സ്വയമേവ ഇല്ലാതാക്കപ്പെടും.</string>
 </resources>

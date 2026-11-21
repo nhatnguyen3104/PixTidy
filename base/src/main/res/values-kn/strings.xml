@@ -116,4 +116,5 @@
     <string name="text_blur">ಮಸುಕು %1$d</string>
     <string name="text_no_blurry_photos_found">ಮಸುಕಾದ ಫೋಟೋಗಳು ಕಂಡುಬಂದಿಲ್ಲ</string>
     <string name="text_no_blurry_photos_description">ನಿಮ್ಮ ಫೋಟೋ ಗ್ಯಾಲರಿಯಲ್ಲಿ ಮಸುಕಾದ ಐಟಂಗಳಿಲ್ಲ.</string>
+    <string name="text_no_media_trash_description">ಅನುಪಯುಕ್ತದಲ್ಲಿರುವ ಮಾಧ್ಯಮವನ್ನು 30 ದಿನಗಳ ನಂತರ ಸ್ವಯಂಚಾಲಿತವಾಗಿ ಅಳಿಸಲಾಗುತ್ತದೆ.</string>
 </resources>
